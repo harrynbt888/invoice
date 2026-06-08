@@ -1,54 +1,61 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Templates</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin: 12px 0;
-        }
-        a {
-            display: block;
-            padding: 12px;
-            text-decoration: none;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        a:hover {
-            background: #f5f5f5;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice Templates</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+h1{
+    text-align:center;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:15px;
+}
+
+.card{
+    display:block;
+    text-decoration:none;
+    color:#333;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:15px;
+    transition:0.2s;
+}
+
+.card:hover{
+    background:#f5f5f5;
+    transform:translateY(-2px);
+}
+</style>
+
 </head>
 <body>
 
-<h1>Danh sách Invoice</h1>
+<h1>Danh sách mẫu Invoice</h1>
 
-<ul>
-    <li><a href="invoice-1.html">Invoice 1</a></li>
-    <li><a href="invoice-2.html">Invoice 2</a></li>
-    <li><a href="invoice-3.html">Invoice 3</a></li>
-    <li><a href="invoice-4.html">Invoice 4</a></li>
-    <li><a href="invoice-5.html">Invoice 5</a></li>
-    <li><a href="invoice-6.html">Invoice 6</a></li>
-    <li><a href="invoice-classic.html">Invoice Classic</a></li>
-    <li><a href="invoice-ghtk.html">Invoice QTHK</a></li>
-    <li><a href="invoice-mart.html">Invoice Mart</a></li>
-    <li><a href="invoice-vip.html">Invoice VIP</a></li>
-</ul>
+<div class="grid">
+    <a class="card" href="invoice-1.html">Invoice 1</a>
+    <a class="card" href="invoice-2.html">Invoice 2</a>
+    <a class="card" href="invoice-3.html">Invoice 3</a>
+    <a class="card" href="invoice-4.html">Invoice 4</a>
+    <a class="card" href="invoice-5.html">Invoice 5</a>
+    <a class="card" href="invoice-6.html">Invoice 6</a>
+    <a class="card" href="invoice-classic.html">Invoice Classic</a>
+    <a class="card" href="invoice-qthk.html">Invoice QTHK</a>
+    <a class="card" href="invoice-mart.html">Invoice Mart</a>
+    <a class="card" href="invoice-vip.html">Invoice VIP</a>
+</div>
 
 </body>
 </html>
