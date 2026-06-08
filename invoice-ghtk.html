@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Phiếu giao hàng</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+    <style>
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px;
+        margin: 0;
+      }
+
+      .sheet {
+        border: 1px solid #000;
+        padding: 10px;
+      }
+
+      /* HEADER */
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .title {
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .date {
+        margin-top: 4px;
+      }
+
+      /* BARCODE */
+      .barcode-box {
+        text-align: right;
+        font-size: 11px;
+      }
+
+      .barcode-box svg {
+        width: 200px;
+        height: 50px;
+      }
+
+      /* INFO BLOCK */
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        border-top: 1px solid #000;
+      }
+
+      .box {
+        border-right: 1px solid #000;
+        padding: 8px;
+      }
+
+      .box:last-child {
+        border-right: none;
+      }
+
+      .box h4 {
+        margin: 0 0 6px;
+        font-size: 13px;
+      }
+
+      .line {
+        margin: 2px 0;
+      }
+
+      .bold {
+        font-weight: bold;
+      }
+
+      /* INPUT */
+      input,
+      textarea {
+        width: 100%;
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 0;
+        resize: none;
+      }
+
+      .inline {
+        display: inline-block;
+        width: auto;
+      }
+
+      textarea {
+        height: 45px;
+      }
+
+      /* FOOTER */
+      .footer {
+        border-top: 1px solid #000;
+        margin-top: 6px;
+        padding-top: 6px;
+        font-size: 12px;
+      }
+
+      .brand-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+      }
+
+      .brand-line img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        flex-shrink: 0;
+      }
+
+      /* FILE UPLOAD FIX */
+      .file-input {
+        display: none;
+      }
+
+      .upload-btn {
+        font-size: 11px;
+        border: 1px solid #000;
+        padding: 2px 6px;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .brand-line input[type="text"] {
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: transparent;
+      }
+
+      /* PRINT */
+      .no-print {
+        display: block;
+      }
+
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        input,
+        textarea {
+          pointer-events: none;
+        }
+        textarea {
+          overflow: hidden !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="sheet">
+      <!-- HEADER -->
+      <div class="top">
+        <div>
+          <div class="title">PHIẾU GIAO HÀNG</div>
+          <div class="date">
+            Ngày:
+            <input class="inline" style="width: 90px" value="18/10/2016" />
+          </div>
+        </div>
+
+        <div class="barcode-box">
+          <svg id="barcode"></svg>
+          <div class="bold">
+            <input
+              id="barcodeValue"
+              class="inline bold"
+              value="526198_R2_174665"
+              oninput="renderBarcode()"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="row">
+        <!-- SHOP -->
+        <div class="box">
+          <h4>Shop / cửa hàng</h4>
+          <div class="line bold">
+            <input class="inline bold" style="width: 60px" value="526198" /> -
+            <input
+              class="inline bold"
+              style="width: 160px"
+              value="Nhà sách FAHASA"
+            />
+          </div>
+          <div class="line">
+            Liên hệ:
+            <input
+              class="inline"
+              style="width: 140px"
+              value="(04) 35.738.739"
+            />
+          </div>
+        </div>
+
+        <!-- ORDER -->
+        <div class="box">
+          <h4>Đơn hàng</h4>
+          <div class="line">
+            Mã ĐH:
+            <input
+              class="inline bold"
+              style="width: 120px"
+              value="A2.1746065"
+            />
+          </div>
+          <div class="line">
+            Thu hộ:
+            <input class="inline" style="width: 100px" value="81,600" />
+          </div>
+          <div class="line">
+            Ghi chú:
+            <textarea>Cho xem hàng - giao trong giờ hành chính</textarea>
+          </div>
+          <div class="line">
+            Ngày tạo ĐH:
+            <input class="inline" style="width: 100px" value="18-10-2016" />
+          </div>
+        </div>
+
+        <!-- RECEIVER -->
+        <div class="box">
+          <h4>Người nhận hàng</h4>
+          <div class="line">
+            Tên:
+            <input class="inline" style="width: 160px" value="Phạm Bảo" />
+          </div>
+          <div class="line">
+            ĐT:
+            <input
+              class="inline bold"
+              style="width: 140px"
+              value="0948955518"
+            />
+          </div>
+          <div class="line">
+            ĐC:
+            <textarea>109 Trần Hưng Đạo - Hoàn Kiếm - Hà Nội</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <div class="brand-line">
+          <img id="brandLogo" />
+
+          <label class="upload-btn no-print">
+            Chọn logo
+            <input
+              type="file"
+              accept="image/*"
+              onchange="loadLogo(this)"
+              class="file-input"
+            />
+          </label>
+
+          <input
+            type="text"
+            value="Giaohangtietkiem.vn – Chuyên nghiệp trong từng bước chuyển"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="no-print" style="margin: 10px">
+      <button onclick="window.print()">In phiếu</button>
+    </div>
+
+    <script>
+      function loadLogo(input) {
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById("brandLogo").src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+
+      function renderBarcode() {
+        const val = document.getElementById("barcodeValue").value || "";
+        JsBarcode("#barcode", val, {
+          format: "CODE128",
+          displayValue: false,
+          height: 40,
+          margin: 0,
+        });
+      }
+
+      renderBarcode();
+    </script>
+  </body>
+</html>

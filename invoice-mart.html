@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>HÓA ĐƠN BÁN HÀNG - AUTOCOMPLETE NGÂN HÀNG</title>
+<style>
+  body{font-family:"Courier New",monospace;font-size:10px;margin:0;padding:20px;background:#f7f7f7;display:flex;gap:20px}
+  .invoice-box{background:#fff;border:1px solid #ccc;border-radius:6px;padding:12px;width:420px;color:#000}
+  .center{text-align:center}.bold{font-weight:700}hr{border:none;border-top:1px dashed #000;margin:6px 0}
+  table{width:100%;border-collapse:collapse}th,td{padding:3px 0;text-align:left}
+  th:nth-child(2),td:nth-child(2){text-align:center}th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4){text-align:right}
+  td[contenteditable="true"]{background:#f8f8f8;border:1px dashed #ccc;border-radius:2px}
+  .right{text-align:right}#qrBox{margin-top:10px;text-align:center}
+  .no-print{display:block} .delBtn{color:red;background:none;border:none;cursor:pointer}
+  @media print{body{background:none;padding:0;margin:0}.invoice-box{box-shadow:none;border:1px solid #ccc;width:80mm;margin:0 auto}.no-print,.delBtn{display:none !important}td[contenteditable="true"]{border:none;background:none}}
+  .bank-autocomplete{position:relative}
+  .suggestions{position:absolute;background:white;border:1px solid #ccc;width:320px;max-height:180px;overflow:auto;z-index:50}
+  .suggestions div{padding:6px;cursor:pointer}
+  .suggestions div:hover{background:#eef}
+  input{padding:4px}
+  button{padding:4px 6px;margin:2px}
+  @media print {
+  body {
+    display: flex;
+    justify-content: center;
+  }
+  .invoice-box {
+    display: block !important;
+    width: 80mm !important;
+    border: 1px solid #000;
+  }
+  /* Ẩn toàn bộ phần bên phải khi in */
+  body > div:not(.invoice-box) {
+    display: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="invoice-box">
+  <div class="center bold" contenteditable="true">CỬA HÀNG TẠP HÓA ABC</div>
+  <div class="center" contenteditable="true">Địa chỉ: ...<br>ĐT: ...</div>
+  <hr>
+
+  <div>Mã đơn hàng: <span id="orderCode" contenteditable="true">HD00001</span></div>
+
+  <div class="center bold" style="margin:8px 0;">HÓA ĐƠN BÁN HÀNG</div>
+  <div>Ngày: <span contenteditable="true" id="date">26/10/2025</span> | Số phiếu: <span contenteditable="true" id="invoiceNo">FT2509123532900</span></div>
+  <div>Thu ngân: <span contenteditable="true" id="cashier">Admin</span></div>
+  <div>Khách hàng: <span contenteditable="true" id="customer">Khách lẻ</span></div>
+  <hr>
+
+  <table id="itemTable">
+    <thead>
+      <tr class="bold"><th>Mặt hàng</th><th>SL</th><th>Giá</th><th>Tiền</th><th class="no-print"></th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td contenteditable="true">Sản phẩm 1</td>
+        <td contenteditable="true" class="qty">5</td>
+        <td contenteditable="true" class="price">12,000</td>
+        <td class="total">60,000</td>
+        <td class="no-print"><button class="delBtn">❌</button></td>
+      </tr>
+    </tbody>
+  </table>
+  <hr>
+
+  <table>
+    <tr><td class="bold">Tổng SL:</td><td class="right" id="sumQty">0</td></tr>
+    <tr><td class="bold">Tiền hàng:</td><td class="right" id="sumTotal">0</td></tr>
+  </table>
+
+  <div id="qrBox">
+    <div class="bold">QR THANH TOÁN</div>
+    <div style="font-size:10px;">💬 Nội dung chuyển khoản:
+      <span id="transferInfo" contenteditable="true">HD00001_Khach_le</span>
+    </div>
+    <img id="qrImage" src="" alt="QR thanh toán" style="width:160px;height:160px;margin-top:5px;">
+  </div>
+
+  <hr>
+  <div class="center">Xin cảm ơn Quý khách! Thank you!</div>
+</div>
+
+<!-- panel điều khiển -->
+<div style="width:420px">
+  <div style="margin-bottom:8px;">
+    <label class="bold">Chọn ngân hàng:</label>
+    <div class="bank-autocomplete">
+      <input id="bankSearch" placeholder="Gõ tên hoặc mã tắt, ví dụ VCB hoặc Vietcombank" style="width:320px">
+      <div id="suggestions" class="suggestions" style="display:none"></div>
+    </div>
+    <div style="margin-top:6px;">
+      <label>Mã BIN (6 số):</label>
+      <input id="bankBin" style="width:120px" placeholder="970436">
+      <label style="margin-left:8px">STK:</label>
+      <input id="accountNo" placeholder="Số TK" style="width:160px">
+    </div>
+    <div style="margin-top:6px;">
+      <label>Tên chủ TK:</label>
+      <input id="accountName" placeholder="Chủ TK" style="width:300px">
+    </div>
+  </div>
+
+  <div style="margin-top:10px;">
+    <button onclick="addRow()">➕ Thêm hàng</button>
+    <button onclick="generateQR()">🔃 Cập nhật QR</button>
+    <button onclick="window.print()">🖨 In hóa đơn</button>
+  </div>
+
+  <hr>
+  <div style="font-size:12px;color:#444">
+    Ghi chú: danh sách ngân hàng phổ biến đã được nhúng sẵn. Nếu ngân hàng không có trong gợi ý, nhập trực tiếp mã BIN 6 chữ số vào ô "Mã BIN".
+  </div>
+</div>
+
+<script>
+/* ===== danh sách ngân hàng nhúng sẵn (tên, alias, mã BIN 6 chữ số) =====
+   Đây là danh sách phổ biến. Bạn có thể mở rộng nếu cần. */
+const banks = [
+  {name:"Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)", alias:"VCB,Vietcombank,Vietcom", bin:"970436"},
+  {name:"Ngân hàng TMCP Kỹ Thương Việt Nam (Techcombank)", alias:"TCB,Techcombank", bin:"970407"},
+  {name:"Ngân hàng TMCP Quân Đội (MB)", alias:"MB,MB Bank", bin:"970422"},
+  {name:"Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)", alias:"BIDV", bin:"970418"},
+  {name:"Ngân hàng TMCP Á Châu (ACB)", alias:"ACB", bin:"970416"},
+  {name:"Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank)", alias:"VPB,VPBank", bin:"970432"},
+  {name:"Ngân hàng TMCP Tiên Phong (TPBank)", alias:"TPB,TPBank,TPBank", bin:"970423"},
+  {name:"Ngân hàng Sài Gòn - Hà Nội (SHB)", alias:"SHB", bin:"970443"}
+];
+
+/* ============ autocomplete =========== */
+const bankSearch = document.getElementById('bankSearch');
+const suggestions = document.getElementById('suggestions');
+const bankBinInput = document.getElementById('bankBin');
+
+bankSearch.addEventListener('input', ()=> {
+  const q = bankSearch.value.trim().toLowerCase();
+  if(!q){ suggestions.style.display='none'; return; }
+  const matches = banks.filter(b=>{
+    const keys = (b.alias + ',' + b.name).toLowerCase();
+    return keys.includes(q);
+  }).slice(0,20);
+  if(matches.length===0){ suggestions.style.display='none'; return; }
+  suggestions.innerHTML = matches.map(m =>
+    `<div data-bin="${m.bin}" data-name="${m.name}"><strong>${m.alias.split(',')[0]}</strong> — ${m.name} <span style="float:right">${m.bin}</span></div>`
+  ).join('');
+  suggestions.style.display='block';
+});
+
+suggestions.addEventListener('click', e=>{
+  const target = e.target.closest('div[data-bin]');
+  if(!target) return;
+  const bin = target.getAttribute('data-bin');
+  const name = target.getAttribute('data-name');
+  bankSearch.value = name;
+  bankBinInput.value = bin;
+  suggestions.style.display='none';
+});
+
+/* hide suggestions on outside click */
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.bank-autocomplete')) suggestions.style.display='none';
+});
+
+/* allow pressing Enter to accept first suggestion */
+bankSearch.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter'){
+    const first = suggestions.querySelector('div[data-bin]');
+    if(first){
+      bankSearch.value = first.getAttribute('data-name');
+      bankBinInput.value = first.getAttribute('data-bin');
+      suggestions.style.display='none';
+      e.preventDefault();
+    }
+  }
+});
+
+/* ===== invoice math & QR ===== */
+function parseNumber(str){ return Number(String(str).replace(/[^\d.-]/g,'')) || 0; }
+function formatNumber(num){ return num.toLocaleString('en-US'); }
+
+function updateTotals(){
+  let sumQty=0,sumTotal=0;
+  document.querySelectorAll("#itemTable tbody tr").forEach(tr=>{
+    const qty=parseNumber(tr.querySelector(".qty").textContent);
+    const price=parseNumber(tr.querySelector(".price").textContent);
+    const total = qty * price;
+    tr.querySelector(".total").textContent = formatNumber(total);
+    sumQty += qty; sumTotal += total;
+  });
+  document.getElementById("sumQty").textContent = sumQty;
+  document.getElementById("sumTotal").textContent = formatNumber(sumTotal);
+  return sumTotal;
+}
+
+function generateQR(auto=false){
+  const bankBin = document.getElementById('bankBin').value.trim();
+  const acc = document.getElementById('accountNo').value.trim();
+  const name = document.getElementById('accountName').value.trim();
+  const amount = updateTotals();
+  if(!bankBin || !/^\d{6}$/.test(bankBin) || !acc){
+    if(!auto) alert('Vui lòng chọn ngân hàng hợp lệ (hoặc nhập mã BIN 6 chữ số) và số tài khoản.');
+    return;
+  }
+  const info = document.getElementById('transferInfo').textContent.trim() || document.getElementById('orderCode').textContent.trim();
+  const qrUrl = `https://img.vietqr.io/image/${bankBin}-${acc}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(info)}&accountName=${encodeURIComponent(name)}`;
+  document.getElementById('qrImage').src = qrUrl;
+}
+
+/* editable money formatting helpers */
+function placeCaretAtEnd(el){ const range=document.createRange(),sel=window.getSelection(); range.selectNodeContents(el); range.collapse(false); sel.removeAllRanges(); sel.addRange(range); }
+function autoFormatMoney(td){
+  td.addEventListener('input', ()=>{
+    td.textContent = td.textContent.replace(/[^\d]/g,'');
+    placeCaretAtEnd(td);
+    updateTotals();
+  });
+  td.addEventListener('blur', ()=>{
+    const raw = parseNumber(td.textContent);
+    td.textContent = raw ? formatNumber(raw) : '0';
+    updateTotals();
+    generateQR(true);
+  });
+}
+
+function attachAutoUpdate(){
+  document.querySelectorAll('.price,.qty').forEach(td=>autoFormatMoney(td));
+  document.querySelectorAll('.delBtn').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.target.closest('tr').remove();
+      updateTotals(); generateQR(true);
+    });
+  });
+}
+
+function addRow(){
+  const tbody = document.querySelector('#itemTable tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td contenteditable="true">Mặt hàng mới</td>
+    <td contenteditable="true" class="qty">1</td>
+    <td contenteditable="true" class="price">0</td>
+    <td class="total">0</td>
+    <td class="no-print"><button class="delBtn">❌</button></td>
+  `;
+  tbody.appendChild(tr);
+  autoFormatMoney(tr.querySelector('.price'));
+  autoFormatMoney(tr.querySelector('.qty'));
+  tr.querySelector('.delBtn').addEventListener('click', ()=>{
+    tr.remove(); updateTotals(); generateQR(true);
+  });
+  updateTotals(); generateQR(true);
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('date').textContent = new Date().toLocaleDateString('vi-VN');
+  attachAutoUpdate();
+  updateTotals(); generateQR(true);
+});
+</script>
+
+</body>
+</html>

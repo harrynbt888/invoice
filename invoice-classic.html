@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Hóa đơn thanh toán</title>
+  <style>
+    body{
+      font-family: "Arial", sans-serif;
+      width:380px;
+      margin:auto;
+      padding:20px;
+      border:1px dashed #000;
+      background-color:#ffffff;
+      transition:background-color 0.3s ease;
+    }
+    table th, table td {
+  font-size: 11px;
+  padding: 3px;
+}
+
+h2, h3 {
+  font-size: 13px;
+}
+
+.summary, .footer, input, select {
+  font-size: 10px;
+}
+body.theme-classic, body.theme-pos {
+  font-family: "Courier New", monospace; /* giống kiểu in hóa đơn POS */
+  font-size: 11px;
+  line-height: 1.2;
+}
+    h2,h3,p{text-align:center;margin:4px 0}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border:1px solid #000;padding:5px;text-align:left;font-size:14px;word-break:break-word}
+    input[type="text"],input[type="number"],select{width:100%;box-sizing:border-box;font-size:13px;padding:4px}
+    .summary{margin-top:10px;font-size:12px;font-weight:bold}
+    .footer{text-align:center;margin-top:20px;font-style:italic}
+    button{margin:10px 5px;padding:5px 10px;cursor:pointer}
+    .qr-container{text-align:center;margin-top:15px}
+    .qr-container img{max-width:180px;margin:5px 0}
+    .only-print{display:none}
+    .bold-label{font-weight:bold;}
+    .logo{text-align:center;margin-bottom:5px;}
+    .logo img{max-width:120px;max-height:80px;object-fit:contain;}
+    #remove-logo-btn{display:none;margin-top:5px;background:#f55;color:white;border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px}
+
+    /* === MẪU CỔ ĐIỂN === */
+    body.theme-classic {
+      background-color:#ffffff;
+      color:#000;
+      border:1px dashed #000;
+    }
+
+    /* === MẪU IN THU NHỎ (POS) === */
+    body.theme-pos {
+      width:80mm;
+      font-size:11px;
+      border:none;
+      padding:10px;
+      background:#fff;
+      color:#000;
+    }
+    body.theme-pos table {
+      font-size:11px;
+      border:1px solid #000;
+    }
+    body.theme-pos th, body.theme-pos td {
+      border:1px solid #000;
+      padding:3px;
+      text-align:left;
+    }
+    body.theme-pos h2 {
+      font-size:14px;
+      font-weight:bold;
+      text-transform:uppercase;
+      margin-bottom:2px;
+    }
+    body.theme-pos h3 {
+      font-size:12px;
+      margin:3px 0;
+    }
+    body.theme-pos .footer {
+      font-size:10px;
+      font-style:italic;
+      margin-top:8px;
+    }
+
+    /* ===== IN HÓA ĐƠN ===== */
+    @page {
+      size:auto;
+      margin:5mm;
+    }
+    @media print {
+      html, body {width:auto;height:auto;overflow:hidden;}
+      body {transform-origin:top left;transform:scale(1);}
+      button, input, select, #color-picker, #theme-select, #logo-upload, #remove-logo-btn {display:none !important;}
+      #settings-panel {display:none !important;}
+      td{font-size:13px}
+      .only-print{display:inline !important;}
+      th:last-child, td:last-child{display:none !important;}
+      #bank-info, #account-info {display:none !important;}
+      #invoice-logo:has(img[src=""]), #invoice-logo:not(:has(img[src])) {display:none !important;}
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body class="theme-classic">
+
+  <div class="logo" id="invoice-logo">
+    <img id="logo-img" src="" alt="Logo">
+    <button id="remove-logo-btn" onclick="removeLogo()">❌ Xóa logo</button>
+  </div>
+
+  <h2 contenteditable="true" style="font-weight:bold;">CÔNG TY NỘI THẤT</h2>
+  <h3 contenteditable="true">Hóa đơn thanh toán</h3>
+
+  <div id="settings-panel" style="text-align:center;margin-bottom:10px;">
+    <label>🎨 Màu nền: <input type="color" id="color-picker" value="#ffffff" onchange="updateBackground()"></label><br>
+    <label>🧾 Mẫu hóa đơn:
+      <select id="theme-select" onchange="changeTheme()">
+        <option value="theme-classic">Cổ điển</option>
+        <option value="theme-pos">Mẫu in thu nhỏ (POS)</option>
+      </select>
+    </label><br>
+    <label>🖼 Tải logo của bạn:
+      <input type="file" id="logo-upload" accept="image/*" onchange="uploadLogo(event)">
+    </label>
+  </div>
+
+  <p>Mã hóa đơn:
+    <span class="only-print" id="invoice-id-print"></span>
+    <input id="invoice-id" type="text" value="HD001" oninput="updateAll()">
+  </p>
+
+  <div style="text-align:center;"><svg id="barcode"></svg></div>
+
+  <p>Thời gian Oder:
+    <span class="only-print" id="check-in-print"></span>
+    <input id="check-in" type="text" value="" oninput="updateAll()">
+  </p>
+
+  <p>Thời gian thanh toán:
+    <span class="only-print" id="check-out-print"></span>
+    <input id="check-out" type="text" value="" oninput="updateAll()">
+  </p>
+
+  <table id="item-table">
+    <thead>
+      <tr><th>Tên hàng</th><th>SL</th><th>Đ. Giá</th><th>Thành tiền</th><th>Xoá</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <button onclick="addItem()">➕ Thêm sản phẩm</button>
+
+  <div class="summary">
+    <p>Tổng hóa đơn: <span id="total">0</span> đ</p>
+    <p>Giảm giá: <span class="only-print" id="discount-print"></span>
+      <input id="discount" type="number" value="0" oninput="updateAll()" style="width:50px;"> %
+    </p>
+    <p>Tổng cộng: <span id="total-final">0</span> đ</p>
+    <p>Tiền khách chuyển khoản: <span id="total-paid">0</span> đ</p>
+
+    <p>Tên khách hàng:
+      <span class="only-print" id="customer-name-print"></span>
+      <input id="customer-name" type="text" value="TRAN VAN B" oninput="updateAll()">
+    </p>
+
+    <p id="account-info" class="bold-label">Chủ tài khoản:
+      <span class="only-print" id="account-holder-print"></span>
+      <input id="account-holder" type="text" value="TRAN VAN A" oninput="updateAll()">
+    </p>
+
+    <p>SĐT:
+      <span class="only-print" id="customer-phone-print"></span>
+      <input id="customer-phone" type="text" value="0862812806" oninput="updateAll()">
+    </p>
+
+    <div id="bank-info">
+      <p>Ngân hàng:
+        <span class="only-print" id="bank-select-print"></span>
+        <select id="bank-select" onchange="updateAll()">
+          <option value="">-- Chọn ngân hàng --</option>
+        </select>
+      </p>
+      <p>Số tài khoản:
+        <span class="only-print" id="receiver-account-number-print"></span>
+        <input id="receiver-account-number" type="text" placeholder="Nhập số tài khoản" oninput="updateAll()">
+      </p>
+    </div>
+  </div>
+
+  <div class="qr-container" id="qr-container" style="display:none;">
+    <div>📱 QR chuyển khoản</div>
+    <img id="vietqrImage" alt="QR chuyển khoản">
+    <p style="font-size:12px;">Quét mã để chuyển khoản</p>
+  </div>
+
+  <div class="footer">Cảm ơn Quý Khách Và Hẹn Gặp Lại!!!</div>
+  <button onclick="window.print()">🖨 In hóa đơn</button>
+
+  <script>
+    const tbody=document.querySelector("#item-table tbody");
+
+    function addItem(name="",qty=1,price=0){
+      const row=document.createElement("tr");
+      row.innerHTML=`
+        <td><input type="text" value="${name}" oninput="updateAll()"><span class="only-print print-name"></span></td>
+        <td style="width:60px"><input type="number" value="${qty}" min="1" oninput="updateAll()"><span class="only-print print-qty"></span></td>
+        <td><input type="number" value="${price}" min="0" oninput="updateAll()"><span class="only-print print-price"></span></td>
+        <td class="item-total">0</td>
+        <td><button onclick="this.closest('tr').remove();updateAll()">❌</button></td>`;
+      tbody.appendChild(row);
+      updateAll();
+    }
+
+    function fmt(n){return (n||0).toLocaleString('vi-VN');}
+
+    const banks = [
+  {name:"Ngân hàng TMCP Ngoại thương Việt Nam (VCB)", code:"970436"},
+  {name:"Ngân hàng TMCP Kỹ Thương Việt Nam (Techcombank - TCB)", code:"970407"},
+  {name:"Ngân hàng TMCP Quân Đội (MB)", code:"970422"},
+  {name:"Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)", code:"970418"},
+  {name:"Ngân hàng TMCP Á Châu (ACB)", code:"970416"},
+  {name:"Ngân hàng TMCP Việt Nam Thịnh Vượng (VPBank - VPB)", code:"970432"},
+  {name:"Ngân hàng TMCP Sài Gòn – Hà Nội (SHB)", code:"970443"},
+  {name:"Ngân hàng TMCP Tiên Phong (TPBank)", code:"970423"} // thêm TPBank
+];
+    function populateBanks(){
+      const sel=document.getElementById("bank-select");
+      sel.innerHTML='<option value="">-- Chọn ngân hàng --</option>';
+      banks.forEach(b=>{
+        const opt=document.createElement("option");
+        opt.value=b.code;
+        opt.textContent=b.name;
+        sel.appendChild(opt);
+      });
+    }
+
+    function updateAll(){
+      let total=0;
+      tbody.querySelectorAll("tr").forEach(row=>{
+        const qty=parseInt(row.cells[1].querySelector("input").value)||0;
+        const price=parseInt(row.cells[2].querySelector("input").value)||0;
+        const name=row.cells[0].querySelector("input").value.trim();
+        const itemTotal=qty*price;
+        row.querySelector(".item-total").textContent=fmt(itemTotal);
+        row.querySelector(".print-name").textContent=name;
+        row.querySelector(".print-qty").textContent=qty;
+        row.querySelector(".print-price").textContent=fmt(price);
+        total+=itemTotal;
+      });
+      const discount=parseFloat(document.getElementById("discount").value)||0;
+      const final=Math.round(total*(1-discount/100));
+      document.getElementById("total").textContent=fmt(total);
+      document.getElementById("total-final").textContent=fmt(final);
+      document.getElementById("total-paid").textContent=fmt(final);
+      document.getElementById("invoice-id-print").textContent=document.getElementById("invoice-id").value;
+      document.getElementById("check-in-print").textContent=document.getElementById("check-in").value;
+      document.getElementById("check-out-print").textContent=document.getElementById("check-out").value;
+      document.getElementById("discount-print").textContent=document.getElementById("discount").value+"%";
+      document.getElementById("customer-name-print").textContent=document.getElementById("customer-name").value;
+      document.getElementById("account-holder-print").textContent=document.getElementById("account-holder").value;
+      document.getElementById("customer-phone-print").textContent=document.getElementById("customer-phone").value;
+      document.getElementById("bank-select-print").textContent=document.getElementById("bank-select").selectedOptions[0].textContent;
+      document.getElementById("receiver-account-number-print").textContent=document.getElementById("receiver-account-number").value;
+      JsBarcode("#barcode",document.getElementById("invoice-id").value,{format:"CODE128",displayValue:false,height:40,width:2,margin:0});
+      updateQR(final);
+    }
+
+    function updateQR(amount){
+      const bankCode=document.getElementById("bank-select").value;
+      const acc=document.getElementById("receiver-account-number").value.trim();
+      const inv=document.getElementById("invoice-id").value;
+      const holder=document.getElementById("account-holder").value;
+      if(bankCode && acc){
+        const qrUrl=`https://img.vietqr.io/image/${bankCode}-${acc}-compact2.png?amount=${amount||0}&addInfo=${encodeURIComponent(inv)}&accountName=${encodeURIComponent(holder)}`;
+        document.getElementById("vietqrImage").src=qrUrl;
+        document.getElementById("qr-container").style.display="block";
+      } else {
+        document.getElementById("qr-container").style.display="none";
+      }
+    }
+
+    function updateBackground(){
+      const c=document.getElementById("color-picker").value;
+      document.body.style.backgroundColor=c;
+    }
+
+    function changeTheme(){
+      const theme=document.getElementById("theme-select").value;
+      document.body.className=theme;
+      document.getElementById("color-picker").value="#ffffff";
+      const logo=document.getElementById("logo-img");
+      logo.src=sessionStorage.getItem("customLogo")||"";
+    }
+
+    function uploadLogo(e){
+      const file=e.target.files[0];
+      if(!file)return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const img=document.getElementById("logo-img");
+        img.src=reader.result;
+        sessionStorage.setItem("customLogo",reader.result);
+        document.getElementById("remove-logo-btn").style.display="inline-block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeLogo(){
+      const img=document.getElementById("logo-img");
+      img.src="";
+      sessionStorage.removeItem("customLogo");
+      document.getElementById("remove-logo-btn").style.display="none";
+    }
+
+    window.onload=()=>{
+      const savedLogo=sessionStorage.getItem("customLogo");
+      if(savedLogo){
+        document.getElementById("logo-img").src=savedLogo;
+        document.getElementById("remove-logo-btn").style.display="inline-block";
+      }
+      populateBanks();
+      addItem("Sản phẩm 1",1,200000);
+      updateAll();
+    }
+  </script>
+</body>
+</html>

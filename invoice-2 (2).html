@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hóa đơn bán hàng</title>
+
+    <style>
+      @page {
+        size: A4;
+        margin: 10mm;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, Roboto, Arial, sans-serif;
+        font-size: 13px;
+        color: #111;
+      }
+      .invoice {
+        border: 1px solid #ddd;
+        padding: 12mm;
+        min-height: 270mm;
+        box-sizing: border-box;
+      }
+      input,
+      select {
+        border: none;
+        border-bottom: 1px dashed #aaa;
+        font-size: 13px;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+      }
+
+      /* HEADER */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .company b {
+        font-size: 17px;
+      }
+      .logo-print {
+        max-width: 120px;
+        max-height: 70px;
+        object-fit: contain;
+      }
+
+      /* TITLE */
+      .title {
+        text-align: center;
+        margin: 6px 0;
+      }
+      .title h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      /* BARCODE */
+      .barcode-wrap {
+        margin: 6px 0;
+      }
+      .barcode-wrap svg {
+        height: 36px;
+      }
+
+      /* INFO */
+      .info {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 6px 0;
+      }
+      .info td {
+        padding: 4px;
+      }
+
+      /* TABLE */
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+      }
+      .table th,
+      .table td {
+        border: 1px solid #000;
+        padding: 4px;
+        font-size: 12px;
+        text-align: center;
+      }
+      .table th {
+        background: #f5f7fa;
+      }
+      .table td input {
+        width: 100%;
+        border: none;
+        text-align: right;
+      }
+      .table td:nth-child(2) input {
+        text-align: left;
+      }
+
+      /* TOTAL */
+      .total {
+        margin-top: 8px;
+      }
+
+      /* QR */
+      .qr-wrap {
+        text-align: center;
+        margin-top: 12px;
+      }
+      .qr-wrap img {
+        width: 140px;
+      }
+      .table td:nth-child(2) {
+  text-align: left;
+  white-space: normal;   /* cho phép xuống dòng */
+  word-break: break-word;
+  padding: 6px;
+}
+
+      /* BUTTON */
+      .btn {
+        margin-top: 10px;
+        padding: 8px 14px;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+     @media print {
+  .no-print {
+    display: none;
+  }
+
+  input,
+  select {
+    border: none;
+    color: #000;
+  }
+}
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  </head>
+
+  <body>
+    <div class="invoice">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="company">
+          <b contenteditable="true">CỬA HÀNG ABC</b><br />
+        </div>
+        <div>
+          <img id="logoPrint" class="logo-print" /><br />
+          <input
+            type="file"
+            accept="image/*"
+            onchange="loadLogo(this)"
+            class="no-print"
+          />
+        </div>
+      </div>
+
+      <!-- TITLE -->
+      <div class="title">
+        <h1>HÓA ĐƠN BÁN HÀNG</h1>
+
+        <!-- BARCODE TRÊN MÃ HÓA ĐƠN -->
+        <div class="barcode-wrap">
+          <svg id="barcode"></svg>
+        </div>
+
+        <p>
+          Mã hóa đơn:
+          <input
+            id="invoiceId"
+            value="HD00001"
+            oninput="updateAll()"
+            style="width: 200px"
+          />
+        </p>
+
+        <p>
+          Ngày <input style="width: 30px" /> / <input style="width: 30px" /> /
+          <input style="width: 50px" />
+        </p>
+      </div>
+
+      <!-- INFO -->
+      <table class="info">
+        <tr>
+          <td width="25%">Khách hàng:</td>
+          <td><input value="NGUYỄN VĂN A" /></td>
+        </tr>
+      </table>
+
+      <!-- TABLE -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Tên hàng</th>
+            <th>ĐVT</th>
+            <th>SL</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+            <th class="no-print"></th>
+          </tr>
+        </thead>
+        <tbody id="items"></tbody>
+      </table>
+
+      <button class="no-print" onclick="addItem()">➕ Thêm dòng</button>
+
+      <!-- TOTAL -->
+      <div class="total">
+        <p>Tổng tiền: <b id="total">0</b></p>
+        <p>
+          Giảm (%):
+          <input
+            id="discount"
+            type="number"
+            value="0"
+            style="width: 60px"
+            oninput="updateAll()"
+          />
+        </p>
+        <p>
+          <b>Thanh toán: <span id="final">0</span></b>
+        </p>
+      </div>
+
+      <!-- BANK INFO -->
+      <div class="total">
+        <p>
+          Ngân hàng:
+          <select id="bank" onchange="updateQR()">
+           <option value="VCB">Vietcombank</option>
+          <option value="ABB">ABBank</option>
+          <option value="SHBVN">SOL</option>
+          <option value="ACB">ACB</option>
+          <option value="AGRIBANK">Agribank</option>
+          <option value="BAB">Bac A Bank</option>
+          <option value="BAOVIETBANK">BaoViet Bank</option>
+          <option value="BIDV">BIDV</option>
+          <option value="BVB">BVBank</option>
+          <option value="EIB">Eximbank</option>
+          <option value="HDB">HDBank</option>
+          <option value="ICB">VietinBank</option>
+          <option value="KLB">KienlongBank</option>
+          <option value="MB">MB Bank</option>
+          <option value="MSB">MSB</option>
+          <option value="NAB">Nam A Bank</option>
+          <option value="OCB">OCB</option>
+          <option value="PGB">PG Bank</option>
+          <option value="PVCOMBANK">PVcomBank</option>
+          <option value="SAIGONBANK">SaigonBank</option>
+          <option value="SCB">SCB</option>
+          <option value="SEAB">SeABank</option>
+          <option value="SHB">SHB</option>
+          <option value="STB">Sacombank</option>
+          <option value="TCB">Techcombank</option>
+          <option value="TPB">TPBank</option>
+          <option value="VIB">VIB</option>
+          <option value="VPB">VPBank</option>
+          <option value="VCB">Vietcombank</option>
+          </select>
+        </p>
+        <p>
+          STK: <input id="account" value="0123456789" oninput="updateQR()" />
+        </p>
+        <p>
+          Chủ TK: <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
+        </p>
+      </div>
+
+      <!-- QR DƯỚI THÔNG TIN NGƯỜI NHẬN -->
+      <div class="qr-wrap">
+        <img id="qr" />
+      </div>
+
+      <div
+        class="footer"
+        style="
+          text-align: center;
+          font-size: 11px;
+          color: #666;
+          margin-top: 10px;
+        "
+      >
+        Cảm ơn quý khách đã mua hàng!
+      </div>
+
+      <button class="btn no-print" onclick="window.print()">
+        🖨 In hóa đơn
+      </button>
+    </div>
+
+    <script>
+      const items = document.getElementById("items");
+
+    function addItem(name = "", qty = 1, price = 0) {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+<td></td>
+<td contenteditable="true" class="name">${name}</td>
+<td><input></td>
+<td><input type="number" value="${qty}"></td>
+<td><input type="number" value="${price}"></td>
+<td class="line">0</td>
+<td class="no-print"><button onclick="this.closest('tr').remove();updateAll()">✕</button></td>`;
+  items.appendChild(tr);
+
+  tr.querySelectorAll("input").forEach((i) => (i.oninput = updateAll));
+  tr.querySelector(".name").oninput = updateAll;
+
+  updateAll();
+}
+
+      function fmt(n) {
+        return (n || 0).toLocaleString("vi-VN");
+      }
+
+      function updateAll() {
+        let sum = 0;
+        [...items.children].forEach((tr, i) => {
+          tr.children[0].textContent = i + 1;
+          const q = +tr.children[3].querySelector("input").value || 0;
+          const p = +tr.children[4].querySelector("input").value || 0;
+          const t = q * p;
+          tr.querySelector(".line").textContent = fmt(t);
+          sum += t;
+        });
+        const d = +discount.value || 0;
+        const pay = Math.round(sum * (1 - d / 100));
+        total.textContent = fmt(sum);
+        final.textContent = fmt(pay);
+
+        JsBarcode("#barcode", invoiceId.value, {
+          displayValue: false,
+          height: 36,
+          width: 2,
+        });
+        updateQR();
+      }
+
+      function updateQR() {
+        const amount = final.textContent.replace(/\D/g, "");
+        qr.src = `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png?amount=${amount}&addInfo=${invoiceId.value}&accountName=${owner.value}`;
+      }
+
+      function loadLogo(input) {
+        if (input.files[0]) {
+          const r = new FileReader();
+          r.onload = (e) => (logoPrint.src = e.target.result);
+          r.readAsDataURL(input.files[0]);
+        }
+      }
+
+      window.onload = () => addItem("Sản phẩm 1", 1, 100000);
+    </script>
+  </body>
+</html>

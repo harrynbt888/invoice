@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hóa đơn - AN NAM</title>
+
+    <style>
+      @page {
+        size: A4;
+        margin: 20mm;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #eaf3ee;
+        color: #0f3d2e;
+      }
+
+      .invoice {
+        max-width: 800px;
+        margin: auto;
+      }
+
+      /* HEADER */
+      .header {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .brand {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .info {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+      }
+
+      /* TABLE */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 40px;
+      }
+      th,
+      td {
+        border-bottom: 1px solid #0f3d2e;
+        padding: 8px;
+      }
+      th {
+        border-bottom: 2px solid #0f3d2e;
+      }
+
+      .center {
+        text-align: center;
+      }
+      .right {
+        text-align: right;
+      }
+
+      /* INPUT */
+      input,
+      select {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        font-family: inherit;
+      }
+
+      /* BANK */
+      .bank-row {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 10px;
+        margin: 6px 0;
+      }
+
+      td.center input {
+        text-align: center;
+      }
+
+      .date-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .date-row span {
+        white-space: nowrap;
+      }
+
+      .date-row input {
+        width: auto;
+        min-width: 110px;
+      }
+
+      /* ACTIONS */
+      .actions {
+        margin: 30px 0;
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        padding: 8px 14px;
+        border: none;
+        cursor: pointer;
+      }
+      .add {
+        background: #cde8d6;
+      }
+      .print {
+        background: #0f3d2e;
+        color: #fff;
+      }
+
+      /* BARCODE + QR */
+      .code {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .code img {
+        width: 160px;
+      }
+
+      /* PRINT */
+      @media print {
+        body {
+          background: #fff;
+        }
+        .no-print {
+          display: none;
+        }
+        input,
+        select {
+          pointer-events: none;
+        }
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  </head>
+
+  <body>
+    <div class="invoice">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="brand">
+          <div>
+            <h1 contenteditable="plaintext-only" style="line-height: 1;">AN NAM</h1>
+            <p contenteditable="plaintext-only" style="line-height: 1;">Thiền Am Bên Bờ Vũ Trụ</p>
+          </div>
+        </div>
+        <div>
+          <h2>HÓA ĐƠN</h2>
+          <div class="date-row">
+            <span>Ngày:</span>
+            <input value="20/07/2030" />
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="info">
+        <div>
+          <h3>KHÁCH HÀNG</h3>
+          <input value="Lê Hiền" />
+        </div>
+        <div>
+          <h3>THANH TOÁN CHO</h3>
+          <input id="owner" value="NGUYEN VAN A" oninput="syncBank()" />
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <table>
+        <thead>
+          <tr>
+            <th>MÔ TẢ</th>
+            <th class="center">SL</th>
+            <th class="center">ĐƠN GIÁ</th>
+            <th class="right">THÀNH TIỀN</th>
+            <th class="no-print"></th>
+          </tr>
+        </thead>
+        <tbody id="items"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"><b>TỔNG CỘNG</b></td>
+            <td class="right" id="total">0 VND</td>
+            <td class="no-print"></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- ACTIONS -->
+      <div class="actions no-print">
+        <button class="add" onclick="addRow()">➕ Thêm dòng</button>
+        <button class="print" onclick="window.print()">🖨 In hóa đơn</button>
+      </div>
+
+      <!-- BANK -->
+      <div class="bank-row">
+        <span>Ngân hàng</span>
+        <select id="bank" onchange="syncBank()">
+          <option value="VCB">Vietcombank</option>
+          <option value="ABB">ABBank</option>
+          <option value="SHBVN">SOL</option>
+          <option value="ACB">ACB</option>
+          <option value="AGRIBANK">Agribank</option>
+          <option value="BAB">Bac A Bank</option>
+          <option value="BAOVIETBANK">BaoViet Bank</option>
+          <option value="BIDV">BIDV</option>
+          <option value="BVB">BVBank</option>
+          <option value="EIB">Eximbank</option>
+          <option value="HDB">HDBank</option>
+          <option value="ICB">VietinBank</option>
+          <option value="KLB">KienlongBank</option>
+          <option value="MB">MB Bank</option>
+          <option value="MSB">MSB</option>
+          <option value="NAB">Nam A Bank</option>
+          <option value="OCB">OCB</option>
+          <option value="PGB">PG Bank</option>
+          <option value="PVCOMBANK">PVcomBank</option>
+          <option value="SAIGONBANK">SaigonBank</option>
+          <option value="SCB">SCB</option>
+          <option value="SEAB">SeABank</option>
+          <option value="SHB">SHB</option>
+          <option value="STB">Sacombank</option>
+          <option value="TCB">Techcombank</option>
+          <option value="TPB">TPBank</option>
+          <option value="VIB">VIB</option>
+          <option value="VPB">VPBank</option>
+          <option value="VCB">Vietcombank</option>
+        </select>
+      </div>
+
+      <div class="bank-row">
+        <span>STK</span>
+        <input id="account" value="0123456789" oninput="syncBank()" />
+      </div>
+
+      <!-- BARCODE + QR -->
+      <div class="code">
+        <svg id="barcode"></svg><br />
+        <img id="qr" />
+        <div>Quét QR để thanh toán</div>
+      </div>
+    </div>
+
+    <script>
+      const items = document.getElementById("items");
+
+      function fmt(n) {
+        return (n || 0).toLocaleString("vi-VN") + " VND";
+      }
+
+      function addRow(desc = "", qty = 1, price = 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+    <td><input value="${desc}"></td>
+    <td class="center"><input type="number" value="${qty}" oninput="calc()"></td>
+    <td class="center"><input type="number" value="${price}" oninput="calc()"></td>
+    <td class="right line">0</td>
+    <td class="no-print" onclick="this.parentNode.remove();calc()">✕</td>
+  `;
+        items.appendChild(tr);
+        calc();
+      }
+
+      function calc() {
+        let sum = 0;
+        items.querySelectorAll("tr").forEach((tr) => {
+          const q = +tr.children[1].querySelector("input").value || 0;
+          const p = +tr.children[2].querySelector("input").value || 0;
+          const t = q * p;
+          tr.querySelector(".line").textContent = fmt(t);
+          sum += t;
+        });
+        total.textContent = fmt(sum);
+
+        JsBarcode("#barcode", "HD-AN-NAM", {
+          displayValue: false,
+          height: 40,
+          width: 2,
+        });
+
+        updateQR(sum);
+      }
+
+      function updateQR(amount) {
+        if (!bank.value || !account.value) return;
+        qr.src =
+          `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` +
+          `?amount=${amount}&accountName=${owner.value}`;
+      }
+
+      function syncBank() {
+        const amount = total.textContent.replace(/\D/g, "");
+        updateQR(amount);
+      }
+
+      addRow("Dịch vụ lưu trú", 5, 2000000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invoice</title>
+
+    <style>
+      @page {
+        size: A4;
+        margin: 20mm;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f2f2f2;
+        color: #222;
+      }
+
+      .invoice {
+        max-width: 800px;
+        margin: auto;
+        background: #fff;
+        padding: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* HEADER */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .brand {
+        display: flex;
+        gap: 12px;
+      }
+
+      .brand input {
+        border: none;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .brand .small {
+        font-size: 13px;
+        color: #555;
+      }
+
+      .invoice-title {
+        text-align: right;
+      }
+
+      .invoice-title h1 {
+        margin: 0;
+        letter-spacing: 2px;
+      }
+
+      .invoice-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .invoice-meta div {
+        display: flex;
+        justify-content: flex-end;
+        gap: 6px;
+      }
+
+      .invoice-meta input {
+        border: none;
+        width: 120px;
+        text-align: right;
+      }
+
+      /* INFO */
+      .info {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+      }
+
+      .info h3 {
+        font-size: 13px;
+        letter-spacing: 1px;
+      }
+
+      .info input {
+        border: none;
+        display: block;
+        margin: 2px 0;
+        width: 260px;
+      }
+
+      /* TABLE */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 40px;
+        font-size: 14px;
+      }
+
+      thead th {
+        text-align: left;
+        border-bottom: 2px solid #333;
+        padding: 8px;
+      }
+
+      tbody td {
+        border-bottom: 1px solid #ddd;
+        padding: 8px;
+      }
+
+      td.center {
+        text-align: center;
+      }
+
+      td.right {
+        text-align: right;
+      }
+
+      td input {
+        width: 100%;
+        border: none;
+      }
+
+      .delete {
+        color: #c00;
+        cursor: pointer;
+      }
+
+      /* TOTAL */
+      .total-box {
+        margin-top: 20px;
+        width: 260px;
+        margin-left: auto;
+      }
+
+      .total-box div {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+      }
+
+      .total-box .final {
+        font-weight: bold;
+        border-top: 2px solid #333;
+        padding-top: 6px;
+      }
+
+      /* BANK */
+      .bank {
+        margin-top: 40px;
+      }
+
+      .bank-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 8px;
+        margin: 6px 0;
+      }
+
+      .bank input,
+      .bank select {
+        border: none;
+        width: 100%;
+      }
+
+      .qr {
+        margin-top: 10px;
+      }
+
+      .qr img {
+        width: 120px;
+      }
+
+      /* ACTIONS */
+      .actions {
+        margin-top: 30px;
+        display: flex;
+        gap: 10px;
+      }
+
+      button {
+        padding: 8px 14px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .add {
+        background: #eee;
+      }
+      .print {
+        background: #111;
+        color: #fff;
+      }
+
+      /* PRINT */
+      .print-only {
+        display: none;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+        .no-print {
+          display: none;
+        }
+        input,
+        select {
+          pointer-events: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="invoice">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="brand">
+          <div>
+            <input value="Arrowai Industries" />
+          </div>
+        </div>
+
+        <div class="invoice-title">
+          <h1>Hóa Đơn</h1>
+          <div class="invoice-meta">
+            <div><span>Ngày:</span><input value="05/02/2023" /></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="info">
+        <div>
+          <h3>KHÁCH HÀNG:</h3>
+          <input value="Pedro Fernandes" />
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <table>
+        <thead>
+          <tr>
+            <th>TÊN</th>
+            <th class="center">SỐ LƯỢNG</th>
+            <th class="center">GIÁ</th>
+            <th class="right">TỔNG</th>
+            <th class="no-print"></th>
+          </tr>
+        </thead>
+        <tbody id="items"></tbody>
+      </table>
+
+      <!-- TOTAL -->
+      <div class="total-box">
+        <div class="final">
+          <span>TỔNG CỘNG:</span><span id="total">0</span>
+        </div>
+      </div>
+
+      <!-- BANK -->
+      <div class="bank">
+        <div class="bank-row">
+          <span>NGÂN HÀNG</span>
+          <select id="bank" onchange="syncQR()">
+               <option value="VCB">Vietcombank</option>
+          <option value="ABB">ABBank</option>
+          <option value="SHBVN">SOL</option>
+          <option value="ACB">ACB</option>
+          <option value="AGRIBANK">Agribank</option>
+          <option value="BAB">Bac A Bank</option>
+          <option value="BAOVIETBANK">BaoViet Bank</option>
+          <option value="BIDV">BIDV</option>
+          <option value="BVB">BVBank</option>
+          <option value="EIB">Eximbank</option>
+          <option value="HDB">HDBank</option>
+          <option value="ICB">VietinBank</option>
+          <option value="KLB">KienlongBank</option>
+          <option value="MB">MB Bank</option>
+          <option value="MSB">MSB</option>
+          <option value="NAB">Nam A Bank</option>
+          <option value="OCB">OCB</option>
+          <option value="PGB">PG Bank</option>
+          <option value="PVCOMBANK">PVcomBank</option>
+          <option value="SAIGONBANK">SaigonBank</option>
+          <option value="SCB">SCB</option>
+          <option value="SEAB">SeABank</option>
+          <option value="SHB">SHB</option>
+          <option value="STB">Sacombank</option>
+          <option value="TCB">Techcombank</option>
+          <option value="TPB">TPBank</option>
+          <option value="VIB">VIB</option>
+          <option value="VPB">VPBank</option>
+          <option value="VCB">Vietcombank</option>
+          </select>
+        </div>
+        <div class="bank-row">
+          <span>Số Tài Khoản</span>
+          <input id="account" value="0123456789" oninput="syncQR()" />
+        </div>
+        <div class="bank-row">
+          <span>Chủ Tài Khoản</span>
+          <input id="owner" value="NGUYEN VAN A" oninput="syncQR()" />
+        </div>
+
+        <div class="qr">
+          <img id="qr" />
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="actions no-print">
+        <button class="add" onclick="addRow()">+ Add Row</button>
+        <button class="print" onclick="window.print()">Print</button>
+      </div>
+    </div>
+
+    <script>
+      const items = document.getElementById("items");
+      const total = document.getElementById("total");
+
+      function addRow(name = "Item Name", qty = 1, price = 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+    <td><input value="${name}"></td>
+    <td class="center"><input type="number" value="${qty}" oninput="calc()"></td>
+    <td class="center"><input type="number" value="${price}" oninput="calc()"></td>
+    <td class="right line">0</td>
+    <td class="no-print delete" onclick="this.closest('tr').remove();calc()">✕</td>
+  `;
+        items.appendChild(tr);
+        calc();
+      }
+
+      function calc() {
+        let sum = 0;
+
+        items.querySelectorAll("tr").forEach((tr) => {
+          const q = +tr.children[1].querySelector("input")?.value || 0;
+          const p = +tr.children[2].querySelector("input")?.value || 0;
+          const t = q * p;
+
+          const line = tr.querySelector(".line");
+          if (line) line.textContent = t.toLocaleString("vi-VN");
+
+          sum += t;
+        });
+
+        document.getElementById("total").textContent =
+          sum.toLocaleString("vi-VN");
+
+        syncQR();
+      }
+
+      function syncQR() {
+        const amount = total.textContent.replace(/\D/g, "");
+        qr.src = `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png?amount=${amount}&accountName=${owner.value}`;
+      }
+
+      addRow("Item Name", 4, 50);
+    </script>
+  </body>
+</html>
