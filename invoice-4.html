@@ -85,7 +85,6 @@
         border: none;
       }
 
-      /* ===== QR + BARCODE ===== */
       .code {
         margin-top: 14px;
         text-align: center;
@@ -96,7 +95,7 @@
       }
 
       .code img {
-        width: 220px; /* QR TO HƠN */
+        width: 220px;
         max-width: 100%;
         margin-top: 10px;
       }
@@ -105,14 +104,24 @@
         margin-top: 6px;
       }
 
+      .delete-btn {
+        border: 1px solid #cc0000;
+        background: #fff;
+        color: #cc0000;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
       @media print {
         input,
         select {
           border: none;
           pointer-events: none;
         }
+
         .no-print {
-          display: none;
+          display: none !important;
         }
       }
     </style>
@@ -122,7 +131,6 @@
 
   <body>
     <div class="invoice">
-      <!-- HEADER -->
       <div class="header">
         <input
           type="file"
@@ -148,7 +156,6 @@
         />
       </div>
 
-      <!-- INFO -->
       <p>
         <b>Thanh toán chuyển khoản</b><br />
         Chủ TK:
@@ -157,7 +164,7 @@
         <input id="account" value="0123456789" oninput="updateQR()" /><br />
         Ngân hàng:
         <select id="info" onchange="updateQR()">
-           <option value="VCB">Vietcombank</option>
+          <option value="VCB">Vietcombank</option>
           <option value="ABB">ABBank</option>
           <option value="SHBVN">SOL</option>
           <option value="ACB">ACB</option>
@@ -185,11 +192,9 @@
           <option value="TPB">TPBank</option>
           <option value="VIB">VIB</option>
           <option value="VPB">VPBank</option>
-          <option value="VCB">Vietcombank</option>
         </select>
       </p>
 
-      <!-- TABLE -->
       <table>
         <thead>
           <tr>
@@ -198,6 +203,7 @@
             <th width="60">SL</th>
             <th width="90">Đơn giá</th>
             <th width="110">Thành tiền</th>
+            <th width="60" class="no-print">Xóa</th>
           </tr>
         </thead>
         <tbody id="items"></tbody>
@@ -205,7 +211,6 @@
 
       <button class="no-print" onclick="addRow()">➕ Thêm dòng</button>
 
-      <!-- TOTAL -->
       <table class="total">
         <tr>
           <td>Cộng tiền:</td>
@@ -223,7 +228,6 @@
 
       <div style="clear: both"></div>
 
-      <!-- BARCODE + QR -->
       <div class="code">
         <svg id="barcode"></svg><br />
         <img id="qr" />
@@ -240,15 +244,29 @@
 
       function addRow() {
         const tr = document.createElement("tr");
+
         tr.innerHTML = `
           <td class="center"></td>
           <td><input></td>
           <td><input type="number" value="1"></td>
           <td><input type="number" value="0"></td>
           <td class="right line">0</td>
+          <td class="center no-print">
+            <button type="button" class="delete-btn" onclick="removeRow(this)">❌</button>
+          </td>
         `;
+
         items.appendChild(tr);
-        tr.querySelectorAll("input").forEach((i) => (i.oninput = updateAll));
+
+        tr.querySelectorAll("input").forEach((i) => {
+          i.oninput = updateAll;
+        });
+
+        updateAll();
+      }
+
+      function removeRow(button) {
+        button.closest("tr").remove();
         updateAll();
       }
 
@@ -258,11 +276,14 @@
 
       function updateAll() {
         let sum = 0;
+
         items.querySelectorAll("tr").forEach((tr, i) => {
           tr.children[0].textContent = i + 1;
+
           const qty = +tr.children[2].querySelector("input").value || 0;
           const price = +tr.children[3].querySelector("input").value || 0;
           const line = qty * price;
+
           tr.querySelector(".line").textContent = fmt(line);
           sum += line;
         });
@@ -273,7 +294,7 @@
         total.textContent = fmt(sum);
         final.textContent = fmt(pay);
 
-        JsBarcode("#barcode", invoiceId.value, {
+        JsBarcode("#barcode", invoiceId.value || "HD000001", {
           displayValue: true,
           height: 40,
           width: 2,
@@ -284,16 +305,24 @@
 
       function updateQR() {
         const amount = final.textContent.replace(/\D/g, "");
+
         qr.src =
           `https://img.vietqr.io/image/${info.value}-${account.value}-compact2.png` +
-          `?amount=${amount}&addInfo=${invoiceId.value}&accountName=${owner.value}`;
+          `?amount=${amount}&addInfo=${encodeURIComponent(invoiceId.value)}` +
+          `&accountName=${encodeURIComponent(owner.value)}`;
       }
 
       function loadImage(e) {
         const file = e.target.files[0];
+
         if (!file) return;
+
         const r = new FileReader();
-        r.onload = () => (printImg.src = r.result);
+
+        r.onload = () => {
+          printImg.src = r.result;
+        };
+
         r.readAsDataURL(file);
       }
 
