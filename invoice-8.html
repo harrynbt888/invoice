@@ -1,0 +1,411 @@
+<!doctype html>
+
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Invoice 8</title>
+
+<style>
+@page {
+  size: A4;
+  margin: 8mm;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f3f6fb;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  color: #111827;
+}
+
+.invoice {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: #fff;
+  padding: 10mm;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 3px solid #2563eb;
+  padding-bottom: 8px;
+}
+
+.store input {
+  font-size: 22px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.title {
+  text-align: right;
+}
+
+.title h1 {
+  margin: 0;
+  color: #2563eb;
+  font-size: 24px;
+}
+
+input,
+select {
+  border: none;
+  border-bottom: 1px dashed #9ca3af;
+  background: transparent;
+  width: 100%;
+  font-size: 12px;
+  padding: 3px 1px;
+  outline: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.box {
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.box h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: #2563eb;
+}
+
+label {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th {
+  background: #2563eb;
+  color: white;
+  padding: 6px;
+  font-size: 11px;
+}
+
+td {
+  border: 1px solid #e5e7eb;
+  padding: 4px;
+  text-align: center;
+}
+
+.name {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
+}
+
+.btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-top: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.delete-btn {
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 3px 6px;
+}
+
+.bottom {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.code {
+  text-align: center;
+}
+
+.code img {
+  width: 150px;
+  margin-top: 4px;
+}
+
+.summary {
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.sum-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+.final {
+  border-top: 2px dashed #93c5fd;
+  padding-top: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 10px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.no-print {
+  display: inline-block;
+}
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .invoice {
+    width: auto;
+    min-height: auto;
+    padding: 0;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  input,
+  select {
+    border: none;
+    pointer-events: none;
+  }
+
+  th {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+</head>
+
+<body>
+<div class="invoice">
+  <div class="header">
+    <div class="store">
+      <input id="shopName" value="HARRY STORE" />
+      <div>Địa chỉ: <input value="Việt Nam" /></div>
+      <div>Hotline: <input value="0900000000" /></div>
+    </div>
+
+```
+<div class="title">
+  <h1>HÓA ĐƠN</h1>
+  <div>Mã HĐ: <input id="invoiceId" value="HD000001" oninput="updateAll()" /></div>
+  <div>Ngày: <input id="invoiceDate" /></div>
+</div>
+```
+
+  </div>
+
+  <div class="row">
+    <div class="box">
+      <h3>Khách hàng</h3>
+      <label>Tên khách</label>
+      <input value="Khách lẻ" />
+      <label>Số điện thoại</label>
+      <input value="0900000000" />
+    </div>
+
+```
+<div class="box">
+  <h3>Thanh toán</h3>
+  <label>Ngân hàng</label>
+  <select id="bank" onchange="updateQR()">
+    <option value="VCB">Vietcombank</option>
+    <option value="ACB">ACB</option>
+    <option value="SHB">SHB</option>
+    <option value="TCB">Techcombank</option>
+    <option value="MB">MB Bank</option>
+    <option value="BIDV">BIDV</option>
+    <option value="ICB">VietinBank</option>
+    <option value="VPB">VPBank</option>
+  </select>
+
+  <label>STK</label>
+  <input id="account" value="0123456789" oninput="updateQR()" />
+
+  <label>Chủ TK</label>
+  <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
+</div>
+```
+
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th width="35">STT</th>
+        <th>Tên hàng</th>
+        <th width="55">SL</th>
+        <th width="85">Đơn giá</th>
+        <th width="100">Thành tiền</th>
+        <th width="45" class="no-print">Xóa</th>
+      </tr>
+    </thead>
+    <tbody id="items"></tbody>
+  </table>
+
+<button class="btn no-print" onclick="addRow()">➕ Thêm dòng</button>
+
+  <div class="bottom">
+    <div class="box code">
+      <svg id="barcode"></svg><br />
+      <img id="qr" />
+    </div>
+
+```
+<div class="summary">
+  <div class="sum-row">
+    <span>Tạm tính:</span>
+    <b id="sum">0 đ</b>
+  </div>
+
+  <div class="sum-row">
+    <span>Chiết khấu %:</span>
+    <input id="discount" type="number" value="0" oninput="updateAll()" style="width:70px;text-align:right;" />
+  </div>
+
+  <div class="sum-row final">
+    <span>Thanh toán:</span>
+    <span id="final">0 đ</span>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="footer">
+    Cảm ơn quý khách. Hẹn gặp lại!
+  </div>
+
+<button class="btn no-print" onclick="window.print()">🖨 In hóa đơn</button>
+
+</div>
+
+<script>
+const items = document.getElementById("items");
+const discount = document.getElementById("discount");
+const total = document.getElementById("sum");
+const final = document.getElementById("final");
+
+function addRow(name = "", qty = 1, price = 0) {
+  const tr = document.createElement("tr");
+
+  tr.innerHTML = `
+    <td></td>
+    <td class="name"><input value="${name}" oninput="updateAll()"></td>
+    <td><input type="number" value="${qty}" oninput="updateAll()"></td>
+    <td><input type="number" value="${price}" oninput="updateAll()"></td>
+    <td class="right line">0 đ</td>
+    <td class="no-print">
+      <button class="delete-btn" onclick="removeRow(this)">❌</button>
+    </td>
+  `;
+
+  items.appendChild(tr);
+  updateAll();
+}
+
+function removeRow(btn) {
+  btn.closest("tr").remove();
+  updateAll();
+}
+
+function fmt(n) {
+  return (n || 0).toLocaleString("vi-VN") + " đ";
+}
+
+function updateAll() {
+  let sum = 0;
+
+  items.querySelectorAll("tr").forEach((tr, i) => {
+    tr.children[0].textContent = i + 1;
+
+    const qty = +tr.children[2].querySelector("input").value || 0;
+    const price = +tr.children[3].querySelector("input").value || 0;
+    const line = qty * price;
+
+    tr.querySelector(".line").textContent = fmt(line);
+    sum += line;
+  });
+
+  const d = +discount.value || 0;
+  const pay = Math.round(sum * (1 - d / 100));
+
+  total.textContent = fmt(sum);
+  final.textContent = fmt(pay);
+
+  JsBarcode("#barcode", invoiceId.value || "HD000001", {
+    displayValue: true,
+    height: 32,
+    width: 1.5,
+    margin: 0
+  });
+
+  updateQR();
+}
+
+function updateQR() {
+  const amount = final.textContent.replace(/\D/g, "");
+
+  qr.src =
+    `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` +
+    `?amount=${amount}` +
+    `&addInfo=${encodeURIComponent(invoiceId.value)}` +
+    `&accountName=${encodeURIComponent(owner.value)}`;
+}
+
+function setToday() {
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  invoiceDate.value = `${day}/${month}/${year}`;
+}
+
+window.onload = () => {
+  setToday();
+  addRow("Cà phê sữa đá", 2, 30000);
+  addRow("Bạc xỉu", 1, 35000);
+};
+</script>
+
+</body>
+</html>
