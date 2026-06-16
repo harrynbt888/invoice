@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -9,7 +8,7 @@
   <style>
     @page {
       size: A4;
-      margin: 10mm;
+      margin: 8mm;
     }
 
     * {
@@ -167,6 +166,7 @@
 
     .right {
       text-align: right;
+      white-space: nowrap;
     }
 
     .btn {
@@ -195,9 +195,10 @@
 
     .bottom {
       display: grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: minmax(0, 1fr) 320px;
       gap: 18px;
       margin-top: 18px;
+      align-items: start;
     }
 
     .summary {
@@ -229,15 +230,46 @@
       color: #2563eb;
     }
 
+    #final,
+    #sum {
+      white-space: nowrap;
+    }
+
     .code {
       text-align: center;
       margin-top: 8px;
     }
 
+    #barcode {
+      max-width: 140px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .bank-print-text {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #334155;
+      text-align: left;
+      word-break: break-word;
+    }
+
     .code img {
-      width: 210px;
+      display: block;
+      width: 150px;
       max-width: 100%;
-      margin-top: 10px;
+      min-height: 150px;
+      margin: 10px auto 0;
+      object-fit: contain;
+    }
+
+    .qr-label {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
     }
 
     .note {
@@ -264,23 +296,142 @@
     @media print {
       body {
         background: white;
+        font-size: 11px;
       }
 
       .invoice {
+        width: 100%;
+        max-width: none;
         margin: 0;
         box-shadow: none;
         border-radius: 0;
-        max-width: none;
+        overflow: visible;
       }
 
-      .no-print {
-        display: none !important;
+      .topbar {
+        padding: 12px 14px;
+      }
+
+      .shop-name,
+      .shop-name input {
+        font-size: 24px;
+      }
+
+      .invoice-title h1 {
+        font-size: 20px;
+      }
+
+      .subtitle {
+        font-size: 11px;
+      }
+
+      .content {
+        padding: 12px 14px;
+      }
+
+      .grid {
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .card,
+      .summary {
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      .card h3 {
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+
+      label {
+        margin-top: 4px;
+        font-size: 10px;
       }
 
       input,
       select {
+        padding: 3px 1px;
+        font-size: 11px;
         border: none;
         pointer-events: none;
+      }
+
+      table {
+        margin-top: 8px;
+        border-radius: 8px;
+      }
+
+      th {
+        padding: 6px;
+        font-size: 10px;
+      }
+
+      td {
+        padding: 5px;
+        font-size: 10px;
+      }
+
+      .bottom {
+        grid-template-columns: 1fr 230px;
+        gap: 10px;
+        margin-top: 10px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .summary-row {
+        margin: 6px 0;
+        gap: 6px;
+      }
+
+      .summary-row input {
+        width: 48px;
+      }
+
+      .final {
+        font-size: 14px;
+        padding-top: 8px;
+        margin-top: 8px;
+      }
+
+      #barcode {
+        max-width: 110px;
+      }
+
+      .code img {
+        width: 105px;
+        min-height: 105px;
+        margin-top: 5px;
+      }
+
+      .qr-label {
+        font-size: 9px;
+        margin-top: 3px;
+      }
+
+      .bank-print-text {
+        font-size: 10px;
+        line-height: 1.35;
+        margin-top: 4px;
+      }
+
+      .note {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 8px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .footer {
+        padding: 10px;
+        font-size: 10px;
+      }
+
+      .no-print {
+        display: none !important;
       }
 
       .topbar,
@@ -312,7 +463,6 @@
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-
 </head>
 
 <body>
@@ -325,135 +475,135 @@
         <div class="subtitle">Hóa đơn điện tử / Electronic Invoice</div>
       </div>
 
-```
-  <div class="invoice-title">
-    <h1>HÓA ĐƠN</h1>
+      <div class="invoice-title">
+        <h1>HÓA ĐƠN</h1>
 
-    <label>Mã hóa đơn</label>
-    <input id="invoiceId" value="HD000001" oninput="updateAll()" />
+        <label>Mã hóa đơn</label>
+        <input id="invoiceId" value="HD000001" oninput="updateAll()" />
 
-    <label>Ngày lập</label>
-    <input id="invoiceDate" />
-  </div>
-</div>
-
-<div class="content">
-  <div class="grid">
-    <div class="card">
-      <h3>Thông tin khách hàng</h3>
-
-      <label>Khách hàng</label>
-      <input id="customer" value="Khách lẻ" />
-
-      <label>Số điện thoại</label>
-      <input id="phone" value="0900000000" />
-
-      <label>Địa chỉ</label>
-      <input id="address" value="Việt Nam" />
-    </div>
-
-    <div class="card">
-      <h3>Thanh toán chuyển khoản</h3>
-
-      <label>Chủ tài khoản</label>
-      <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
-
-      <label>Số tài khoản</label>
-      <input id="account" value="0123456789" oninput="updateQR()" />
-
-      <label>Ngân hàng</label>
-      <select id="bank" onchange="updateQR()">
-       <option value="VCB">Vietcombank</option>
-          <option value="ABB">ABBank</option>
-          <option value="SHBVN">SOL</option>
-          <option value="ACB">ACB</option>
-          <option value="AGRIBANK">Agribank</option>
-          <option value="BAB">Bac A Bank</option>
-          <option value="BAOVIETBANK">BaoViet Bank</option>
-          <option value="BIDV">BIDV</option>
-          <option value="BVB">BVBank</option>
-          <option value="EIB">Eximbank</option>
-          <option value="HDB">HDBank</option>
-          <option value="ICB">VietinBank</option>
-          <option value="KLB">KienlongBank</option>
-          <option value="MB">MB Bank</option>
-          <option value="MSB">MSB</option>
-          <option value="NAB">Nam A Bank</option>
-          <option value="OCB">OCB</option>
-          <option value="PGB">PG Bank</option>
-          <option value="PVCOMBANK">PVcomBank</option>
-          <option value="SAIGONBANK">SaigonBank</option>
-          <option value="SCB">SCB</option>
-          <option value="SEAB">SeABank</option>
-          <option value="SHB">SHB</option>
-          <option value="STB">Sacombank</option>
-          <option value="TCB">Techcombank</option>
-          <option value="TPB">TPBank</option>
-          <option value="VIB">VIB</option>
-          <option value="VPB">VPBank</option>
-      </select>
-    </div>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th width="45">STT</th>
-        <th>Tên hàng hóa</th>
-        <th width="80">SL</th>
-        <th width="120">Đơn giá</th>
-        <th width="130">Thành tiền</th>
-        <th width="60" class="no-print">Xóa</th>
-      </tr>
-    </thead>
-    <tbody id="items"></tbody>
-  </table>
-
-  <button class="btn no-print" onclick="addRow()">➕ Thêm sản phẩm</button>
-
-  <div class="bottom">
-    <div class="card">
-      <h3>Mã thanh toán</h3>
-      <div class="code">
-        <svg id="barcode"></svg><br />
-        <img id="qr" />
+        <label>Ngày lập</label>
+        <input id="invoiceDate" />
       </div>
     </div>
 
-    <div class="summary">
-      <div class="summary-row">
-        <span>Tạm tính:</span>
-        <b id="sum">0 đ</b>
+    <div class="content">
+      <div class="grid">
+        <div class="card">
+          <h3>Thông tin khách hàng</h3>
+
+          <label>Khách hàng</label>
+          <input id="customer" value="Khách lẻ" />
+
+          <label>Số điện thoại</label>
+          <input id="phone" value="0900000000" />
+
+          <label>Địa chỉ</label>
+          <input id="address" value="Việt Nam" />
+        </div>
+
+        <div class="card">
+          <h3>Thanh toán chuyển khoản</h3>
+
+          <label>Chủ tài khoản</label>
+          <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
+
+          <label>Số tài khoản</label>
+          <input id="account" value="0123456789" oninput="updateQR()" />
+
+          <label>Ngân hàng</label>
+          <select id="bank" onchange="updateQR()">
+            <option value="VCB">Vietcombank</option>
+            <option value="ABB">ABBank</option>
+            <option value="SHBVN">SOL</option>
+            <option value="ACB">ACB</option>
+            <option value="AGRIBANK">Agribank</option>
+            <option value="BAB">Bac A Bank</option>
+            <option value="BAOVIETBANK">BaoViet Bank</option>
+            <option value="BIDV">BIDV</option>
+            <option value="BVB">BVBank</option>
+            <option value="EIB">Eximbank</option>
+            <option value="HDB">HDBank</option>
+            <option value="ICB">VietinBank</option>
+            <option value="KLB">KienlongBank</option>
+            <option value="MB">MB Bank</option>
+            <option value="MSB">MSB</option>
+            <option value="NAB">Nam A Bank</option>
+            <option value="OCB">OCB</option>
+            <option value="PGB">PG Bank</option>
+            <option value="PVCOMBANK">PVcomBank</option>
+            <option value="SAIGONBANK">SaigonBank</option>
+            <option value="SCB">SCB</option>
+            <option value="SEAB">SeABank</option>
+            <option value="SHB">SHB</option>
+            <option value="STB">Sacombank</option>
+            <option value="TCB">Techcombank</option>
+            <option value="TPB">TPBank</option>
+            <option value="VIB">VIB</option>
+            <option value="VPB">VPBank</option>
+          </select>
+        </div>
       </div>
 
-      <div class="summary-row">
-        <span>Chiết khấu (%):</span>
-        <input id="discount" type="number" value="0" oninput="updateAll()" />
+      <table>
+        <thead>
+          <tr>
+            <th width="45">STT</th>
+            <th>Tên hàng hóa</th>
+            <th width="80">SL</th>
+            <th width="120">Đơn giá</th>
+            <th width="130">Thành tiền</th>
+            <th width="60" class="no-print">Xóa</th>
+          </tr>
+        </thead>
+        <tbody id="items"></tbody>
+      </table>
+
+      <button class="btn no-print" onclick="addRow()">➕ Thêm sản phẩm</button>
+
+      <div class="bottom">
+        <div class="card">
+          <h3>Mã thanh toán</h3>
+          <div class="code">
+            <svg id="barcode"></svg>
+            <img id="qr" alt="QR thanh toán" referrerpolicy="no-referrer" loading="eager" />
+            <div class="qr-label">Quét QR để thanh toán</div>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="summary-row">
+            <span>Tạm tính:</span>
+            <b id="sum">0 đ</b>
+          </div>
+
+          <div class="summary-row">
+            <span>Chiết khấu (%):</span>
+            <input id="discount" type="number" value="0" oninput="updateAll()" />
+          </div>
+
+          <div class="summary-row final">
+            <span>Thanh toán:</span>
+            <span id="final">0 đ</span>
+          </div>
+        </div>
       </div>
 
-      <div class="summary-row final">
-        <span>Thanh toán:</span>
-        <span id="final">0 đ</span>
+      <div class="note">
+        Ghi chú:
+        <input id="note" value="Cảm ơn quý khách đã sử dụng dịch vụ." />
       </div>
+
+      <button class="btn no-print" onclick="window.print()">🖨 In hóa đơn</button>
     </div>
-  </div>
 
-  <div class="note">
-    Ghi chú:
-    <input id="note" value="Cảm ơn quý khách đã sử dụng dịch vụ." />
-  </div>
-
-  <button class="btn no-print" onclick="window.print()">🖨 In hóa đơn</button>
-</div>
-
-<div class="footer">
-  Hóa đơn được tạo tự động. Vui lòng kiểm tra thông tin trước khi thanh toán.
-</div>
-```
-
+    <div class="footer">
+      Hóa đơn được tạo tự động. Vui lòng kiểm tra thông tin trước khi thanh toán.
+    </div>
   </div>
 
   <script>
+    const FIXED_BARCODE_VALUE = "HS";
+
     const items = document.getElementById("items");
     const discount = document.getElementById("discount");
     const total = document.getElementById("sum");
@@ -521,10 +671,11 @@
       total.textContent = fmt(sum);
       final.textContent = fmt(pay);
 
-      JsBarcode("#barcode", invoiceId.value || "HD000001", {
-        displayValue: true,
-        height: 42,
-        width: 2,
+      JsBarcode("#barcode", FIXED_BARCODE_VALUE, {
+        format: "CODE128",
+        displayValue: false,
+        height: 34,
+        width: 1.4,
         margin: 0,
       });
 
@@ -533,12 +684,30 @@
 
     function updateQR() {
       const amount = final.textContent.replace(/\D/g, "");
+      const bankCode = String(bank.value || "VCB").trim();
+      const accountNo = String(account.value || "").replace(/\s+/g, "");
+      const invoiceCode = String(invoiceId.value || "HD000001").trim();
+      const ownerName = String(owner.value || "").trim();
 
-      qr.src =
-        `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` +
-        `?amount=${amount}` +
-        `&addInfo=${encodeURIComponent(invoiceId.value)}` +
-        `&accountName=${encodeURIComponent(owner.value)}`;
+      const qrUrl =
+        `https://img.vietqr.io/image/${bankCode}-${accountNo}-compact2.png` +
+        `?amount=${encodeURIComponent(amount)}` +
+        `&addInfo=${encodeURIComponent(invoiceCode)}` +
+        `&accountName=${encodeURIComponent(ownerName)}` +
+        `&t=${Date.now()}`;
+
+      qr.onerror = function () {
+        // Nếu VietQR lỗi tạm thời, thử lại một lần với kiểu compact.
+        this.onerror = null;
+        this.src =
+          `https://img.vietqr.io/image/${bankCode}-${accountNo}-compact.png` +
+          `?amount=${encodeURIComponent(amount)}` +
+          `&addInfo=${encodeURIComponent(invoiceCode)}` +
+          `&accountName=${encodeURIComponent(ownerName)}` +
+          `&t=${Date.now()}`;
+      };
+
+      qr.src = qrUrl;
     }
 
     function setToday() {
@@ -556,6 +725,5 @@
       addRow("Bạc xỉu", 1, 35000);
     };
   </script>
-
 </body>
 </html>
