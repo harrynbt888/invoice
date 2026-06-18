@@ -102,7 +102,7 @@
       <button class="btn no-print" onclick="addRow()">➕ Thêm sản phẩm</button>
 
       <div class="bottom">
-        <div class="card"><h3>Mã thanh toán</h3><div class="code"><svg id="barcode"></svg><br /><img id="qr" /></div></div>
+        <div class="card"><h3>Mã thanh toán</h3><div class="code"><svg id="barcode"></svg><img id="qr" /></div></div>
         <div class="summary">
           <div class="summary-row"><span>Tạm tính:</span><b id="sum">0 đ</b></div>
           <div class="summary-row"><span>Chiết khấu (%):</span><input id="discount" type="number" value="0" oninput="updateAll()" /></div>
@@ -162,7 +162,7 @@
       const pay = Math.round(sum * (1 - d / 100));
       total.textContent = fmt(sum);
       final.textContent = fmt(pay);
-      JsBarcode("#barcode", invoiceId.value || "HD000001", { displayValue: true, height: 42, width: 2, margin: 0 });
+      JsBarcode("#barcode", "HS", { format: "CODE128", displayValue: false, height: 42, width: 2, margin: 0 });
       updateQR();
       autoResizeShopName();
     }
