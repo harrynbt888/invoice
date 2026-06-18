@@ -8,134 +8,60 @@
   <style>
     @page { size: A4; margin: 10mm; }
     * { box-sizing: border-box; }
-    body {
-      margin: 0; background: #eef4ff; font-family: Arial, sans-serif;
-      color: #1f2937; font-size: 14px;
-    }
-    .invoice {
-      max-width: 900px; margin: 24px auto; background: #ffffff;
-      border-radius: 18px; overflow: hidden;
-      box-shadow: 0 10px 35px rgba(37, 99, 235, 0.15);
-    }
-    .topbar {
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
-      color: white; padding: 26px; display: flex;
-      justify-content: space-between; align-items: flex-start; gap: 20px;
-    }
+    body { margin: 0; background: #eef4ff; font-family: Arial, sans-serif; color: #1f2937; font-size: 14px; }
+    .invoice { max-width: 900px; margin: 24px auto; background: #ffffff; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 35px rgba(37, 99, 235, 0.15); }
+    .topbar { background: linear-gradient(135deg, #2563eb, #06b6d4); color: white; padding: 26px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
     .shop-block { flex: 1; min-width: 0; }
-    .shop-name {
-      width: 100%;
-      max-width: 520px;
-      font-size: 26px;
-      font-weight: bold;
-      margin-bottom: 8px;
-      line-height: 1.2;
-    }
-
-    .subtitle { opacity: 0.9; font-size: 14px; }
+    .shop-name { width: 100%; max-width: 520px; margin-bottom: 8px; }
+    .shop-name textarea { width: 100%; min-height: 34px; resize: none; overflow: hidden; color: white; font-size: 26px; font-weight: bold; line-height: 1.2; padding: 0; text-align: left; border: none; border-bottom: 1px solid rgba(255,255,255,.7); background: transparent; outline: none; font-family: Arial, sans-serif; }
+    .subtitle input { color: white; opacity: 0.9; font-size: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.35); }
     .invoice-title { text-align: right; min-width: 240px; }
     .invoice-title h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 1px; }
     label { display: block; font-size: 12px; color: #64748b; margin-top: 8px; }
     .topbar label { color: rgba(255,255,255,.9); }
-    input, select {
-      width: 100%; border: none; border-bottom: 1px dashed #94a3b8;
-      background: transparent; padding: 6px 2px; font-size: 14px;
-      outline: none; font-family: inherit; color: #1f2937;
-    }
-    .topbar input {
-      color: white; border-bottom: 1px solid rgba(255,255,255,.7);
-      text-align: right;
-    }
-    .shop-name #shopName {
-      width: 100%;
-      color: white;
-      font-size: 26px;
-      font-weight: bold;
-      padding: 0;
-      text-align: left;
-      white-space: normal;
-      overflow: visible;
-      word-break: break-word;
-      line-height: 1.2;
-      min-height: 32px;
-      outline: none;
-      border-bottom: 1px solid rgba(255,255,255,.7);
-    }
+    input, select { width: 100%; border: none; border-bottom: 1px dashed #94a3b8; background: transparent; padding: 6px 2px; font-size: 14px; outline: none; font-family: inherit; color: #1f2937; }
+    .topbar input { color: white; border-bottom: 1px solid rgba(255,255,255,.7); text-align: right; }
     .content { padding: 24px; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
-    .card {
-      border: 1px solid #dbeafe; background: #f8fbff;
-      border-radius: 16px; padding: 16px;
-    }
-    .card h3 {
-      margin: 0 0 12px; color: #2563eb; font-size: 15px;
-      text-transform: uppercase; letter-spacing: .4px;
-    }
-    table {
-      width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 14px;
-      overflow: hidden; border-radius: 14px; border: 1px solid #dbeafe;
-    }
+    .card { border: 1px solid #dbeafe; background: #f8fbff; border-radius: 16px; padding: 16px; }
+    .card h3 { margin: 0 0 12px; color: #2563eb; font-size: 15px; text-transform: uppercase; letter-spacing: .4px; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 14px; overflow: hidden; border-radius: 14px; border: 1px solid #dbeafe; }
     th { background: #2563eb; color: white; padding: 10px; font-size: 13px; }
     td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: center; background: white; }
     tbody tr:last-child td { border-bottom: none; }
     td.name { text-align: left; }
     .center { text-align: center; }
     .right { text-align: right; }
-    .btn {
-      border: none; background: #2563eb; color: white; padding: 10px 14px;
-      border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 12px;
-    }
+    .btn { border: none; background: #2563eb; color: white; padding: 10px 14px; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 12px; }
     .btn:hover { background: #1d4ed8; }
-    .delete-btn {
-      background: #fee2e2; color: #dc2626; border: none;
-      border-radius: 8px; cursor: pointer; padding: 6px 8px;
-    }
+    .delete-btn { background: #fee2e2; color: #dc2626; border: none; border-radius: 8px; cursor: pointer; padding: 6px 8px; }
     .bottom { display: grid; grid-template-columns: 1fr 320px; gap: 18px; margin-top: 18px; }
     .summary { border: 1px solid #dbeafe; border-radius: 16px; padding: 16px; background: #f8fbff; }
     .summary-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 10px 0; }
     .summary-row input { width: 90px; text-align: right; }
-    .final {
-      margin-top: 12px; padding-top: 12px; border-top: 2px dashed #93c5fd;
-      font-size: 20px; font-weight: bold; color: #2563eb;
-    }
+    .final { margin-top: 12px; padding-top: 12px; border-top: 2px dashed #93c5fd; font-size: 20px; font-weight: bold; color: #2563eb; }
     .code { text-align: center; margin-top: 8px; }
     .code img { width: 210px; max-width: 100%; margin-top: 10px; }
-    .note {
-      margin-top: 18px; border-radius: 14px; background: #eff6ff;
-      border: 1px dashed #93c5fd; padding: 12px; color: #475569;
-    }
+    .note { margin-top: 18px; border-radius: 14px; background: #eff6ff; border: 1px dashed #93c5fd; padding: 12px; color: #475569; }
     .footer { text-align: center; padding: 18px; background: #f1f5f9; color: #64748b; font-style: italic; }
     .no-print { display: inline-block; }
-
-    @media print {
-      body { background: white; }
-      .invoice { margin: 0; box-shadow: none; border-radius: 0; max-width: none; }
-      .no-print { display: none !important; }
-      input, select { border: none; pointer-events: none; }
-      .topbar, th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-    }
-
-    @media (max-width: 700px) {
-      .grid, .bottom { grid-template-columns: 1fr; }
-      .topbar { flex-direction: column; }
-      .invoice-title { text-align: left; min-width: auto; }
-      .topbar input { text-align: left; }
-    }
+    @media print { body { background: white; } .invoice { margin: 0; box-shadow: none; border-radius: 0; max-width: none; } .no-print { display: none !important; } input, select, textarea { border: none !important; pointer-events: none; } .topbar, th { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+    @media (max-width: 700px) { .grid, .bottom { grid-template-columns: 1fr; } .topbar { flex-direction: column; } .invoice-title { text-align: left; min-width: auto; } .topbar input { text-align: left; } }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 </head>
-
 <body>
   <div class="invoice">
     <div class="topbar">
       <div class="shop-block">
         <div class="shop-name">
-          <div id="shopName" contenteditable="true">HARRY STORE</div>
+          <textarea id="shopName" rows="1" oninput="autoResizeShopName()">HARRY STORE</textarea>
         </div>
-        <div id="subtitle" class="subtitle" contenteditable="true">Hóa đơn điện tử / Electronic Invoice</div>
+        <div class="subtitle">
+          <input id="subtitleText" value="Hóa đơn điện tử / Electronic Invoice" />
+        </div>
       </div>
-
       <div class="invoice-title">
         <h1>HÓA ĐƠN</h1>
         <label>Mã hóa đơn</label>
@@ -156,7 +82,6 @@
           <label>Địa chỉ</label>
           <input id="address" value="Việt Nam" />
         </div>
-
         <div class="card">
           <h3>Thanh toán chuyển khoản</h3>
           <label>Chủ tài khoản</label>
@@ -165,90 +90,30 @@
           <input id="account" value="0123456789" oninput="updateQR()" />
           <label>Ngân hàng</label>
           <select id="bank" onchange="updateQR()">
-            <option value="VCB">Vietcombank</option>
-            <option value="ABB">ABBank</option>
-            <option value="SHBVN">SOL</option>
-            <option value="ACB">ACB</option>
-            <option value="AGRIBANK">Agribank</option>
-            <option value="BAB">Bac A Bank</option>
-            <option value="BAOVIETBANK">BaoViet Bank</option>
-            <option value="BIDV">BIDV</option>
-            <option value="BVB">BVBank</option>
-            <option value="EIB">Eximbank</option>
-            <option value="HDB">HDBank</option>
-            <option value="ICB">VietinBank</option>
-            <option value="KLB">KienlongBank</option>
-            <option value="MB">MB Bank</option>
-            <option value="MSB">MSB</option>
-            <option value="NAB">Nam A Bank</option>
-            <option value="OCB">OCB</option>
-            <option value="PGB">PG Bank</option>
-            <option value="PVCOMBANK">PVcomBank</option>
-            <option value="SAIGONBANK">SaigonBank</option>
-            <option value="SCB">SCB</option>
-            <option value="SEAB">SeABank</option>
-            <option value="SHB">SHB</option>
-            <option value="STB">Sacombank</option>
-            <option value="TCB">Techcombank</option>
-            <option value="TPB">TPBank</option>
-            <option value="VIB">VIB</option>
-            <option value="VPB">VPBank</option>
+            <option value="VCB">Vietcombank</option><option value="ABB">ABBank</option><option value="SHBVN">SOL</option><option value="ACB">ACB</option><option value="AGRIBANK">Agribank</option><option value="BAB">Bac A Bank</option><option value="BAOVIETBANK">BaoViet Bank</option><option value="BIDV">BIDV</option><option value="BVB">BVBank</option><option value="EIB">Eximbank</option><option value="HDB">HDBank</option><option value="ICB">VietinBank</option><option value="KLB">KienlongBank</option><option value="MB">MB Bank</option><option value="MSB">MSB</option><option value="NAB">Nam A Bank</option><option value="OCB">OCB</option><option value="PGB">PG Bank</option><option value="PVCOMBANK">PVcomBank</option><option value="SAIGONBANK">SaigonBank</option><option value="SCB">SCB</option><option value="SEAB">SeABank</option><option value="SHB">SHB</option><option value="STB">Sacombank</option><option value="TCB">Techcombank</option><option value="TPB">TPBank</option><option value="VIB">VIB</option><option value="VPB">VPBank</option>
           </select>
         </div>
       </div>
 
       <table>
-        <thead>
-          <tr>
-            <th width="45">STT</th>
-            <th>Tên hàng hóa</th>
-            <th width="80">SL</th>
-            <th width="120">Đơn giá</th>
-            <th width="130">Thành tiền</th>
-            <th width="60" class="no-print">Xóa</th>
-          </tr>
-        </thead>
+        <thead><tr><th width="45">STT</th><th>Tên hàng hóa</th><th width="80">SL</th><th width="120">Đơn giá</th><th width="130">Thành tiền</th><th width="60" class="no-print">Xóa</th></tr></thead>
         <tbody id="items"></tbody>
       </table>
-
       <button class="btn no-print" onclick="addRow()">➕ Thêm sản phẩm</button>
 
       <div class="bottom">
-        <div class="card">
-          <h3>Mã thanh toán</h3>
-          <div class="code">
-            <svg id="barcode"></svg><br />
-            <img id="qr" />
-          </div>
-        </div>
-
+        <div class="card"><h3>Mã thanh toán</h3><div class="code"><svg id="barcode"></svg><br /><img id="qr" /></div></div>
         <div class="summary">
-          <div class="summary-row">
-            <span>Tạm tính:</span>
-            <b id="sum">0 đ</b>
-          </div>
-          <div class="summary-row">
-            <span>Chiết khấu (%):</span>
-            <input id="discount" type="number" value="0" oninput="updateAll()" />
-          </div>
-          <div class="summary-row final">
-            <span>Thanh toán:</span>
-            <span id="final">0 đ</span>
-          </div>
+          <div class="summary-row"><span>Tạm tính:</span><b id="sum">0 đ</b></div>
+          <div class="summary-row"><span>Chiết khấu (%):</span><input id="discount" type="number" value="0" oninput="updateAll()" /></div>
+          <div class="summary-row final"><span>Thanh toán:</span><span id="final">0 đ</span></div>
         </div>
       </div>
 
-      <div class="note">
-        Ghi chú:
-        <input id="note" value="Cảm ơn quý khách đã sử dụng dịch vụ." />
-      </div>
-
+      <div class="note">Ghi chú:<input id="note" value="Cảm ơn quý khách đã sử dụng dịch vụ." /></div>
       <button class="btn no-print" onclick="window.print()">🖨 In hóa đơn</button>
     </div>
-
-    <div class="footer">
-      Hóa đơn được tạo tự động. Vui lòng kiểm tra thông tin trước khi thanh toán.
-    </div>
+    <div class="footer">Hóa đơn được tạo tự động. Vui lòng kiểm tra thông tin trước khi thanh toán.</div>
   </div>
 
   <script>
@@ -256,88 +121,55 @@
     const discount = document.getElementById("discount");
     const total = document.getElementById("sum");
     const final = document.getElementById("final");
+    const shopName = document.getElementById("shopName");
+
+    function autoResizeShopName() {
+      shopName.style.height = "auto";
+      shopName.style.height = shopName.scrollHeight + "px";
     }
 
     function escapeHtml(value) {
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+      return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
     }
 
     function addRow(name = "", qty = 1, price = 0) {
       const tr = document.createElement("tr");
-
       tr.innerHTML = `
         <td class="center"></td>
-        <td class="name">
-          <input value="${escapeHtml(name)}" oninput="updateAll()" />
-        </td>
-        <td>
-          <input type="number" value="${qty}" oninput="updateAll()" />
-        </td>
-        <td>
-          <input type="number" value="${price}" oninput="updateAll()" />
-        </td>
+        <td class="name"><input value="${escapeHtml(name)}" oninput="updateAll()" /></td>
+        <td><input type="number" value="${qty}" oninput="updateAll()" /></td>
+        <td><input type="number" value="${price}" oninput="updateAll()" /></td>
         <td class="right line">0 đ</td>
-        <td class="no-print">
-          <button type="button" class="delete-btn" onclick="removeRow(this)">❌</button>
-        </td>
-      `;
-
+        <td class="no-print"><button type="button" class="delete-btn" onclick="removeRow(this)">❌</button></td>`;
       items.appendChild(tr);
       updateAll();
     }
 
-    function removeRow(button) {
-      button.closest("tr").remove();
-      updateAll();
-    }
-
-    function fmt(n) {
-      return (n || 0).toLocaleString("vi-VN") + " đ";
-    }
+    function removeRow(button) { button.closest("tr").remove(); updateAll(); }
+    function fmt(n) { return (n || 0).toLocaleString("vi-VN") + " đ"; }
 
     function updateAll() {
       let sum = 0;
-
       items.querySelectorAll("tr").forEach((tr, index) => {
         tr.children[0].textContent = index + 1;
-
         const qty = +tr.children[2].querySelector("input").value || 0;
         const price = +tr.children[3].querySelector("input").value || 0;
         const line = qty * price;
-
         tr.querySelector(".line").textContent = fmt(line);
         sum += line;
       });
-
       const d = +discount.value || 0;
       const pay = Math.round(sum * (1 - d / 100));
-
       total.textContent = fmt(sum);
       final.textContent = fmt(pay);
-
-      JsBarcode("#barcode", invoiceId.value || "HD000001", {
-        displayValue: true,
-        height: 42,
-        width: 2,
-        margin: 0,
-      });
-
+      JsBarcode("#barcode", invoiceId.value || "HD000001", { displayValue: true, height: 42, width: 2, margin: 0 });
       updateQR();
+      autoResizeShopName();
     }
 
     function updateQR() {
       const amount = final.textContent.replace(/\D/g, "");
-
-      qr.src =
-        `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` +
-        `?amount=${amount}` +
-        `&addInfo=${encodeURIComponent(invoiceId.value)}` +
-        `&accountName=${encodeURIComponent(owner.value)}`;
+      qr.src = `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` + `?amount=${amount}` + `&addInfo=${encodeURIComponent(invoiceId.value)}` + `&accountName=${encodeURIComponent(owner.value)}`;
     }
 
     function setToday() {
@@ -345,16 +177,16 @@
       const day = String(d.getDate()).padStart(2, "0");
       const month = String(d.getMonth() + 1).padStart(2, "0");
       const year = d.getFullYear();
-
       invoiceDate.value = `${day}/${month}/${year}`;
     }
 
     window.onload = () => {
       setToday();
+      autoResizeShopName();
       addRow("Cà phê sữa đá", 2, 30000);
       addRow("Bạc xỉu", 1, 35000);
     };
-
+    window.addEventListener("resize", autoResizeShopName);
   </script>
 </body>
 </html>
