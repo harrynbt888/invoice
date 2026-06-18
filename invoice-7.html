@@ -6,459 +6,120 @@
   <title>Invoice 7</title>
 
   <style>
-    @page {
-      size: A4;
-      margin: 8mm;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    @page { size: A4; margin: 10mm; }
+    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      background: #eef4ff;
-      font-family: Arial, sans-serif;
-      color: #1f2937;
-      font-size: 14px;
+      margin: 0; background: #eef4ff; font-family: Arial, sans-serif;
+      color: #1f2937; font-size: 14px;
     }
-
     .invoice {
-      max-width: 900px;
-      margin: 24px auto;
-      background: #ffffff;
-      border-radius: 18px;
-      overflow: hidden;
+      max-width: 900px; margin: 24px auto; background: #ffffff;
+      border-radius: 18px; overflow: hidden;
       box-shadow: 0 10px 35px rgba(37, 99, 235, 0.15);
     }
-
     .topbar {
       background: linear-gradient(135deg, #2563eb, #06b6d4);
-      color: white;
-      padding: 26px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
+      color: white; padding: 26px; display: flex;
+      justify-content: space-between; align-items: flex-start; gap: 20px;
     }
-
+    .shop-block { flex: 1; min-width: 0; }
     .shop-name {
-      font-size: 35px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    .subtitle {
-      opacity: 0.9;
-      font-size: 14px;
-    }
-
-    .invoice-title {
-      text-align: right;
-      min-width: 240px;
-    }
-
-    .invoice-title h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      letter-spacing: 1px;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 8px;
-    }
-
-    .topbar label {
-      color: rgba(255,255,255,.9);
-    }
-
-    input,
-    select {
       width: 100%;
-      border: none;
-      border-bottom: 1px dashed #94a3b8;
-      background: transparent;
-      padding: 6px 2px;
-      font-size: 14px;
-      outline: none;
-      font-family: inherit;
-      color: #1f2937;
+      max-width: 520px;
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      line-height: 1.2;
     }
 
+    .subtitle { opacity: 0.9; font-size: 14px; }
+    .invoice-title { text-align: right; min-width: 240px; }
+    .invoice-title h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 1px; }
+    label { display: block; font-size: 12px; color: #64748b; margin-top: 8px; }
+    .topbar label { color: rgba(255,255,255,.9); }
+    input, select {
+      width: 100%; border: none; border-bottom: 1px dashed #94a3b8;
+      background: transparent; padding: 6px 2px; font-size: 14px;
+      outline: none; font-family: inherit; color: #1f2937;
+    }
     .topbar input {
-      color: white;
-      border-bottom: 1px solid rgba(255,255,255,.7);
+      color: white; border-bottom: 1px solid rgba(255,255,255,.7);
       text-align: right;
     }
-
-    .shop-name input {
+    .shop-name #shopName {
+      width: 100%;
       color: white;
-      font-size: 35px;
+      font-size: 26px;
       font-weight: bold;
       padding: 0;
       text-align: left;
-    }
-
-    .content {
-      padding: 24px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .card {
-      border: 1px solid #dbeafe;
-      background: #f8fbff;
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .card h3 {
-      margin: 0 0 12px;
-      color: #2563eb;
-      font-size: 15px;
-      text-transform: uppercase;
-      letter-spacing: .4px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      margin-top: 14px;
-      overflow: hidden;
-      border-radius: 14px;
-      border: 1px solid #dbeafe;
-    }
-
-    th {
-      background: #2563eb;
-      color: white;
-      padding: 10px;
-      font-size: 13px;
-    }
-
-    td {
-      padding: 8px;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: center;
-      background: white;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    td.name {
-      text-align: left;
-    }
-
-    .center {
-      text-align: center;
-    }
-
-    .right {
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    .btn {
-      border: none;
-      background: #2563eb;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 12px;
-    }
-
-    .btn:hover {
-      background: #1d4ed8;
-    }
-
-    .delete-btn {
-      background: #fee2e2;
-      color: #dc2626;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      padding: 6px 8px;
-    }
-
-    .bottom {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 320px;
-      gap: 18px;
-      margin-top: 18px;
-      align-items: start;
-    }
-
-    .summary {
-      border: 1px solid #dbeafe;
-      border-radius: 16px;
-      padding: 16px;
-      background: #f8fbff;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin: 10px 0;
-    }
-
-    .summary-row input {
-      width: 90px;
-      text-align: right;
-    }
-
-    .final {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 2px dashed #93c5fd;
-      font-size: 20px;
-      font-weight: bold;
-      color: #2563eb;
-    }
-
-    #final,
-    #sum {
-      white-space: nowrap;
-    }
-
-    .code {
-      text-align: center;
-      margin-top: 8px;
-    }
-
-    #barcode {
-      max-width: 140px;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
-
-    .bank-print-text {
-      margin-top: 8px;
-      font-size: 12px;
-      line-height: 1.5;
-      color: #334155;
-      text-align: left;
+      white-space: normal;
+      overflow: visible;
       word-break: break-word;
+      line-height: 1.2;
+      min-height: 32px;
+      outline: none;
+      border-bottom: 1px solid rgba(255,255,255,.7);
     }
-
-    .code img {
-      display: block;
-      width: 150px;
-      max-width: 100%;
-      min-height: 150px;
-      margin: 10px auto 0;
-      object-fit: contain;
+    .content { padding: 24px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+    .card {
+      border: 1px solid #dbeafe; background: #f8fbff;
+      border-radius: 16px; padding: 16px;
     }
-
-    .qr-label {
-      margin-top: 6px;
-      font-size: 11px;
-      color: #64748b;
-      text-align: center;
+    .card h3 {
+      margin: 0 0 12px; color: #2563eb; font-size: 15px;
+      text-transform: uppercase; letter-spacing: .4px;
     }
-
+    table {
+      width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 14px;
+      overflow: hidden; border-radius: 14px; border: 1px solid #dbeafe;
+    }
+    th { background: #2563eb; color: white; padding: 10px; font-size: 13px; }
+    td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: center; background: white; }
+    tbody tr:last-child td { border-bottom: none; }
+    td.name { text-align: left; }
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .btn {
+      border: none; background: #2563eb; color: white; padding: 10px 14px;
+      border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 12px;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .delete-btn {
+      background: #fee2e2; color: #dc2626; border: none;
+      border-radius: 8px; cursor: pointer; padding: 6px 8px;
+    }
+    .bottom { display: grid; grid-template-columns: 1fr 320px; gap: 18px; margin-top: 18px; }
+    .summary { border: 1px solid #dbeafe; border-radius: 16px; padding: 16px; background: #f8fbff; }
+    .summary-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 10px 0; }
+    .summary-row input { width: 90px; text-align: right; }
+    .final {
+      margin-top: 12px; padding-top: 12px; border-top: 2px dashed #93c5fd;
+      font-size: 20px; font-weight: bold; color: #2563eb;
+    }
+    .code { text-align: center; margin-top: 8px; }
+    .code img { width: 210px; max-width: 100%; margin-top: 10px; }
     .note {
-      margin-top: 18px;
-      border-radius: 14px;
-      background: #eff6ff;
-      border: 1px dashed #93c5fd;
-      padding: 12px;
-      color: #475569;
+      margin-top: 18px; border-radius: 14px; background: #eff6ff;
+      border: 1px dashed #93c5fd; padding: 12px; color: #475569;
     }
-
-    .footer {
-      text-align: center;
-      padding: 18px;
-      background: #f1f5f9;
-      color: #64748b;
-      font-style: italic;
-    }
-
-    .no-print {
-      display: inline-block;
-    }
+    .footer { text-align: center; padding: 18px; background: #f1f5f9; color: #64748b; font-style: italic; }
+    .no-print { display: inline-block; }
 
     @media print {
-      body {
-        background: white;
-        font-size: 11px;
-      }
-
-      .invoice {
-        width: 100%;
-        max-width: none;
-        margin: 0;
-        box-shadow: none;
-        border-radius: 0;
-        overflow: visible;
-      }
-
-      .topbar {
-        padding: 12px 14px;
-      }
-
-      .shop-name,
-      .shop-name input {
-        font-size: 24px;
-      }
-
-      .invoice-title h1 {
-        font-size: 20px;
-      }
-
-      .subtitle {
-        font-size: 11px;
-      }
-
-      .content {
-        padding: 12px 14px;
-      }
-
-      .grid {
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-
-      .card,
-      .summary {
-        border-radius: 10px;
-        padding: 10px;
-      }
-
-      .card h3 {
-        font-size: 12px;
-        margin-bottom: 6px;
-      }
-
-      label {
-        margin-top: 4px;
-        font-size: 10px;
-      }
-
-      input,
-      select {
-        padding: 3px 1px;
-        font-size: 11px;
-        border: none;
-        pointer-events: none;
-      }
-
-      table {
-        margin-top: 8px;
-        border-radius: 8px;
-      }
-
-      th {
-        padding: 6px;
-        font-size: 10px;
-      }
-
-      td {
-        padding: 5px;
-        font-size: 10px;
-      }
-
-      .bottom {
-        grid-template-columns: 1fr 230px;
-        gap: 10px;
-        margin-top: 10px;
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-
-      .summary-row {
-        margin: 6px 0;
-        gap: 6px;
-      }
-
-      .summary-row input {
-        width: 48px;
-      }
-
-      .final {
-        font-size: 14px;
-        padding-top: 8px;
-        margin-top: 8px;
-      }
-
-      #barcode {
-        max-width: 110px;
-      }
-
-      .code img {
-        width: 105px;
-        min-height: 105px;
-        margin-top: 5px;
-      }
-
-      .qr-label {
-        font-size: 9px;
-        margin-top: 3px;
-      }
-
-      .bank-print-text {
-        font-size: 10px;
-        line-height: 1.35;
-        margin-top: 4px;
-      }
-
-      .note {
-        margin-top: 10px;
-        padding: 8px;
-        border-radius: 8px;
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-
-      .footer {
-        padding: 10px;
-        font-size: 10px;
-      }
-
-      .no-print {
-        display: none !important;
-      }
-
-      .topbar,
-      th {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-      }
+      body { background: white; }
+      .invoice { margin: 0; box-shadow: none; border-radius: 0; max-width: none; }
+      .no-print { display: none !important; }
+      input, select { border: none; pointer-events: none; }
+      .topbar, th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     }
 
     @media (max-width: 700px) {
-      .grid,
-      .bottom {
-        grid-template-columns: 1fr;
-      }
-
-      .topbar {
-        flex-direction: column;
-      }
-
-      .invoice-title {
-        text-align: left;
-        min-width: auto;
-      }
-
-      .topbar input {
-        text-align: left;
-      }
+      .grid, .bottom { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; }
+      .invoice-title { text-align: left; min-width: auto; }
+      .topbar input { text-align: left; }
     }
   </style>
 
@@ -468,19 +129,17 @@
 <body>
   <div class="invoice">
     <div class="topbar">
-      <div>
+      <div class="shop-block">
         <div class="shop-name">
-          <input id="shopName" value="HARRY STORE" />
+          <div id="shopName" contenteditable="true">HARRY STORE</div>
         </div>
-        <div class="subtitle">Hóa đơn điện tử / Electronic Invoice</div>
+        <div id="subtitle" class="subtitle" contenteditable="true">Hóa đơn điện tử / Electronic Invoice</div>
       </div>
 
       <div class="invoice-title">
         <h1>HÓA ĐƠN</h1>
-
         <label>Mã hóa đơn</label>
         <input id="invoiceId" value="HD000001" oninput="updateAll()" />
-
         <label>Ngày lập</label>
         <input id="invoiceDate" />
       </div>
@@ -490,26 +149,20 @@
       <div class="grid">
         <div class="card">
           <h3>Thông tin khách hàng</h3>
-
           <label>Khách hàng</label>
           <input id="customer" value="Khách lẻ" />
-
           <label>Số điện thoại</label>
           <input id="phone" value="0900000000" />
-
           <label>Địa chỉ</label>
           <input id="address" value="Việt Nam" />
         </div>
 
         <div class="card">
           <h3>Thanh toán chuyển khoản</h3>
-
           <label>Chủ tài khoản</label>
           <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
-
           <label>Số tài khoản</label>
           <input id="account" value="0123456789" oninput="updateQR()" />
-
           <label>Ngân hàng</label>
           <select id="bank" onchange="updateQR()">
             <option value="VCB">Vietcombank</option>
@@ -564,9 +217,8 @@
         <div class="card">
           <h3>Mã thanh toán</h3>
           <div class="code">
-            <svg id="barcode"></svg>
-            <img id="qr" alt="QR thanh toán" referrerpolicy="no-referrer" loading="eager" />
-            <div class="qr-label">Quét QR để thanh toán</div>
+            <svg id="barcode"></svg><br />
+            <img id="qr" />
           </div>
         </div>
 
@@ -575,12 +227,10 @@
             <span>Tạm tính:</span>
             <b id="sum">0 đ</b>
           </div>
-
           <div class="summary-row">
             <span>Chiết khấu (%):</span>
             <input id="discount" type="number" value="0" oninput="updateAll()" />
           </div>
-
           <div class="summary-row final">
             <span>Thanh toán:</span>
             <span id="final">0 đ</span>
@@ -602,12 +252,11 @@
   </div>
 
   <script>
-    const FIXED_BARCODE_VALUE = "HS";
-
     const items = document.getElementById("items");
     const discount = document.getElementById("discount");
     const total = document.getElementById("sum");
     const final = document.getElementById("final");
+    }
 
     function escapeHtml(value) {
       return String(value)
@@ -671,11 +320,10 @@
       total.textContent = fmt(sum);
       final.textContent = fmt(pay);
 
-      JsBarcode("#barcode", FIXED_BARCODE_VALUE, {
-        format: "CODE128",
-        displayValue: false,
-        height: 34,
-        width: 1.4,
+      JsBarcode("#barcode", invoiceId.value || "HD000001", {
+        displayValue: true,
+        height: 42,
+        width: 2,
         margin: 0,
       });
 
@@ -684,30 +332,12 @@
 
     function updateQR() {
       const amount = final.textContent.replace(/\D/g, "");
-      const bankCode = String(bank.value || "VCB").trim();
-      const accountNo = String(account.value || "").replace(/\s+/g, "");
-      const invoiceCode = String(invoiceId.value || "HD000001").trim();
-      const ownerName = String(owner.value || "").trim();
 
-      const qrUrl =
-        `https://img.vietqr.io/image/${bankCode}-${accountNo}-compact2.png` +
-        `?amount=${encodeURIComponent(amount)}` +
-        `&addInfo=${encodeURIComponent(invoiceCode)}` +
-        `&accountName=${encodeURIComponent(ownerName)}` +
-        `&t=${Date.now()}`;
-
-      qr.onerror = function () {
-        // Nếu VietQR lỗi tạm thời, thử lại một lần với kiểu compact.
-        this.onerror = null;
-        this.src =
-          `https://img.vietqr.io/image/${bankCode}-${accountNo}-compact.png` +
-          `?amount=${encodeURIComponent(amount)}` +
-          `&addInfo=${encodeURIComponent(invoiceCode)}` +
-          `&accountName=${encodeURIComponent(ownerName)}` +
-          `&t=${Date.now()}`;
-      };
-
-      qr.src = qrUrl;
+      qr.src =
+        `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` +
+        `?amount=${amount}` +
+        `&addInfo=${encodeURIComponent(invoiceId.value)}` +
+        `&accountName=${encodeURIComponent(owner.value)}`;
     }
 
     function setToday() {
@@ -724,6 +354,7 @@
       addRow("Cà phê sữa đá", 2, 30000);
       addRow("Bạc xỉu", 1, 35000);
     };
+
   </script>
 </body>
 </html>
