@@ -1,213 +1,129 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hóa đơn - AN NAM</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa đơn - AN NAM</title>
 
-    <style>
-      @page {
-        size: A4;
-        margin: 20mm;
-      }
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #eaf3ee; color: #0f3d2e; padding: 20px 0; }
+    .invoice { max-width: 800px; margin: auto; background: #ffffff; padding: 40px 35px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f3d2e; padding-bottom: 20px; }
+    .brand h1 { margin: 0; font-size: 28px; letter-spacing: 2px; }
+    .brand p { margin: 4px 0 0; font-style: italic; opacity: 0.7; font-size: 14px; }
+    .bill-title { text-align: right; }
+    .bill-title h2 { margin: 0; font-size: 26px; color: #0f3d2e; }
+    .date-row { display: flex; align-items: center; gap: 6px; justify-content: flex-end; margin-top: 8px; }
+    .date-row input { width: 130px; border: none; border-bottom: 1px dashed #0f3d2e; background: transparent; font-size: 14px; font-weight: 600; text-align: center; }
+    .info { display: flex; justify-content: space-between; margin-top: 30px; gap: 20px; }
+    .info-box h3 { margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
+    .info-box input { font-size: 16px; font-weight: 600; border: none; border-bottom: 1px solid #ccc; background: transparent; padding: 4px 0; width: 100%; }
+    .info-box input:focus { outline: none; border-bottom-color: #0f3d2e; }
+    table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+    th { text-align: left; border-bottom: 2px solid #0f3d2e; padding: 10px 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 8px 6px; border-bottom: 1px solid #e0e8e4; }
+    th.center, td.center { text-align: center; }
+    th.right, td.right { text-align: right; }
+    input, select { width: 100%; border: none; background: transparent; font-size: 14px; font-family: inherit; color: #0f3d2e; }
+    input:focus, select:focus { outline: none; }
+    td.center input { text-align: center; }
+    td.right input { text-align: right; }
+    tfoot tr { border-top: 2px solid #0f3d2e; }
+    tfoot td { padding-top: 12px; font-size: 16px; }
+    #total { font-size: 18px; font-weight: 700; }
+    .bank-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 30px; }
+    .bank-row { display: grid; grid-template-columns: 90px 1fr; gap: 8px; align-items: center; }
+    .bank-row span { font-size: 14px; font-weight: 600; color: #0f3d2e; }
+    .bank-row select, .bank-row input { border-bottom: 1px solid #ccc; padding: 4px 0; }
+    .bank-row select { border-bottom: 1px solid #ccc; background: transparent; cursor: pointer; }
+    .actions { margin: 30px 0 10px; display: flex; gap: 12px; flex-wrap: wrap; }
+    button { padding: 10px 18px; border: none; border-radius: 40px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+    .add { background: #cde8d6; color: #0f3d2e; }
+    .add:hover { background: #a8d5bb; }
+    .print { background: #0f3d2e; color: #fff; }
+    .print:hover { background: #1a5a44; }
+    .code-section { margin-top: 30px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .code-section svg { max-width: 200px; }
+    .code-section img { width: 160px; height: 160px; border: 1px solid #e0e8e4; border-radius: 12px; padding: 10px; background: #fff; }
+    .code-section .qr-label { font-size: 13px; color: #555; margin-top: 4px; }
+    .warning-note { font-size: 13px; color: #888; margin-top: -5px; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .invoice { box-shadow: none; border-radius: 0; padding: 20px; }
+      .no-print { display: none !important; }
+      input, select { pointer-events: none; border-bottom-color: #aaa !important; }
+      .code-section img { border: 1px solid #ccc; }
+    }
+    @media (max-width: 600px) {
+      .invoice { padding: 20px; }
+      .header { flex-direction: column; gap: 10px; }
+      .bill-title { text-align: left; width: 100%; }
+      .date-row { justify-content: flex-start; }
+      .info { flex-direction: column; gap: 10px; }
+      .bank-section { grid-template-columns: 1fr; gap: 5px; }
+    }
+  </style>
 
-      body {
-        margin: 0;
-        font-family: "Segoe UI", Arial, sans-serif;
-        background: #eaf3ee;
-        color: #0f3d2e;
-      }
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js">
+  </script>
+</head>
 
-      .invoice {
-        max-width: 800px;
-        margin: auto;
-      }
+<body>
+  <div class="invoice">
 
-      /* HEADER */
-      .header {
-        display: flex;
-        justify-content: space-between;
-      }
-
-      .brand {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-      }
-
-      .info {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 40px;
-      }
-
-      /* TABLE */
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 40px;
-      }
-      th,
-      td {
-        border-bottom: 1px solid #0f3d2e;
-        padding: 8px;
-      }
-      th {
-        border-bottom: 2px solid #0f3d2e;
-      }
-
-      .center {
-        text-align: center;
-      }
-      .right {
-        text-align: right;
-      }
-
-      /* INPUT */
-      input,
-      select {
-        width: 100%;
-        border: none;
-        background: transparent;
-        font-size: 14px;
-        font-family: inherit;
-      }
-
-      /* BANK */
-      .bank-row {
-        display: grid;
-        grid-template-columns: 100px 1fr;
-        gap: 10px;
-        margin: 6px 0;
-      }
-
-      td.center input {
-        text-align: center;
-      }
-
-      .date-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .date-row span {
-        white-space: nowrap;
-      }
-
-      .date-row input {
-        width: auto;
-        min-width: 110px;
-      }
-
-      /* ACTIONS */
-      .actions {
-        margin: 30px 0;
-        display: flex;
-        gap: 10px;
-      }
-      button {
-        padding: 8px 14px;
-        border: none;
-        cursor: pointer;
-      }
-      .add {
-        background: #cde8d6;
-      }
-      .print {
-        background: #0f3d2e;
-        color: #fff;
-      }
-
-      /* BARCODE + QR */
-      .code {
-        margin-top: 20px;
-        text-align: center;
-      }
-      .code img {
-        width: 160px;
-      }
-
-      /* PRINT */
-      @media print {
-        body {
-          background: #fff;
-        }
-        .no-print {
-          display: none;
-        }
-        input,
-        select {
-          pointer-events: none;
-        }
-      }
-    </style>
-
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  </head>
-
-  <body>
-    <div class="invoice">
-      <!-- HEADER -->
-      <div class="header">
-        <div class="brand">
-          <div>
-            <h1 contenteditable="plaintext-only" style="line-height: 1;">AN NAM</h1>
-            <p contenteditable="plaintext-only" style="line-height: 1;">Thiền Am Bên Bờ Vũ Trụ</p>
-          </div>
-        </div>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="brand">
         <div>
-          <h2>HÓA ĐƠN</h2>
-          <div class="date-row">
-            <span>Ngày:</span>
-            <input value="20/07/2030" />
-          </div>
+          <h1 contenteditable="plaintext-only" style="line-height:1;">AN NAM</h1>
+          <p contenteditable="plaintext-only" style="line-height:1;">Thiền Am Bên Bờ Vũ Trụ</p>
         </div>
       </div>
-
-      <!-- INFO -->
-      <div class="info">
-        <div>
-          <h3>KHÁCH HÀNG</h3>
-          <input value="Lê Hiền" />
-        </div>
-        <div>
-          <h3>THANH TOÁN CHO</h3>
-          <input id="owner" value="NGUYEN VAN A" oninput="syncBank()" />
+      <div class="bill-title">
+        <h2>HÓA ĐƠN</h2>
+        <div class="date-row">
+          <span>Ngày:</span>
+          <input id="invoiceDate" value="20/07/2030" />
         </div>
       </div>
+    </div>
 
-      <!-- TABLE -->
-      <table>
-        <thead>
-          <tr>
-            <th>MÔ TẢ</th>
-            <th class="center">SL</th>
-            <th class="center">ĐƠN GIÁ</th>
-            <th class="right">THÀNH TIỀN</th>
-            <th class="no-print"></th>
-          </tr>
-        </thead>
-        <tbody id="items"></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3"><b>TỔNG CỘNG</b></td>
-            <td class="right" id="total">0 VND</td>
-            <td class="no-print"></td>
-          </tr>
-        </tfoot>
-      </table>
-
-      <!-- ACTIONS -->
-      <div class="actions no-print">
-        <button class="add" onclick="addRow()">➕ Thêm dòng</button>
-        <button class="print" onclick="window.print()">🖨 In hóa đơn</button>
+    <!-- INFO -->
+    <div class="info">
+      <div class="info-box">
+        <h3>KHÁCH HÀNG</h3>
+        <input id="customer" value="Lê Hiền" />
       </div>
+      <div class="info-box">
+        <h3>THANH TOÁN CHO</h3>
+        <input id="owner" value="NGUYEN VAN A" oninput="syncBank()" />
+      </div>
+    </div>
 
-      <!-- BANK -->
+    <!-- TABLE -->
+    <table>
+      <thead>
+        <tr><th>Mô tả</th><th class="center">SL</th><th class="center">Đơn giá</th><th class="right">Thành tiền</th><th class="no-print"></th></tr>
+      </thead>
+      <tbody id="items"></tbody>
+      <tfoot>
+        <tr><td colspan="3"><b>TỔNG CỘNG</b></td><td class="right" id="total">0 VND</td><td class="no-print"></td></tr>
+      </tfoot>
+    </table>
+
+    <!-- ACTIONS -->
+    <div class="actions no-print">
+      <button class="add" onclick="addRow()">➕ Thêm dòng</button>
+      <button class="print" onclick="window.print()">🖨 In hóa đơn</button>
+    </div>
+
+    <!-- BANK INFO -->
+    <div class="bank-section">
       <div class="bank-row">
         <span>Ngân hàng</span>
         <select id="bank" onchange="syncBank()">
-          <option value="VCB">Vietcombank</option>
+          <option value="VCB" selected>Vietcombank</option>
           <option value="ABB">ABBank</option>
           <option value="SHBVN">SOL</option>
           <option value="ACB">ACB</option>
@@ -235,76 +151,139 @@
           <option value="TPB">TPBank</option>
           <option value="VIB">VIB</option>
           <option value="VPB">VPBank</option>
-          <option value="VCB">Vietcombank</option>
         </select>
       </div>
 
       <div class="bank-row">
         <span>STK</span>
-        <input id="account" value="0123456789" oninput="syncBank()" />
+        <input id="account" value="0011005169918" oninput="syncBank()" />
       </div>
 
-      <!-- BARCODE + QR -->
-      <div class="code">
-        <svg id="barcode"></svg><br />
-        <img id="qr" />
-        <div>Quét QR để thanh toán</div>
+      <div class="bank-row">
+        <span>Nội dung</span>
+        <input id="description" value="Thanh toán hóa đơn AN NAM" oninput="syncBank()" />
       </div>
     </div>
 
-    <script>
-      const items = document.getElementById("items");
+    <!-- QR CODE -->
+    <div class="code-section">
+      <svg id="barcode"></svg>
+      <div>
+        <img id="qr" alt="Đang tạo mã QR..." />
+      </div>
+      <div class="qr-label">Quét QR để thanh toán</div>
+      <div class="warning-note no-print">⚠️ Nếu lỗi, hãy nhập đúng số tài khoản thật của bạn (ví dụ: tài khoản Vietcombank thật) để test.</div>
+    </div>
 
-      function fmt(n) {
-        return (n || 0).toLocaleString("vi-VN") + " VND";
-      }
+  </div>
 
-      function addRow(desc = "", qty = 1, price = 0) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-    <td><input value="${desc}"></td>
-    <td class="center"><input type="number" value="${qty}" oninput="calc()"></td>
-    <td class="center"><input type="number" value="${price}" oninput="calc()"></td>
-    <td class="right line">0</td>
-    <td class="no-print" onclick="this.parentNode.remove();calc()">✕</td>
-  `;
-        items.appendChild(tr);
-        calc();
-      }
+  <script>
+    // ---------- CORE LOGIC ----------
+    const items = document.getElementById('items');
 
-      function calc() {
-        let sum = 0;
-        items.querySelectorAll("tr").forEach((tr) => {
-          const q = +tr.children[1].querySelector("input").value || 0;
-          const p = +tr.children[2].querySelector("input").value || 0;
-          const t = q * p;
-          tr.querySelector(".line").textContent = fmt(t);
-          sum += t;
-        });
-        total.textContent = fmt(sum);
+    function fmt(n) {
+      return (n || 0).toLocaleString('vi-VN') + ' VND';
+    }
 
-        JsBarcode("#barcode", "HD-AN-NAM", {
+    function addRow(desc = '', qty = 1, price = 0) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input value="${desc}" placeholder="Nhập mô tả"></td>
+        <td class="center"><input type="number" value="${qty}" min="1" oninput="calc()"></td>
+        <td class="center"><input type="number" value="${price}" min="0" step="1000" oninput="calc()"></td>
+        <td class="right line">0</td>
+        <td class="no-print" style="text-align:center;">
+          <button onclick="this.closest('tr').remove();calc();" 
+                  style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:18px;font-weight:bold;">✕</button>
+        </td>
+      `;
+      items.appendChild(tr);
+      calc();
+    }
+
+    function calc() {
+      let sum = 0;
+      document.querySelectorAll('#items tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        const q = parseFloat(inputs[1]?.value) || 0;
+        const p = parseFloat(inputs[2]?.value) || 0;
+        const t = q * p;
+        const lineTd = tr.querySelector('.line');
+        if (lineTd) lineTd.textContent = fmt(t);
+        sum += t;
+      });
+      document.getElementById('total').textContent = fmt(sum);
+
+      try {
+        JsBarcode('#barcode', 'HD-AN-NAM', {
           displayValue: false,
           height: 40,
           width: 2,
+          background: '#ffffff',
+          lineColor: '#0f3d2e'
         });
+      } catch (e) {}
 
-        updateQR(sum);
+      updateQR(sum);
+    }
+
+    function updateQR(amount) {
+      const bank = document.getElementById('bank').value;
+      const account = document.getElementById('account').value.trim();
+      const owner = document.getElementById('owner').value.trim();
+      const desc = document.getElementById('description').value.trim();
+
+      const qrImg = document.getElementById('qr');
+
+      if (!bank || !account) {
+        qrImg.src = '';
+        qrImg.alt = 'Vui lòng nhập Ngân hàng và Số tài khoản';
+        return;
       }
 
-      function updateQR(amount) {
-        if (!bank.value || !account.value) return;
-        qr.src =
-          `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` +
-          `?amount=${amount}&accountName=${owner.value}`;
-      }
+      // Tạo URL với đầy đủ tham số
+      const params = new URLSearchParams({
+        amount: amount || 0,
+        accountName: owner || 'Chủ tài khoản',
+        description: desc || 'Thanh toán',
+        addInfo: desc || 'Thanh toán',
+        _t: Date.now() // chống cache
+      });
 
-      function syncBank() {
-        const amount = total.textContent.replace(/\D/g, "");
-        updateQR(amount);
-      }
+      const url = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${params.toString()}`;
 
-      addRow("Dịch vụ lưu trú", 5, 2000000);
-    </script>
-  </body>
+      qrImg.src = url;
+      qrImg.alt = 'Đang tải mã QR...';
+
+      // Xử lý lỗi
+      qrImg.onerror = function() {
+        // Thử lại lần 2 với fallback (bỏ amount nếu cần)
+        const fallbackParams = new URLSearchParams({
+          accountName: owner || 'Chủ tài khoản',
+          description: desc || 'Thanh toán',
+          addInfo: desc || 'Thanh toán',
+          _t: Date.now()
+        });
+        if (amount > 0) fallbackParams.set('amount', amount);
+        const fallbackUrl =
+          `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${fallbackParams.toString()}`;
+        this.src = fallbackUrl;
+        this.onerror = function() {
+          this.src = '';
+          this.alt = '❌ Không thể tạo QR. Kiểm tra lại ngân hàng và số tài khoản (có thể số tài khoản không hợp lệ).';
+        };
+      };
+    }
+
+    function syncBank() {
+      const totalText = document.getElementById('total').textContent;
+      const amount = parseInt(totalText.replace(/\D/g, '')) || 0;
+      updateQR(amount);
+    }
+
+    // ---------- KHỞI TẠO ----------
+    addRow('Dịch vụ lưu trú', 5, 2000000);
+  </script>
+
+</body>
 </html>
