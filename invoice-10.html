@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hóa đơn - SAIGON TECHNOLOGY</title>
+
+  <style>
+    /* ---------- RESET & GLOBAL ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @page {
+      size: A4;
+      margin: 18mm;
+    }
+
+    body {
+      background: #f0f4f9;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 30px 15px;
+      color: #1a2a3a;
+    }
+
+    .invoice-wrapper {
+      max-width: 880px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0, 20, 40, 0.08);
+      padding: 45px 45px 35px;
+      transition: all 0.2s;
+    }
+
+    /* ---------- HEADER ---------- */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 3px solid #1e3b5c;
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      background: #1e3b5c;
+      color: #fff;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+      color: #1e3b5c;
+      margin: 0;
+    }
+
+    .brand-text p {
+      font-size: 13px;
+      color: #5d7184;
+      margin: 2px 0 0;
+      font-weight: 400;
+    }
+
+    .invoice-meta {
+      text-align: right;
+      min-width: 170px;
+    }
+
+    .invoice-meta h2 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1e3b5c;
+      letter-spacing: 1px;
+      margin: 0 0 6px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .meta-row span {
+      color: #5d7184;
+    }
+
+    .meta-row input {
+      border: none;
+      border-bottom: 1px dashed #b0c4d8;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a2a3a;
+      text-align: center;
+      padding: 2px 4px;
+      width: 130px;
+    }
+
+    .meta-row input:focus {
+      outline: none;
+      border-bottom-color: #2c7be5;
+    }
+
+    /* ---------- INFO ---------- */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px 40px;
+      background: #f8faff;
+      padding: 18px 22px;
+      border-radius: 14px;
+      margin-bottom: 28px;
+    }
+
+    .info-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #6b7f94;
+      margin-bottom: 2px;
+    }
+
+    .info-field input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a2a3a;
+      padding: 4px 0;
+      border-bottom: 1px solid transparent;
+      transition: border 0.2s;
+    }
+
+    .info-field input:focus {
+      outline: none;
+      border-bottom-color: #2c7be5;
+    }
+
+    /* ---------- TABLE ---------- */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 10px 8px 12px;
+      border-bottom: 2px solid #dce3ed;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #3d5670;
+      font-weight: 600;
+    }
+
+    thead th:not(:first-child) {
+      text-align: center;
+    }
+
+    thead th:last-child {
+      text-align: right;
+    }
+
+    tbody td {
+      padding: 8px 8px;
+      border-bottom: 1px solid #edf2f8;
+      vertical-align: middle;
+    }
+
+    tbody td:not(:first-child) {
+      text-align: center;
+    }
+
+    tbody td:last-child {
+      text-align: right;
+    }
+
+    tbody input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: #1a2a3a;
+      text-align: inherit;
+      padding: 4px 2px;
+    }
+
+    tbody input:focus {
+      outline: none;
+      background: #f2f7ff;
+      border-radius: 4px;
+    }
+
+    tbody td .remove-btn {
+      background: none;
+      border: none;
+      color: #b91c1c;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0 6px;
+      transition: 0.2s;
+      opacity: 0.5;
+    }
+
+    tbody td .remove-btn:hover {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+
+    .line-total {
+      font-weight: 600;
+      color: #1e3b5c;
+    }
+
+    tfoot td {
+      padding: 14px 8px 10px;
+      border-top: 2px solid #1e3b5c;
+      font-size: 16px;
+    }
+
+    tfoot .total-label {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #1e3b5c;
+    }
+
+    #total {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0d2c4a;
+    }
+
+    /* ---------- ACTIONS ---------- */
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 12px 0 28px;
+    }
+
+    .btn {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #e9eff5;
+      color: #1a2a3a;
+    }
+
+    .btn:hover {
+      background: #d4dfe9;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: #1e3b5c;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #132b44;
+    }
+
+    .btn-success {
+      background: #2c7be5;
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      background: #1a66c9;
+    }
+
+    /* ---------- BANK & QR ---------- */
+    .bank-qr-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px 40px;
+      background: #f8faff;
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin-top: 24px;
+      border: 1px solid #e6eef8;
+    }
+
+    .bank-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bank-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bank-row label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3d5670;
+      letter-spacing: 0.3px;
+    }
+
+    .bank-row select,
+    .bank-row input {
+      border: none;
+      border-bottom: 1px solid #d0ddee;
+      background: transparent;
+      padding: 6px 4px;
+      font-size: 14px;
+      color: #1a2a3a;
+      font-family: inherit;
+    }
+
+    .bank-row select:focus,
+    .bank-row input:focus {
+      outline: none;
+      border-bottom-color: #2c7be5;
+    }
+
+    .bank-row select {
+      cursor: pointer;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7f94' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 6px center;
+      appearance: none;
+      padding-right: 28px;
+    }
+
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .qr-section img {
+      width: 150px;
+      height: 150px;
+      border: 1px solid #dce3ed;
+      border-radius: 16px;
+      padding: 8px;
+      background: #fff;
+      object-fit: contain;
+    }
+
+    .qr-section .qr-label {
+      font-size: 13px;
+      color: #6b7f94;
+      letter-spacing: 0.3px;
+    }
+
+    .qr-section .qr-note {
+      font-size: 12px;
+      color: #9aafc4;
+    }
+
+    .warning-note {
+      font-size: 12px;
+      color: #6b7f94;
+      margin-top: 4px;
+    }
+
+    /* Barcode */
+    .barcode-wrap {
+      text-align: center;
+      margin-top: 18px;
+      padding-top: 10px;
+      border-top: 1px solid #e6eef8;
+    }
+
+    .barcode-wrap svg {
+      max-width: 220px;
+      height: auto;
+    }
+
+    /* ---------- PRINT ---------- */
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .invoice-wrapper {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 20px 30px;
+      }
+      .no-print {
+        display: none !important;
+      }
+      input,
+      select {
+        pointer-events: none;
+        border-bottom-color: #b0c4d8 !important;
+      }
+      .info-grid,
+      .bank-qr-grid {
+        background: #fafcff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 700px) {
+      .invoice-wrapper {
+        padding: 25px 18px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .invoice-meta {
+        text-align: left;
+      }
+      .meta-row {
+        justify-content: flex-start;
+      }
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .bank-qr-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .bank-row {
+        grid-template-columns: 80px 1fr;
+      }
+      .qr-section img {
+        width: 130px;
+        height: 130px;
+      }
+    }
+  </style>
+
+  <!-- Thư viện JsBarcode -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js">
+  </script>
+</head>
+
+<body>
+
+  <div class="invoice-wrapper">
+
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">SG</div>
+        <div class="brand-text">
+          <h1 contenteditable="plaintext-only">SAIGON TECHNOLOGY</h1>
+          <p contenteditable="plaintext-only">Giải pháp phần mềm &amp; tư vấn số</p>
+        </div>
+      </div>
+      <div class="invoice-meta">
+        <h2>HÓA ĐƠN</h2>
+        <div class="meta-row">
+          <span>Số:</span>
+          <input id="invoiceNo" value="HD-2026-001" style="width:110px;" />
+        </div>
+        <div class="meta-row">
+          <span>Ngày:</span>
+          <input id="invoiceDate" value="20/07/2026" />
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ THÔNG TIN ============ -->
+    <div class="info-grid">
+      <div class="info-field">
+        <label>Khách hàng</label>
+        <input id="customer" value="Công ty TNHH ABC" />
+      </div>
+      <div class="info-field">
+        <label>Người thụ hưởng</label>
+        <input id="owner" value="NGUYEN VAN B" oninput="syncQR()" />
+      </div>
+      <div class="info-field" style="grid-column:1/2;">
+        <label>Địa chỉ</label>
+        <input id="address" value="123 Lê Lợi, Q.1, TP.HCM" />
+      </div>
+    </div>
+
+    <!-- ============ BẢNG DỊCH VỤ ============ -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Mô tả</th>
+            <th style="text-align:center;">SL</th>
+            <th style="text-align:center;">Đơn giá</th>
+            <th style="text-align:right;">Thành tiền</th>
+            <th class="no-print" style="text-align:center;width:40px;"></th>
+          </tr>
+        </thead>
+        <tbody id="items"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="total-label">Tổng cộng</td>
+            <td style="text-align:right;" id="total">0 VND</td>
+            <td class="no-print"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- ============ NÚT TÁC VỤ ============ -->
+    <div class="actions no-print">
+      <button class="btn btn-success" onclick="addRow()">➕ Thêm dòng</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 In hóa đơn</button>
+    </div>
+
+    <!-- ============ NGÂN HÀNG & QR ============ -->
+    <div class="bank-qr-grid">
+      <div class="bank-fields">
+        <div class="bank-row">
+          <label>Ngân hàng</label>
+          <select id="bank" onchange="syncQR()">
+            <option value="VCB">Vietcombank</option>
+            <option value="BIDV">BIDV</option>
+            <option value="TCB">Techcombank</option>
+            <option value="MB" selected>MB Bank</option>
+            <option value="ACB">ACB</option>
+            <option value="VPB">VPBank</option>
+            <option value="STB">Sacombank</option>
+            <option value="HDB">HDBank</option>
+            <option value="VIB">VIB</option>
+            <option value="TPB">TPBank</option>
+            <option value="SCB">SCB</option>
+            <option value="MSB">MSB</option>
+            <option value="SHB">SHB</option>
+            <option value="AGRIBANK">Agribank</option>
+            <option value="EIB">Eximbank</option>
+            <option value="SEAB">SeABank</option>
+            <option value="BAB">Bac A Bank</option>
+          </select>
+        </div>
+        <div class="bank-row">
+          <label>Số TK</label>
+          <input id="account" value="0123456789" oninput="syncQR()" />
+        </div>
+        <div class="bank-row">
+          <label>Nội dung</label>
+          <input id="description" value="TT hóa đơn HD-2026-001" oninput="syncQR()" />
+        </div>
+        <!-- Dòng hướng dẫn – ẩn khi in -->
+        <div class="warning-note no-print">
+          ⚠️ Thay đổi số tài khoản thật để QR hoạt động
+        </div>
+      </div>
+
+      <div class="qr-section">
+        <img id="qr" alt="Đang tạo mã QR..." />
+        <!-- Các dòng chữ hướng dẫn – đều có class no-print để ẩn khi in -->
+        <div class="qr-label no-print">Quét mã QR để thanh toán</div>
+        <div class="qr-note no-print">(Nội dung chuyển khoản sẽ hiển thị đúng)</div>
+      </div>
+    </div>
+
+    <!-- Mã vạch -->
+    <div class="barcode-wrap">
+      <svg id="barcode"></svg>
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <script>
+    // ---------- CORE ----------
+    const items = document.getElementById('items');
+
+    function fmt(n) {
+      return (n || 0).toLocaleString('vi-VN') + ' VND';
+    }
+
+    // Thêm dòng
+    function addRow(desc = '', qty = 1, price = 0) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input value="${desc}" placeholder="Tên dịch vụ / sản phẩm"></td>
+        <td style="text-align:center;"><input type="number" value="${qty}" min="1" oninput="calc()" style="text-align:center;"></td>
+        <td style="text-align:center;"><input type="number" value="${price}" min="0" step="1000" oninput="calc()" style="text-align:center;"></td>
+        <td class="line-total" style="text-align:right;">0</td>
+        <td class="no-print" style="text-align:center;">
+          <button class="remove-btn" onclick="this.closest('tr').remove();calc();">✕</button>
+        </td>
+      `;
+      items.appendChild(tr);
+      calc();
+    }
+
+    // Tính tổng
+    function calc() {
+      let sum = 0;
+      document.querySelectorAll('#items tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        const q = parseFloat(inputs[1]?.value) || 0;
+        const p = parseFloat(inputs[2]?.value) || 0;
+        const t = q * p;
+        const lineTd = tr.querySelector('.line-total');
+        if (lineTd) lineTd.textContent = fmt(t);
+        sum += t;
+      });
+      document.getElementById('total').textContent = fmt(sum);
+
+      // Barcode
+      try {
+        JsBarcode('#barcode', document.getElementById('invoiceNo').value || 'HD-0000', {
+          displayValue: true,
+          fontSize: 14,
+          height: 40,
+          width: 1.8,
+          background: '#ffffff',
+          lineColor: '#1e3b5c',
+          margin: 6
+        });
+      } catch (e) {}
+
+      // QR
+      syncQR();
+    }
+
+    // Cập nhật QR với nội dung
+    function syncQR() {
+      const bank = document.getElementById('bank').value;
+      const account = document.getElementById('account').value.trim();
+      const owner = document.getElementById('owner').value.trim();
+      const desc = document.getElementById('description').value.trim();
+
+      const qrImg = document.getElementById('qr');
+      const totalText = document.getElementById('total').textContent;
+      const amount = parseInt(totalText.replace(/\D/g, '')) || 0;
+
+      if (!bank || !account) {
+        qrImg.src = '';
+        qrImg.alt = 'Vui lòng nhập ngân hàng và số tài khoản';
+        return;
+      }
+
+      // Tạo URL với đầy đủ tham số (có _t chống cache)
+      const params = new URLSearchParams({
+        amount: amount,
+        accountName: owner || 'Chủ tài khoản',
+        description: desc || 'Thanh toán',
+        addInfo: desc || 'Thanh toán',
+        _t: Date.now()
+      });
+
+      const url = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${params.toString()}`;
+      qrImg.src = url;
+      qrImg.alt = 'Đang tải QR...';
+
+      // Xử lý lỗi tải ảnh
+      qrImg.onerror = function() {
+        // Thử lại lần 2 với fallback (bỏ amount nếu có lỗi)
+        const fallback = new URLSearchParams({
+          accountName: owner || 'Chủ tài khoản',
+          description: desc || 'Thanh toán',
+          addInfo: desc || 'Thanh toán',
+          _t: Date.now()
+        });
+        if (amount > 0) fallback.set('amount', amount);
+        this.src = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${fallback.toString()}`;
+        this.onerror = function() {
+          this.src = '';
+          this.alt = '❌ Lỗi tạo QR. Kiểm tra ngân hàng và số tài khoản.';
+        };
+      };
+    }
+
+    // ---------- KHỞI TẠO ----------
+    addRow('Tư vấn giải pháp', 2, 1500000);
+    addRow('Phát triển phần mềm', 1, 3500000);
+    // Cập nhật lần đầu
+    setTimeout(() => calc(), 100);
+  </script>
+
+</body>
+</html>
