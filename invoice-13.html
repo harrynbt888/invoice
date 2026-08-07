@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hóa đơn bán hàng</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+    <style>
+        /* ----- RESET & BASE ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #d6cdc4;
+            font-family: 'Times New Roman', 'Georgia', 'Nimbus Roman', serif;
+            font-size: 14px;
+            color: #3e2e23;
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            align-items: center;
+        }
+
+        .invoice-wrapper {
+            max-width: 820px;
+            width: 100%;
+            background: #fef8f0;
+            padding: 28px 32px 22px;
+            border: 3px solid #5a3e2b;
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.08);
+        }
+
+        .no-print {
+            display: inline-block;
+        }
+
+        /* ----- HEADER: đơn giản, căn giữa ----- */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #5a3e2b;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+        }
+
+        .company .name {
+            font-size: 26px;
+            font-weight: 700;
+            color: #3e2e23;
+            border: none;
+            border-bottom: 2px dotted #b2957e;
+            background: transparent;
+            outline: none;
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+            margin: 0 auto 4px;
+            padding: 2px 6px;
+            font-family: inherit;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .barcode-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f3ede7;
+            padding: 4px 14px 4px 10px;
+            border-radius: 0;
+            border: 1px solid #b2957e;
+        }
+        .barcode-box label {
+            font-weight: 600;
+            color: #3e2e23;
+        }
+        .barcode-box input {
+            border: none;
+            border-bottom: 1.5px dashed #8c6e5b;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 2px 6px;
+            width: 120px;
+            text-align: center;
+            color: #3e2e23;
+            font-family: inherit;
+        }
+        .barcode-box input:focus {
+            outline: none;
+            border-bottom-color: #5a3e2b;
+        }
+        .barcode-box svg {
+            height: 30px;
+            background: #fef8f0;
+            padding: 0 6px;
+        }
+
+        .date-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+            color: #3e2e23;
+        }
+        .date-group input {
+            width: 34px;
+            text-align: center;
+            border: none;
+            border-bottom: 1.5px dashed #8c6e5b;
+            background: transparent;
+            font-size: 14px;
+            padding: 2px;
+            font-family: inherit;
+        }
+        .date-group input:focus {
+            outline: none;
+            border-bottom-color: #5a3e2b;
+        }
+        .date-group input:nth-child(3) {
+            width: 56px;
+        }
+
+        /* ----- TITLE: chữ hoa, to ----- */
+        .title-row {
+            text-align: center;
+            margin: 6px 0 12px;
+        }
+        .title-row h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #3e2e23;
+            text-transform: uppercase;
+            border-top: 2px solid #5a3e2b;
+            border-bottom: 2px solid #5a3e2b;
+            display: inline-block;
+            padding: 4px 24px;
+            background: #f3ede7;
+            font-family: inherit;
+        }
+
+        /* ----- CUSTOMER INFO: dạng dòng kẻ ----- */
+        .customer-info {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 8px 30px;
+            padding: 8px 0;
+            border-top: 1px solid #b2957e;
+            border-bottom: 1px solid #b2957e;
+            margin-bottom: 14px;
+        }
+        .customer-info label {
+            font-weight: 700;
+            color: #3e2e23;
+        }
+        .customer-info input {
+            border: none;
+            border-bottom: 1.5px dashed #8c6e5b;
+            background: transparent;
+            font-size: 14px;
+            padding: 2px 6px;
+            min-width: 160px;
+            transition: border 0.2s;
+            font-family: inherit;
+            text-align: center;
+        }
+        .customer-info input:focus {
+            outline: none;
+            border-bottom-color: #5a3e2b;
+        }
+
+        /* ----- TABLE: kẻ ô đơn giản ----- */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 6px 0 12px;
+            border: 1.5px solid #5a3e2b;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 500px;
+        }
+        .table th {
+            background: #e8ddd2;
+            color: #3e2e23;
+            font-weight: 700;
+            padding: 8px 6px;
+            border-bottom: 2px solid #5a3e2b;
+            text-align: center;
+            font-family: inherit;
+        }
+        .table td {
+            padding: 4px 4px;
+            border-bottom: 1px solid #d6c8bc;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table td .name-cell {
+            min-width: 100px;
+            text-align: left;
+            padding: 2px 6px;
+            cursor: text;
+            font-weight: 500;
+            color: #3e2e23;
+            display: block;
+            font-family: inherit;
+        }
+        .table td .name-cell:focus {
+            outline: 2px solid #b2957e;
+            background: #fffaf2;
+        }
+
+        .table td input {
+            width: 100%;
+            min-width: 40px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-size: 13px;
+            padding: 2px 2px;
+            border-radius: 0;
+            font-family: inherit;
+        }
+        .table td input:focus {
+            outline: 2px solid #b2957e;
+            background: #fffaf2;
+        }
+        .table td input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .table td input[type="number"]::-webkit-outer-spin-button,
+        .table td input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .table td:first-child {
+            background: #f3ede7;
+            font-weight: 700;
+            color: #3e2e23;
+            width: 30px;
+        }
+
+        .table td .line-total {
+            font-weight: 700;
+            color: #3e2e23;
+        }
+
+        .table td .del-btn {
+            background: #e8d5c6;
+            color: #5a3e2b;
+            border: 1px solid #b2957e;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0;
+        }
+        .table td .del-btn:hover {
+            background: #d6c0af;
+        }
+
+        .add-row-btn {
+            margin: 4px auto 10px;
+            background: #e8ddd2;
+            border: 1.5px solid #5a3e2b;
+            color: #3e2e23;
+            font-weight: 700;
+            padding: 6px 22px;
+            border-radius: 0;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+        .add-row-btn:hover {
+            background: #d6c8bc;
+        }
+
+        /* ----- TOTALS & QR: hai cột có khung riêng ----- */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 8px;
+        }
+
+        .totals-box {
+            border: 1.5px solid #5a3e2b;
+            padding: 14px 18px;
+            background: #faf3ea;
+        }
+        .totals-box .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #d6c8bc;
+        }
+        .totals-box .row:last-of-type {
+            border-bottom: none;
+        }
+        .totals-box .row .label {
+            font-weight: 600;
+            color: #5a3e2b;
+        }
+        .totals-box .row .value {
+            font-weight: 700;
+        }
+        .totals-box .row.discount input {
+            width: 60px;
+            border: none;
+            border-bottom: 1.5px dashed #8c6e5b;
+            background: transparent;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 2px 4px;
+            font-family: inherit;
+        }
+        .totals-box .row.discount input:focus {
+            outline: none;
+            border-bottom-color: #5a3e2b;
+        }
+
+        .totals-box .final-row {
+            background: #3e2e23;
+            color: #fef8f0;
+            padding: 10px 14px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .qr-box {
+            border: 1.5px solid #5a3e2b;
+            padding: 14px 16px;
+            background: #faf3ea;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .qr-box .bank-info {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 6px 14px;
+            font-size: 13px;
+        }
+        .qr-box .bank-info label {
+            font-weight: 600;
+            color: #5a3e2b;
+        }
+        .qr-box .bank-info select,
+        .qr-box .bank-info input {
+            border: none;
+            border-bottom: 1.5px dashed #8c6e5b;
+            background: transparent;
+            padding: 2px 4px;
+            font-size: 13px;
+            min-width: 100px;
+            text-align: center;
+            font-family: inherit;
+        }
+        .qr-box .bank-info select:focus,
+        .qr-box .bank-info input:focus {
+            outline: none;
+            border-bottom-color: #5a3e2b;
+        }
+        .qr-box img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            background: white;
+            padding: 4px;
+            border: 1px solid #b2957e;
+        }
+
+        /* ----- FOOTER ----- */
+        .footer {
+            text-align: center;
+            font-size: 13px;
+            color: #5a3e2b;
+            border-top: 2px solid #5a3e2b;
+            padding-top: 12px;
+            margin-top: 16px;
+        }
+
+        .print-btn {
+            margin-top: 6px;
+            background: #3e2e23;
+            color: #fef8f0;
+            border: none;
+            padding: 8px 30px;
+            border-radius: 0;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+        .print-btn:hover {
+            background: #5a3e2b;
+        }
+
+        /* ----- PRINT (1 trang A4) ----- */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .invoice-wrapper {
+                box-shadow: none;
+                border: 2px solid #3e2e23;
+                padding: 18px 22px;
+                max-width: 100%;
+                background: #fef8f0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .header {
+                border-bottom-color: #3e2e23 !important;
+            }
+            .title-row h1 {
+                border-color: #3e2e23 !important;
+                background: #f3ede7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .table th {
+                background: #e8ddd2 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .table td:first-child {
+                background: #f3ede7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .totals-box .final-row {
+                background: #3e2e23 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                color: #fef8f0 !important;
+            }
+            .totals-box,
+            .qr-box {
+                background: #faf3ea !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                border-color: #3e2e23 !important;
+            }
+            .qr-box img {
+                border-color: #b2957e !important;
+            }
+            .barcode-box {
+                background: #f3ede7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                border-color: #b2957e !important;
+            }
+            .customer-info {
+                border-color: #b2957e !important;
+            }
+            .footer {
+                border-top-color: #3e2e23 !important;
+            }
+            /* thu nhỏ để vừa A4 */
+            .invoice-wrapper {
+                padding: 12px 16px !important;
+            }
+            .company .name {
+                font-size: 22px !important;
+            }
+            .title-row h1 {
+                font-size: 24px !important;
+                padding: 2px 16px !important;
+            }
+            .table th {
+                padding: 5px 4px !important;
+                font-size: 12px !important;
+            }
+            .table td {
+                padding: 2px 3px !important;
+                font-size: 12px !important;
+            }
+            .totals-box .row {
+                font-size: 13px !important;
+                padding: 2px 0 !important;
+            }
+            .totals-box .final-row {
+                font-size: 18px !important;
+                padding: 8px 12px !important;
+            }
+            .qr-box img {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            .add-row-btn {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-meta {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .barcode-box {
+                justify-content: center;
+            }
+            .date-group {
+                justify-content: center;
+            }
+            .customer-info {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .customer-info input {
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="invoice-wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="company">
+            <input class="name" value="CỬA HÀNG ABC" />
+        </div>
+        <div class="header-meta">
+            <span class="barcode-box">
+                <label>Mã</label>
+                <input id="invoiceId" value="HD00001" oninput="updateAll()" />
+                <svg id="barcode"></svg>
+            </span>
+            <span class="date-group">
+                <label>Ngày</label>
+                <input placeholder="DD" /> / <input placeholder="MM" /> / <input placeholder="YYYY" />
+            </span>
+        </div>
+    </div>
+
+    <!-- TITLE -->
+    <div class="title-row">
+        <h1>HÓA ĐƠN BÁN HÀNG</h1>
+    </div>
+
+    <!-- CUSTOMER INFO -->
+    <div class="customer-info">
+        <label>Khách hàng</label>
+        <input value="NGUYỄN VĂN A" />
+        <label>Điện thoại</label>
+        <input value="0987 654 321" placeholder="SĐT" />
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width:6%;">STT</th>
+                    <th style="width:32%;">Tên hàng</th>
+                    <th style="width:10%;">ĐVT</th>
+                    <th style="width:10%;">SL</th>
+                    <th style="width:16%;">Đơn giá</th>
+                    <th style="width:16%;">Thành tiền</th>
+                    <th style="width:10%;" class="no-print"></th>
+                </tr>
+            </thead>
+            <tbody id="items"></tbody>
+        </table>
+    </div>
+    <div style="text-align:center;">
+        <button class="add-row-btn no-print" onclick="addItem()">
+            <i class="fas fa-plus-circle"></i> Thêm dòng
+        </button>
+    </div>
+
+    <!-- BOTTOM: TOTALS + QR (2 cột) -->
+    <div class="bottom-grid">
+        <div class="totals-box">
+            <div class="row">
+                <span class="label">Tổng tiền</span>
+                <span class="value" id="total">0</span>
+            </div>
+            <div class="row discount">
+                <span class="label">Giảm (%)</span>
+                <input id="discount" type="number" value="0" oninput="updateAll()" />
+            </div>
+            <!-- Đã bỏ dòng Thuế -->
+            <div class="final-row">
+                <span>Thanh toán</span>
+                <span id="final">0</span>
+            </div>
+        </div>
+
+        <div class="qr-box">
+            <div class="bank-info">
+                <label>Ngân hàng</label>
+                <select id="bank" onchange="updateQR()">
+                    <option value="VCB">Vietcombank</option>
+                    <option value="ABB">ABBank</option>
+                    <option value="SHBVN">SOL</option>
+                    <option value="ACB">ACB</option>
+                    <option value="AGRIBANK">Agribank</option>
+                    <option value="BAB">Bac A Bank</option>
+                    <option value="BAOVIETBANK">BaoViet Bank</option>
+                    <option value="BIDV">BIDV</option>
+                    <option value="BVB">BVBank</option>
+                    <option value="EIB">Eximbank</option>
+                    <option value="HDB">HDBank</option>
+                    <option value="ICB">VietinBank</option>
+                    <option value="KLB">KienlongBank</option>
+                    <option value="MB">MB Bank</option>
+                    <option value="MSB">MSB</option>
+                    <option value="NAB">Nam A Bank</option>
+                    <option value="OCB">OCB</option>
+                    <option value="PGB">PG Bank</option>
+                    <option value="PVCOMBANK">PVcomBank</option>
+                    <option value="SAIGONBANK">SaigonBank</option>
+                    <option value="SCB">SCB</option>
+                    <option value="SEAB">SeABank</option>
+                    <option value="SHB">SHB</option>
+                    <option value="STB">Sacombank</option>
+                    <option value="TCB">Techcombank</option>
+                    <option value="TPB">TPBank</option>
+                    <option value="VIB">VIB</option>
+                    <option value="VPB">VPBank</option>
+                    <option value="NCB">NCB</option>
+                </select>
+            </div>
+            <div class="bank-info">
+                <label>Số TK</label>
+                <input id="account" value="0123456789" oninput="updateQR()" />
+                <label>Chủ TK</label>
+                <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
+            </div>
+            <img id="qr" alt="QR thanh toán" />
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <span>Cảm ơn quý khách đã mua hàng!</span>
+        <div>
+            <button class="print-btn no-print" onclick="window.print()">
+                <i class="fas fa-print"></i> In hóa đơn
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const items = document.getElementById('items');
+
+    function addItem(name = '', qty = 1, price = 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="stt"></td>
+            <td><span class="name-cell" contenteditable="true">${name}</span></td>
+            <td><input type="text" value="" /></td>
+            <td><input type="number" value="${qty}" /></td>
+            <td><input type="number" value="${price}" /></td>
+            <td class="line-total">0</td>
+            <td class="no-print"><button class="del-btn" onclick="this.closest('tr').remove();updateAll()"><i class="fas fa-times"></i></button></td>
+        `;
+        items.appendChild(tr);
+
+        tr.querySelectorAll('input').forEach(i => i.oninput = updateAll);
+        tr.querySelector('.name-cell').oninput = updateAll;
+        updateAll();
+    }
+
+    function fmt(n) {
+        return (n || 0).toLocaleString('vi-VN');
+    }
+
+    function updateAll() {
+        let sum = 0;
+        [...items.children].forEach((tr, i) => {
+            tr.children[0].textContent = i + 1;
+            const q = +tr.children[3].querySelector('input').value || 0;
+            const p = +tr.children[4].querySelector('input').value || 0;
+            const t = q * p;
+            tr.querySelector('.line-total').textContent = fmt(t);
+            sum += t;
+        });
+
+        const d = +document.getElementById('discount').value || 0;
+        const final = Math.round(sum * (1 - d / 100));
+
+        document.getElementById('total').textContent = fmt(sum);
+        document.getElementById('final').textContent = fmt(final);
+
+        JsBarcode('#barcode', document.getElementById('invoiceId').value, {
+            displayValue: false,
+            height: 30,
+            width: 2,
+        });
+        updateQR();
+    }
+
+    function updateQR() {
+        const amount = document.getElementById('final').textContent.replace(/\D/g, '');
+        const bank = document.getElementById('bank').value;
+        const account = document.getElementById('account').value;
+        const owner = document.getElementById('owner').value;
+        const invoiceId = document.getElementById('invoiceId').value;
+        document.getElementById('qr').src =
+            `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${invoiceId}&accountName=${owner}`;
+    }
+
+    window.onload = () => {
+        addItem('Sản phẩm 1', 1, 100000);
+        addItem('Sản phẩm 2', 2, 50000);
+    };
+</script>
+</body>
+</html>
