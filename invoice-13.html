@@ -6,7 +6,6 @@
     <title>Hóa đơn bán hàng</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
     <style>
         * {
@@ -81,10 +80,13 @@
             padding: 4px 14px 4px 10px;
             border-radius: 0;
             border: 1px solid #b2957e;
+            flex: 1;
+            min-width: 150px;
         }
         .barcode-box label {
             font-weight: 600;
             color: #3e2e23;
+            flex-shrink: 0;
         }
         .barcode-box input {
             border: none;
@@ -93,7 +95,8 @@
             font-size: 14px;
             font-weight: 600;
             padding: 2px 6px;
-            width: 180px;
+            flex: 1;
+            min-width: 220px;
             text-align: center;
             color: #3e2e23;
             font-family: inherit;
@@ -103,22 +106,13 @@
             border-bottom-color: #5a3e2b;
         }
 
-        /* --- Barcode fixed width, hidden overflow --- */
-        .barcode-box svg {
-            height: 34px;
-            width: 160px;           /* cố định chiều rộng */
-            background: #fef8f0;
-            padding: 0 6px;
-            overflow: hidden;       /* cắt phần thừa nếu mã dài */
-            display: block;
-        }
-
         .date-group {
             display: flex;
             align-items: center;
             gap: 4px;
             font-weight: 500;
             color: #3e2e23;
+            flex-shrink: 0;
         }
         .date-group input {
             width: 34px;
@@ -401,13 +395,35 @@
             outline: none;
             border-bottom-color: #5a3e2b;
         }
-        .qr-box img {
+        
+        /* 👉 Wrapper mới cho QR */
+        .qr-wrapper {
+            position: relative;
             width: 120px;
             height: 120px;
+        }
+        .qr-wrapper img {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             background: white;
             padding: 4px;
             border: 1px solid #b2957e;
+        }
+        .qr-fallback {
+            display: none;
+            width: 100%;
+            height: 100%;
+            background: #f3ede7;
+            border: 1px solid #b2957e;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #5a3e2b;
+        }
+        .qr-fallback i {
+            font-size: 28px;
+            margin-bottom: 6px;
         }
 
         .footer {
@@ -487,7 +503,7 @@
                 print-color-adjust: exact;
                 border-color: #3e2e23 !important;
             }
-            .qr-box img {
+            .qr-wrapper img {
                 border-color: #b2957e !important;
             }
             .barcode-box {
@@ -528,15 +544,12 @@
                 font-size: 18px !important;
                 padding: 8px 12px !important;
             }
-            .qr-box img {
+            .qr-wrapper {
                 width: 100px !important;
                 height: 100px !important;
             }
             .add-row-btn {
                 display: none !important;
-            }
-            .barcode-box svg {
-                width: 130px !important;
             }
         }
 
@@ -578,7 +591,6 @@
             <span class="barcode-box">
                 <label>Mã</label>
                 <input id="invoiceId" value="HD00001" oninput="updateAll()" />
-                <svg id="barcode"></svg>
             </span>
             <span class="date-group">
                 <label>Ngày</label>
@@ -682,7 +694,15 @@
                 <label>Chủ TK</label>
                 <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
             </div>
-            <img id="qr" alt="QR thanh toán" />
+            <div class="qr-wrapper">
+                <!-- Ảnh QR chính -->
+                <img id="qr" alt="QR thanh toán" />
+                <!-- Fallback khi ảnh bị lỗi tải -->
+                <div id="qr-fallback" class="qr-fallback">
+                    <i class="fas fa-qrcode"></i>
+                    <span>QR Code</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -699,6 +719,7 @@
 
 <script>
     const items = document.getElementById('items');
+    let qrRetried = false; // Biến kiểm tra đã thử fallback quốc tế chưa
 
     function addItem(name = '', qty = 1, price = 0) {
         const tr = document.createElement('tr');
@@ -738,24 +759,49 @@
 
         document.getElementById('total').textContent = fmt(sum);
         document.getElementById('final').textContent = fmt(final);
-
-        // Barcode với width=1.0 (mỏng) và cố định khung hiển thị 160px
-        JsBarcode('#barcode', document.getElementById('invoiceId').value, {
-            displayValue: false,
-            height: 34,
-            width: 1.0,
-        });
+        
+        // Reset biến cờ khi cập nhật
+        qrRetried = false;
         updateQR();
     }
 
+    // Hàm Fallback QR
     function updateQR() {
         const amount = document.getElementById('final').textContent.replace(/\D/g, '');
         const bank = document.getElementById('bank').value;
         const account = document.getElementById('account').value;
         const owner = document.getElementById('owner').value;
         const invoiceId = document.getElementById('invoiceId').value;
-        document.getElementById('qr').src =
-            `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${invoiceId}&accountName=${owner}`;
+
+        const img = document.getElementById('qr');
+        const fallback = document.getElementById('qr-fallback');
+        
+        // Reset hiển thị
+        img.style.display = 'block';
+        fallback.style.display = 'none';
+        img.onerror = null; // Xóa sự kiện cũ
+        qrRetried = false;
+
+        // 1. Link VietQR
+        const vietQrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${invoiceId}&accountName=${owner}`;
+
+        // 2. Gán sự kiện onerror
+        img.onerror = function() {
+            if (!qrRetried) {
+                qrRetried = true;
+                // Thử dùng QuickChart API (Quốc tế, ít bị chặn)
+                const qrText = `Ngân hàng: ${document.getElementById('bank').selectedOptions[0].text}\nSố TK: ${account}\nChủ TK: ${owner}\nSố tiền: ${amount} VND\nMã HD: ${invoiceId}`;
+                const qcUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrText)}&size=300&ecLevel=L&margin=0`;
+                img.src = qcUrl;
+            } else {
+                // Nếu vẫn lỗi, bung giao diện Fallback
+                img.style.display = 'none';
+                fallback.style.display = 'flex';
+            }
+        };
+
+        // Bắt đầu tải VietQR
+        img.src = vietQrUrl;
     }
 
     window.onload = () => {

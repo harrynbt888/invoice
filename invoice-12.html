@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
     <style>
         /* ----- RESET ----- */
@@ -78,6 +77,7 @@
             margin-top: 8px;
         }
 
+        /* Đã xóa khung chứa barcode. Input mã chiếm diện tích lớn hơn */
         .header-meta .barcode-box {
             display: flex;
             align-items: center;
@@ -86,13 +86,16 @@
             padding: 4px 12px 4px 8px;
             border-radius: 30px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            flex: 1;
+            min-width: 150px;
         }
         .header-meta .barcode-box label {
             font-size: 12px;
             font-weight: 500;
             color: #0c4a6e;
         }
-        /* 👉 Đã tăng chiều rộng input lên 160px để nhập mã dài */
+        
+        /* 👉 Đã kéo dài input mã lên tối đa */
         .header-meta .barcode-box input {
             border: none;
             border-bottom: 1.5px dashed #94a3b8;
@@ -100,29 +103,14 @@
             font-size: 12px;
             font-weight: 600;
             padding: 2px 4px;
-            width: 160px; 
+            flex: 1;
+            min-width: 220px;
             text-align: center;
             color: #0c4a6e;
         }
         .header-meta .barcode-box input:focus {
             outline: none;
             border-bottom-color: #0c4a6e;
-        }
-        
-        /* 👉 Bọc barcode để cố định kích thước và đứng yên */
-        .barcode-wrap {
-            width: 130px; 
-            height: 28px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: visible;
-        }
-        .barcode-wrap svg {
-            display: block;
-            transform-origin: center center;
-            width: auto;
-            height: 100%;
         }
 
         .header-meta .date-group {
@@ -131,6 +119,7 @@
             gap: 6px;
             font-size: 13px;
             color: #0c4a6e;
+            flex-shrink: 0;
         }
         .header-meta .date-group label {
             font-weight: 500;
@@ -418,14 +407,35 @@
             outline: none;
             border-bottom-color: #0c4a6e;
         }
-        .qr-panel img {
+
+        .qr-wrapper {
+            position: relative;
             width: 130px;
             height: 130px;
+            margin: 0 auto;
+        }
+        .qr-wrapper img {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             background: white;
             border-radius: 10px;
             padding: 4px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        /* Fallback khi API lỗi */
+        .qr-fallback {
+            display: none;
+            width: 100%;
+            height: 100%;
+            background: #f1f5f9;
+            border-radius: 10px;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            color: #475569;
+            flex-direction: column;
+            border: 1px solid #e2e8f0;
         }
 
         /* ----- FOOTER ----- */
@@ -548,9 +558,9 @@
                 padding: 10px 12px !important;
                 margin-bottom: 6px !important;
             }
-            .qr-panel img {
-                width: 100px !important;
-                height: 100px !important;
+            .qr-wrapper {
+                width: 100px;
+                height: 100px;
             }
             .footer {
                 margin-top: 6px !important;
@@ -605,8 +615,8 @@
         <div class="header-meta">
             <span class="barcode-box">
                 <label>Mã</label>
+                <!-- Bây giờ ô input này đã rất dài, bạn có thể nhập thoải mái -->
                 <input id="invoiceId" value="HD00001" oninput="updateAll()" />
-                <div class="barcode-wrap"><svg id="barcode"></svg></div>
             </span>
             <span class="date-group">
                 <label>Ngày</label>
@@ -708,7 +718,15 @@
             <label>Chủ TK</label>
             <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
         </div>
-        <img id="qr" alt="QR thanh toán" />
+        
+        <!-- Wrapper chứa QR Code + Fallback -->
+        <div class="qr-wrapper">
+            <img id="qr" alt="QR thanh toán" />
+            <div id="qr-fallback" class="qr-fallback">
+                <i class="fas fa-qrcode" style="font-size:32px; margin-bottom:6px;"></i>
+                <span style="font-size:12px;">QR Code</span>
+            </div>
+        </div>
     </div>
 
     <!-- FOOTER -->
@@ -726,6 +744,7 @@
 
 <script>
     const items = document.getElementById('items');
+    let qrRetried = false; // Cờ để kiểm tra đã thử fallback chưa
 
     function addItem(name = '', qty = 1, price = 0) {
         const tr = document.createElement('tr');
@@ -749,32 +768,6 @@
         return (n || 0).toLocaleString('vi-VN');
     }
 
-    // 👉 Hàm render Barcode cố định vị trí, chỉ thu nhỏ từ tâm
-    function renderBarcode() {
-        const val = document.getElementById('invoiceId').value;
-        const svg = document.getElementById('barcode');
-        const wrapper = svg.parentNode;
-
-        JsBarcode(svg, val, {
-            displayValue: false,
-            height: 28,
-            width: 1.2,
-            margin: 0
-        });
-
-        // Đợi DOM vẽ xong để lấy kích thước chính xác
-        requestAnimationFrame(() => {
-            const actualWidth = svg.getBBox().width;
-            const wrapperWidth = wrapper.clientWidth || 130;
-
-            if (actualWidth > 0) {
-                // Tính tỉ lệ co: Chỉ co nhỏ nếu dài hơn wrapper, giữ nguyên nếu ngắn hơn
-                const scale = Math.min(1, wrapperWidth / actualWidth);
-                svg.style.transform = `scale(${scale})`;
-            }
-        });
-    }
-
     function updateAll() {
         let sum = 0;
         [...items.children].forEach((tr, i) => {
@@ -791,7 +784,7 @@
         document.getElementById('total').textContent = fmt(sum);
         document.getElementById('final').textContent = fmt(pay);
 
-        renderBarcode();
+        qrRetried = false; // Reset cờ khi tính toán lại
         updateQR();
     }
 
@@ -801,8 +794,38 @@
         const account = document.getElementById('account').value;
         const owner = document.getElementById('owner').value;
         const invoiceId = document.getElementById('invoiceId').value;
-        document.getElementById('qr').src =
-            `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${invoiceId}&accountName=${owner}`;
+        
+        const img = document.getElementById('qr');
+        const fallback = document.getElementById('qr-fallback');
+        
+        // Reset trạng thái hiển thị
+        img.style.display = 'block';
+        fallback.style.display = 'none';
+        img.onerror = null;
+        qrRetried = false;
+
+        // 1. Tạo link VietQR API (Ưu tiên hàng đầu)
+        const encodedInfo = encodeURIComponent(invoiceId);
+        const encodedOwner = encodeURIComponent(owner);
+        const vietQrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${encodedInfo}&accountName=${encodedOwner}`;
+
+        // 2. Thiết lập cơ chế Fallback nếu VietQR lỗi
+        img.onerror = function() {
+            if (!qrRetried) {
+                qrRetried = true;
+                // Thử dùng QuickChart API (Không bị chặn quốc tế)
+                const qrText = `Ngân hàng: ${document.getElementById('bank').selectedOptions[0].text}\nSố TK: ${account}\nChủ TK: ${owner}\nSố tiền: ${amount} VND\nMã HD: ${invoiceId}`;
+                const qcUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrText)}&size=300&ecLevel=L&margin=0`;
+                img.src = qcUrl;
+            } else {
+                // Nếu QuickChart cũng lỗi, bung fallback giao diện
+                img.style.display = 'none';
+                fallback.style.display = 'flex';
+            }
+        };
+
+        // Bắt đầu tải ảnh VietQR
+        img.src = vietQrUrl;
     }
 
     window.onload = () => {
