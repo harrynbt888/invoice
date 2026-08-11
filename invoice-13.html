@@ -9,7 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
     <style>
-        /* ----- RESET & BASE ----- */
         * {
             margin: 0;
             padding: 0;
@@ -41,7 +40,6 @@
             display: inline-block;
         }
 
-        /* ----- HEADER: đơn giản, căn giữa ----- */
         .header {
             text-align: center;
             border-bottom: 2px solid #5a3e2b;
@@ -95,7 +93,7 @@
             font-size: 14px;
             font-weight: 600;
             padding: 2px 6px;
-            width: 120px;
+            width: 180px;
             text-align: center;
             color: #3e2e23;
             font-family: inherit;
@@ -104,10 +102,15 @@
             outline: none;
             border-bottom-color: #5a3e2b;
         }
+
+        /* --- Barcode fixed width, hidden overflow --- */
         .barcode-box svg {
-            height: 30px;
+            height: 34px;
+            width: 160px;           /* cố định chiều rộng */
             background: #fef8f0;
             padding: 0 6px;
+            overflow: hidden;       /* cắt phần thừa nếu mã dài */
+            display: block;
         }
 
         .date-group {
@@ -135,7 +138,6 @@
             width: 56px;
         }
 
-        /* ----- TITLE: chữ hoa, to ----- */
         .title-row {
             text-align: center;
             margin: 6px 0 12px;
@@ -154,7 +156,6 @@
             font-family: inherit;
         }
 
-        /* ----- CUSTOMER INFO: dạng dòng kẻ ----- */
         .customer-info {
             display: flex;
             flex-wrap: wrap;
@@ -186,7 +187,6 @@
             border-bottom-color: #5a3e2b;
         }
 
-        /* ----- TABLE: kẻ ô đơn giản ----- */
         .table-wrap {
             overflow-x: auto;
             margin: 6px 0 12px;
@@ -307,7 +307,6 @@
             background: #d6c8bc;
         }
 
-        /* ----- TOTALS & QR: hai cột có khung riêng ----- */
         .bottom-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -411,7 +410,6 @@
             border: 1px solid #b2957e;
         }
 
-        /* ----- FOOTER ----- */
         .footer {
             text-align: center;
             font-size: 13px;
@@ -441,7 +439,6 @@
             background: #5a3e2b;
         }
 
-        /* ----- PRINT (1 trang A4) ----- */
         @media print {
             body {
                 background: white;
@@ -505,7 +502,6 @@
             .footer {
                 border-top-color: #3e2e23 !important;
             }
-            /* thu nhỏ để vừa A4 */
             .invoice-wrapper {
                 padding: 12px 16px !important;
             }
@@ -538,6 +534,9 @@
             }
             .add-row-btn {
                 display: none !important;
+            }
+            .barcode-box svg {
+                width: 130px !important;
             }
         }
 
@@ -624,7 +623,7 @@
         </button>
     </div>
 
-    <!-- BOTTOM: TOTALS + QR (2 cột) -->
+    <!-- BOTTOM: TOTALS + QR -->
     <div class="bottom-grid">
         <div class="totals-box">
             <div class="row">
@@ -635,7 +634,6 @@
                 <span class="label">Giảm (%)</span>
                 <input id="discount" type="number" value="0" oninput="updateAll()" />
             </div>
-            <!-- Đã bỏ dòng Thuế -->
             <div class="final-row">
                 <span>Thanh toán</span>
                 <span id="final">0</span>
@@ -675,6 +673,7 @@
                     <option value="VIB">VIB</option>
                     <option value="VPB">VPBank</option>
                     <option value="NCB">NCB</option>
+                    <option value="VIKKI">VIKKI</option>
                 </select>
             </div>
             <div class="bank-info">
@@ -740,10 +739,11 @@
         document.getElementById('total').textContent = fmt(sum);
         document.getElementById('final').textContent = fmt(final);
 
+        // Barcode với width=1.0 (mỏng) và cố định khung hiển thị 160px
         JsBarcode('#barcode', document.getElementById('invoiceId').value, {
             displayValue: false,
-            height: 30,
-            width: 2,
+            height: 34,
+            width: 1.0,
         });
         updateQR();
     }
