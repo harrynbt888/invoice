@@ -92,6 +92,7 @@
             font-weight: 500;
             color: #0c4a6e;
         }
+        /* 👉 Đã tăng chiều rộng input lên 160px để nhập mã dài */
         .header-meta .barcode-box input {
             border: none;
             border-bottom: 1.5px dashed #94a3b8;
@@ -99,7 +100,7 @@
             font-size: 12px;
             font-weight: 600;
             padding: 2px 4px;
-            width: 110px;
+            width: 160px; 
             text-align: center;
             color: #0c4a6e;
         }
@@ -107,11 +108,21 @@
             outline: none;
             border-bottom-color: #0c4a6e;
         }
-        .header-meta .barcode-box svg {
+        
+        /* 👉 Bọc barcode để cố định kích thước và đứng yên */
+        .barcode-wrap {
+            width: 130px; 
             height: 28px;
-            background: #f8fafc;
-            border-radius: 4px;
-            padding: 0 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: visible;
+        }
+        .barcode-wrap svg {
+            display: block;
+            transform-origin: center center;
+            width: auto;
+            height: 100%;
         }
 
         .header-meta .date-group {
@@ -595,7 +606,7 @@
             <span class="barcode-box">
                 <label>Mã</label>
                 <input id="invoiceId" value="HD00001" oninput="updateAll()" />
-                <svg id="barcode"></svg>
+                <div class="barcode-wrap"><svg id="barcode"></svg></div>
             </span>
             <span class="date-group">
                 <label>Ngày</label>
@@ -737,6 +748,32 @@
         return (n || 0).toLocaleString('vi-VN');
     }
 
+    // 👉 Hàm render Barcode cố định vị trí, chỉ thu nhỏ từ tâm
+    function renderBarcode() {
+        const val = document.getElementById('invoiceId').value;
+        const svg = document.getElementById('barcode');
+        const wrapper = svg.parentNode;
+
+        JsBarcode(svg, val, {
+            displayValue: false,
+            height: 28,
+            width: 1.2,
+            margin: 0
+        });
+
+        // Đợi DOM vẽ xong để lấy kích thước chính xác
+        requestAnimationFrame(() => {
+            const actualWidth = svg.getBBox().width;
+            const wrapperWidth = wrapper.clientWidth || 130;
+
+            if (actualWidth > 0) {
+                // Tính tỉ lệ co: Chỉ co nhỏ nếu dài hơn wrapper, giữ nguyên nếu ngắn hơn
+                const scale = Math.min(1, wrapperWidth / actualWidth);
+                svg.style.transform = `scale(${scale})`;
+            }
+        });
+    }
+
     function updateAll() {
         let sum = 0;
         [...items.children].forEach((tr, i) => {
@@ -753,11 +790,7 @@
         document.getElementById('total').textContent = fmt(sum);
         document.getElementById('final').textContent = fmt(pay);
 
-        JsBarcode('#barcode', document.getElementById('invoiceId').value, {
-            displayValue: false,
-            height: 28,
-            width: 2,
-        });
+        renderBarcode();
         updateQR();
     }
 
