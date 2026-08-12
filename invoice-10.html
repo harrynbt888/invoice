@@ -321,6 +321,10 @@
       align-items: center;
       gap: 8px;
     }
+    .table {
+    width: 100%;
+    table-layout: fixed; /* ⚠️ Rất quan trọng: Khóa cố định chiều rộng cột theo tỷ lệ % */
+}
 
     .bank-row label {
       font-size: 13px;
@@ -610,20 +614,31 @@
     }
 
     // Thêm dòng
-    function addRow(desc = '', qty = 1, price = 0) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><input value="${desc}" placeholder="Tên dịch vụ / sản phẩm"></td>
-        <td style="text-align:center;"><input type="number" value="${qty}" min="1" oninput="calc()" style="text-align:center;"></td>
-        <td style="text-align:center;"><input type="number" value="${price}" min="0" step="1000" oninput="calc()" style="text-align:center;"></td>
-        <td class="line-total" style="text-align:right;">0</td>
-        <td class="no-print" style="text-align:center;">
-          <button class="remove-btn" onclick="this.closest('tr').remove();calc();">✕</button>
+function addRow(desc = '', qty = 1, price = 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <!-- 👉 Kéo dài cột mô tả lên 45% -->
+        <td style="width: 45%; min-width: 180px;">
+            <input value="${desc}" placeholder="Tên dịch vụ / sản phẩm" style="width: 100%;">
         </td>
-      `;
-      items.appendChild(tr);
-      calc();
-    }
+        <!-- 👉 Thu nhỏ cột số lượng còn 12% -->
+        <td style="width: 12%; text-align:center;">
+            <input type="number" value="${qty}" min="1" oninput="calc()" style="width: 100%; text-align:center;">
+        </td>
+        <!-- 👉 Thu nhỏ cột đơn giá còn 15% -->
+        <td style="width: 15%; text-align:center;">
+            <input type="number" value="${price}" min="0" step="1000" oninput="calc()" style="width: 100%; text-align:center;">
+        </td>
+        <!-- 👉 Thu nhỏ cột thành tiền còn 15% -->
+        <td class="line-total" style="width: 15%; text-align:right;">0</td>
+        <!-- 👉 Cột hành động giữ nguyên kích thước nhỏ -->
+        <td class="no-print" style="width: 13%; text-align:center;">
+            <button class="remove-btn" onclick="this.closest('tr').remove();calc();">x</button>
+        </td>
+    `;
+    items.appendChild(tr);
+    calc();
+}
 
     // Tính tổng
     function calc() {
