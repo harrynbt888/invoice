@@ -408,6 +408,11 @@
             border-bottom-color: #0c4a6e;
         }
 
+        /* 👉 Tăng kích thước ô nhập Chủ TK lên 180px để nhập dài hơn */
+        .qr-panel .bank-info input#owner {
+            min-width: 180px;
+        }
+
         .qr-wrapper {
             position: relative;
             width: 130px;
@@ -716,6 +721,7 @@
             <label>Số TK</label>
             <input id="account" value="0123456789" oninput="updateQR()" />
             <label>Chủ TK</label>
+            <!-- Input Chủ TK đã được CSS tăng min-width lên 180px -->
             <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
         </div>
         
