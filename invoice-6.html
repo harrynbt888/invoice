@@ -264,41 +264,41 @@
         </div>
       </div>
 
-      <!-- BANK -->
+      <!-- BANK (đã thêm trường Nội dung) -->
       <div class="bank">
         <div class="bank-row">
           <span>NGÂN HÀNG</span>
           <select id="bank" onchange="syncQR()">
-      <option value="VCB">Vietcombank</option>
-          <option value="ABB">ABBank</option>
-          <option value="SHBVN">SOL</option>
-          <option value="ACB">ACB</option>
-          <option value="AGRIBANK">Agribank</option>
-          <option value="BAB">Bac A Bank</option>
-          <option value="BAOVIETBANK">BaoViet Bank</option>
-          <option value="BIDV">BIDV</option>
-          <option value="BVB">BVBank</option>
-          <option value="EIB">Eximbank</option>
-          <option value="HDB">HDBank</option>
-          <option value="ICB">VietinBank</option>
-          <option value="KLB">KienlongBank</option>
-          <option value="MB">MB Bank</option>
-          <option value="MSB">MSB</option>
-          <option value="NAB">Nam A Bank</option>
-          <option value="OCB">OCB</option>
-          <option value="PGB">PG Bank</option>
-          <option value="PVCOMBANK">PVcomBank</option>
-          <option value="SAIGONBANK">SaigonBank</option>
-          <option value="SCB">SCB</option>
-          <option value="SEAB">SeABank</option>
-          <option value="SHB">SHB</option>
-          <option value="STB">Sacombank</option>
-          <option value="TCB">Techcombank</option>
-          <option value="TPB">TPBank</option>
-          <option value="VIB">VIB</option>
-          <option value="VPB">VPBank</option>
-           <option value="NCB">NCB</option>
-           <option value="VIKKI">VIKKI</option>
+            <option value="VCB">Vietcombank</option>
+            <option value="ABB">ABBank</option>
+            <option value="SHBVN">SOL</option>
+            <option value="ACB">ACB</option>
+            <option value="AGRIBANK">Agribank</option>
+            <option value="BAB">Bac A Bank</option>
+            <option value="BAOVIETBANK">BaoViet Bank</option>
+            <option value="BIDV">BIDV</option>
+            <option value="BVB">BVBank</option>
+            <option value="EIB">Eximbank</option>
+            <option value="HDB">HDBank</option>
+            <option value="ICB">VietinBank</option>
+            <option value="KLB">KienlongBank</option>
+            <option value="MB">MB Bank</option>
+            <option value="MSB">MSB</option>
+            <option value="NAB">Nam A Bank</option>
+            <option value="OCB">OCB</option>
+            <option value="PGB">PG Bank</option>
+            <option value="PVCOMBANK">PVcomBank</option>
+            <option value="SAIGONBANK">SaigonBank</option>
+            <option value="SCB">SCB</option>
+            <option value="SEAB">SeABank</option>
+            <option value="SHB">SHB</option>
+            <option value="STB">Sacombank</option>
+            <option value="TCB">Techcombank</option>
+            <option value="TPB">TPBank</option>
+            <option value="VIB">VIB</option>
+            <option value="VPB">VPBank</option>
+            <option value="NCB">NCB</option>
+            <option value="VIKKI">VIKKI</option>
           </select>
         </div>
         <div class="bank-row">
@@ -308,6 +308,11 @@
         <div class="bank-row">
           <span>Chủ Tài Khoản</span>
           <input id="owner" value="NGUYEN VAN A" oninput="syncQR()" />
+        </div>
+        <!-- THÊM TRƯỜNG NỘI DUNG (description) -->
+        <div class="bank-row">
+          <span>Nội dung</span>
+          <input id="content" value="Thanh toán hóa đơn" oninput="syncQR()" />
         </div>
 
         <div class="qr">
@@ -329,12 +334,12 @@
       function addRow(name = "Item Name", qty = 1, price = 0) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-    <td><input value="${name}"></td>
-    <td class="center"><input type="number" value="${qty}" oninput="calc()"></td>
-    <td class="center"><input type="number" value="${price}" oninput="calc()"></td>
-    <td class="right line">0</td>
-    <td class="no-print delete" onclick="this.closest('tr').remove();calc()">✕</td>
-  `;
+          <td><input value="${name}"></td>
+          <td class="center"><input type="number" value="${qty}" oninput="calc()"></td>
+          <td class="center"><input type="number" value="${price}" oninput="calc()"></td>
+          <td class="right line">0</td>
+          <td class="no-print delete" onclick="this.closest('tr').remove();calc()">✕</td>
+        `;
         items.appendChild(tr);
         calc();
       }
@@ -361,10 +366,38 @@
 
       function syncQR() {
         const amount = total.textContent.replace(/\D/g, "");
-        qr.src = `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png?amount=${amount}&accountName=${owner.value}`;
+        const bank = document.getElementById("bank").value;
+        const account = document.getElementById("account").value;
+        const owner = document.getElementById("owner").value;
+        const content = document.getElementById("content").value; // lấy nội dung
+
+        // Tạo URL với tham số description (addInfo cũng được hỗ trợ)
+        const qrImg = document.getElementById("qr");
+        if (!bank || !account) {
+          qrImg.src = "";
+          return;
+        }
+
+        // Mã hóa nội dung và thêm timestamp để tránh cache
+        const params = new URLSearchParams({
+          amount: amount || "0",
+          accountName: owner || "",
+          description: content || "",
+          _t: Date.now()
+        });
+
+        qrImg.src = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${params.toString()}`;
+
+        // Xử lý lỗi nếu QR không tải được (ví dụ sai thông tin)
+        qrImg.onerror = function() {
+          this.src = "";
+          this.alt = "Lỗi tạo QR, kiểm tra lại thông tin";
+        };
       }
 
-      addRow("Item Name", 4, 50);
+      // Khởi tạo với một vài dòng mẫu
+      addRow("Sản phẩm A", 2, 150000);
+      addRow("Dịch vụ B", 1, 250000);
     </script>
   </body>
 </html>
