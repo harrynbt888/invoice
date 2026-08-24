@@ -26,6 +26,7 @@
         border: none;
         border-bottom: 1px dashed #aaa;
         font-size: 13px;
+        background: transparent;
       }
       input:focus,
       select:focus {
@@ -75,11 +76,12 @@
         padding: 4px;
       }
 
-      /* TABLE */
+      /* TABLE - ĐIỀU CHỈNH ĐỘ RỘNG CỘT */
       .table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 6px;
+        table-layout: fixed; /* giúp kiểm soát chiều rộng chính xác */
       }
       .table th,
       .table td {
@@ -87,14 +89,55 @@
         padding: 4px;
         font-size: 12px;
         text-align: center;
+        word-break: break-word;
+        vertical-align: middle;
       }
       .table th {
         background: #f5f7fa;
       }
+
+      /* ĐỘ RỘNG CỤ THỂ CHO TỪNG CỘT */
+      .table th:nth-child(1),
+      .table td:nth-child(1) {
+        width: 30px; /* STT */
+      }
+      .table th:nth-child(2),
+      .table td:nth-child(2) {
+        width: auto; /* Tên hàng – chiếm phần còn lại */
+        min-width: 150px;
+        text-align: left;
+        white-space: normal;
+        word-break: break-word;
+        padding: 6px;
+      }
+      .table th:nth-child(3),
+      .table td:nth-child(3) {
+        width: 50px; /* ĐVT */
+      }
+      .table th:nth-child(4),
+      .table td:nth-child(4) {
+        width: 50px; /* SL */
+      }
+      .table th:nth-child(5),
+      .table td:nth-child(5) {
+        width: 80px; /* Đơn giá */
+      }
+      .table th:nth-child(6),
+      .table td:nth-child(6) {
+        width: 80px; /* Thành tiền */
+      }
+      .table th:nth-child(7),
+      .table td:nth-child(7) {
+        width: 30px; /* Nút xóa */
+      }
+
+      /* Đảm bảo input trong các cột nhỏ vừa khung */
       .table td input {
         width: 100%;
+        box-sizing: border-box;
         border: none;
         text-align: right;
+        background: transparent;
       }
       .table td:nth-child(2) input {
         text-align: left;
@@ -113,12 +156,6 @@
       .qr-wrap img {
         width: 140px;
       }
-      .table td:nth-child(2) {
-  text-align: left;
-  white-space: normal;   /* cho phép xuống dòng */
-  word-break: break-word;
-  padding: 6px;
-}
 
       /* BUTTON */
       .btn {
@@ -131,17 +168,16 @@
         cursor: pointer;
       }
 
-     @media print {
-  .no-print {
-    display: none;
-  }
-
-  input,
-  select {
-    border: none;
-    color: #000;
-  }
-}
+      @media print {
+        .no-print {
+          display: none;
+        }
+        input,
+        select {
+          border: none;
+          color: #000;
+        }
+      }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -239,36 +275,36 @@
         <p>
           Ngân hàng:
           <select id="bank" onchange="updateQR()">
-          <option value="VCB">Vietcombank</option>
-          <option value="ABB">ABBank</option>
-          <option value="SHBVN">SOL</option>
-          <option value="ACB">ACB</option>
-          <option value="AGRIBANK">Agribank</option>
-          <option value="BAB">Bac A Bank</option>
-          <option value="BAOVIETBANK">BaoViet Bank</option>
-          <option value="BIDV">BIDV</option>
-          <option value="BVB">BVBank</option>
-          <option value="EIB">Eximbank</option>
-          <option value="HDB">HDBank</option>
-          <option value="ICB">VietinBank</option>
-          <option value="KLB">KienlongBank</option>
-          <option value="MB">MB Bank</option>
-          <option value="MSB">MSB</option>
-          <option value="NAB">Nam A Bank</option>
-          <option value="OCB">OCB</option>
-          <option value="PGB">PG Bank</option>
-          <option value="PVCOMBANK">PVcomBank</option>
-          <option value="SAIGONBANK">SaigonBank</option>
-          <option value="SCB">SCB</option>
-          <option value="SEAB">SeABank</option>
-          <option value="SHB">SHB</option>
-          <option value="STB">Sacombank</option>
-          <option value="TCB">Techcombank</option>
-          <option value="TPB">TPBank</option>
-          <option value="VIB">VIB</option>
-          <option value="VPB">VPBank</option>
-           <option value="NCB">NCB</option>
-           <option value="VIKKI">VIKKI</option>
+            <option value="VCB">Vietcombank</option>
+            <option value="ABB">ABBank</option>
+            <option value="SHBVN">SOL</option>
+            <option value="ACB">ACB</option>
+            <option value="AGRIBANK">Agribank</option>
+            <option value="BAB">Bac A Bank</option>
+            <option value="BAOVIETBANK">BaoViet Bank</option>
+            <option value="BIDV">BIDV</option>
+            <option value="BVB">BVBank</option>
+            <option value="EIB">Eximbank</option>
+            <option value="HDB">HDBank</option>
+            <option value="ICB">VietinBank</option>
+            <option value="KLB">KienlongBank</option>
+            <option value="MB">MB Bank</option>
+            <option value="MSB">MSB</option>
+            <option value="NAB">Nam A Bank</option>
+            <option value="OCB">OCB</option>
+            <option value="PGB">PG Bank</option>
+            <option value="PVCOMBANK">PVcomBank</option>
+            <option value="SAIGONBANK">SaigonBank</option>
+            <option value="SCB">SCB</option>
+            <option value="SEAB">SeABank</option>
+            <option value="SHB">SHB</option>
+            <option value="STB">Sacombank</option>
+            <option value="TCB">Techcombank</option>
+            <option value="TPB">TPBank</option>
+            <option value="VIB">VIB</option>
+            <option value="VPB">VPBank</option>
+            <option value="NCB">NCB</option>
+            <option value="VIKKI">VIKKI</option>
           </select>
         </p>
         <p>
@@ -304,23 +340,24 @@
     <script>
       const items = document.getElementById("items");
 
-    function addItem(name = "", qty = 1, price = 0) {
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-<td></td>
-<td contenteditable="true" class="name">${name}</td>
-<td><input></td>
-<td><input type="number" value="${qty}"></td>
-<td><input type="number" value="${price}"></td>
-<td class="line">0</td>
-<td class="no-print"><button onclick="this.closest('tr').remove();updateAll()">✕</button></td>`;
-  items.appendChild(tr);
+      function addItem(name = "", qty = 1, price = 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td></td>
+          <td contenteditable="true" class="name">${name}</td>
+          <td><input></td>
+          <td><input type="number" value="${qty}"></td>
+          <td><input type="number" value="${price}"></td>
+          <td class="line">0</td>
+          <td class="no-print"><button onclick="this.closest('tr').remove();updateAll()">✕</button></td>
+        `;
+        items.appendChild(tr);
 
-  tr.querySelectorAll("input").forEach((i) => (i.oninput = updateAll));
-  tr.querySelector(".name").oninput = updateAll;
+        tr.querySelectorAll("input").forEach((i) => (i.oninput = updateAll));
+        tr.querySelector(".name").oninput = updateAll;
 
-  updateAll();
-}
+        updateAll();
+      }
 
       function fmt(n) {
         return (n || 0).toLocaleString("vi-VN");
