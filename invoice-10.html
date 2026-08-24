@@ -152,20 +152,53 @@
       border-bottom-color: #2c7be5;
     }
 
-    /* ---------- TABLE ---------- */
+    /* ---------- BẢNG VỚI TỈ LỆ CỐ ĐỊNH ---------- */
     .table-wrap {
       overflow-x: auto;
       margin: 20px 0 16px;
     }
 
-    table {
+    .data-table {
       width: 100%;
+      table-layout: fixed;
       border-collapse: collapse;
       font-size: 14px;
     }
 
-    thead th {
+    /* Phân bổ chiều rộng cột: Mô tả chiếm 45%, còn lại chia đều */
+    .data-table th:nth-child(1),
+    .data-table td:nth-child(1) {
+      width: 45%;
       text-align: left;
+      word-break: break-word;
+      white-space: normal;
+    }
+
+    .data-table th:nth-child(2),
+    .data-table td:nth-child(2) {
+      width: 13%;
+      text-align: center;
+    }
+
+    .data-table th:nth-child(3),
+    .data-table td:nth-child(3) {
+      width: 15%;
+      text-align: center;
+    }
+
+    .data-table th:nth-child(4),
+    .data-table td:nth-child(4) {
+      width: 15%;
+      text-align: right;
+    }
+
+    .data-table th:nth-child(5),
+    .data-table td:nth-child(5) {
+      width: 12%;
+      text-align: center;
+    }
+
+    .data-table th {
       padding: 10px 8px 12px;
       border-bottom: 2px solid #dce3ed;
       font-size: 12px;
@@ -175,45 +208,32 @@
       font-weight: 600;
     }
 
-    thead th:not(:first-child) {
-      text-align: center;
-    }
-
-    thead th:last-child {
-      text-align: right;
-    }
-
-    tbody td {
+    .data-table td {
       padding: 8px 8px;
       border-bottom: 1px solid #edf2f8;
       vertical-align: middle;
     }
 
-    tbody td:not(:first-child) {
-      text-align: center;
+    .data-table td:first-child input {
+      text-align: left;
     }
 
-    tbody td:last-child {
-      text-align: right;
-    }
-
-    tbody input {
+    .data-table td input {
       width: 100%;
       border: none;
       background: transparent;
       font-size: 14px;
       color: #1a2a3a;
-      text-align: inherit;
       padding: 4px 2px;
     }
 
-    tbody input:focus {
+    .data-table td input:focus {
       outline: none;
       background: #f2f7ff;
       border-radius: 4px;
     }
 
-    tbody td .remove-btn {
+    .data-table td .remove-btn {
       background: none;
       border: none;
       color: #b91c1c;
@@ -225,7 +245,7 @@
       opacity: 0.5;
     }
 
-    tbody td .remove-btn:hover {
+    .data-table td .remove-btn:hover {
       opacity: 1;
       transform: scale(1.2);
     }
@@ -233,6 +253,7 @@
     .line-total {
       font-weight: 600;
       color: #1e3b5c;
+      text-align: right;
     }
 
     tfoot td {
@@ -321,10 +342,11 @@
       align-items: center;
       gap: 8px;
     }
-    .table {
-    width: 100%;
-    table-layout: fixed; /* ⚠️ Rất quan trọng: Khóa cố định chiều rộng cột theo tỷ lệ % */
-}
+
+    /* Hàng Nội dung sẽ chiếm toàn bộ chiều rộng */
+    .bank-row.full-width {
+      grid-column: 1 / -1;
+    }
 
     .bank-row label {
       font-size: 13px;
@@ -342,6 +364,7 @@
       font-size: 14px;
       color: #1a2a3a;
       font-family: inherit;
+      width: 100%;
     }
 
     .bank-row select:focus,
@@ -462,6 +485,11 @@
         width: 130px;
         height: 130px;
       }
+      .data-table th:nth-child(1),
+      .data-table td:nth-child(1) {
+        width: 30%;
+        min-width: 100px;
+      }
     }
   </style>
 
@@ -477,7 +505,6 @@
     <!-- ============ HEADER ============ -->
     <header class="header">
       <div class="brand">
-      
         <div class="brand-text">
           <h1 contenteditable="plaintext-only">SAIGON TECHNOLOGY</h1>
           <p contenteditable="plaintext-only">Giải pháp phần mềm &amp; tư vấn số</p>
@@ -488,6 +515,10 @@
         <div class="meta-row">
           <span>Ngày:</span>
           <input id="invoiceDate" value="20/07/2026" />
+        </div>
+        <div class="meta-row" style="margin-top: 6px;">
+          <span>Số:</span>
+          <input id="invoiceNo" value="HD-2026-001" style="width: 130px;" />
         </div>
       </div>
     </header>
@@ -510,14 +541,14 @@
 
     <!-- ============ BẢNG DỊCH VỤ ============ -->
     <div class="table-wrap">
-      <table>
+      <table class="data-table">
         <thead>
           <tr>
             <th>Mô tả</th>
             <th style="text-align:center;">SL</th>
             <th style="text-align:center;">Đơn giá</th>
             <th style="text-align:right;">Thành tiền</th>
-            <th class="no-print" style="text-align:center;width:40px;"></th>
+            <th class="no-print" style="text-align:center;">&nbsp;</th>
           </tr>
         </thead>
         <tbody id="items"></tbody>
@@ -543,47 +574,47 @@
         <div class="bank-row">
           <label>Ngân hàng</label>
           <select id="bank" onchange="syncQR()">
-          <option value="VCB">Vietcombank</option>
-          <option value="ABB">ABBank</option>
-          <option value="SHBVN">SOL</option>
-          <option value="ACB">ACB</option>
-          <option value="AGRIBANK">Agribank</option>
-          <option value="BAB">Bac A Bank</option>
-          <option value="BAOVIETBANK">BaoViet Bank</option>
-          <option value="BIDV">BIDV</option>
-          <option value="BVB">BVBank</option>
-          <option value="EIB">Eximbank</option>
-          <option value="HDB">HDBank</option>
-          <option value="ICB">VietinBank</option>
-          <option value="KLB">KienlongBank</option>
-          <option value="MB">MB Bank</option>
-          <option value="MSB">MSB</option>
-          <option value="NAB">Nam A Bank</option>
-          <option value="OCB">OCB</option>
-          <option value="PGB">PG Bank</option>
-          <option value="PVCOMBANK">PVcomBank</option>
-          <option value="SAIGONBANK">SaigonBank</option>
-          <option value="SCB">SCB</option>
-          <option value="SEAB">SeABank</option>
-          <option value="SHB">SHB</option>
-          <option value="STB">Sacombank</option>
-          <option value="TCB">Techcombank</option>
-          <option value="TPB">TPBank</option>
-          <option value="VIB">VIB</option>
-          <option value="VPB">VPBank</option>
-           <option value="NCB">NCB</option>
-           <option value="VIKKI">VIKKI</option>
+            <option value="VCB">Vietcombank</option>
+            <option value="ABB">ABBank</option>
+            <option value="SHBVN">SOL</option>
+            <option value="ACB">ACB</option>
+            <option value="AGRIBANK">Agribank</option>
+            <option value="BAB">Bac A Bank</option>
+            <option value="BAOVIETBANK">BaoViet Bank</option>
+            <option value="BIDV">BIDV</option>
+            <option value="BVB">BVBank</option>
+            <option value="EIB">Eximbank</option>
+            <option value="HDB">HDBank</option>
+            <option value="ICB">VietinBank</option>
+            <option value="KLB">KienlongBank</option>
+            <option value="MB">MB Bank</option>
+            <option value="MSB">MSB</option>
+            <option value="NAB">Nam A Bank</option>
+            <option value="OCB">OCB</option>
+            <option value="PGB">PG Bank</option>
+            <option value="PVCOMBANK">PVcomBank</option>
+            <option value="SAIGONBANK">SaigonBank</option>
+            <option value="SCB">SCB</option>
+            <option value="SEAB">SeABank</option>
+            <option value="SHB">SHB</option>
+            <option value="STB">Sacombank</option>
+            <option value="TCB">Techcombank</option>
+            <option value="TPB">TPBank</option>
+            <option value="VIB">VIB</option>
+            <option value="VPB">VPBank</option>
+            <option value="NCB">NCB</option>
+            <option value="VIKKI">VIKKI</option>
           </select>
         </div>
         <div class="bank-row">
           <label>Số TK</label>
           <input id="account" value="0123456789" oninput="syncQR()" />
         </div>
-        <div class="bank-row">
+        <!-- Hàng Nội dung được kéo dài toàn bộ chiều rộng -->
+        <div class="bank-row full-width">
           <label>Nội dung</label>
-          <input id="description" value="TT hóa đơn HD-2026-001" oninput="syncQR()" />
+          <input id="description" value="chuyen khoan VAN QUYNH JGKA762H" oninput="syncQR()" style="width: 150%;" />
         </div>
-        <!-- Dòng hướng dẫn – ẩn khi in -->
         <div class="warning-note no-print">
           ⚠️ Thay đổi số tài khoản thật để QR hoạt động
         </div>
@@ -591,7 +622,6 @@
 
       <div class="qr-section">
         <img id="qr" alt="Đang tạo mã QR..." />
-        <!-- Các dòng chữ hướng dẫn – đều có class no-print để ẩn khi in -->
         <div class="qr-label no-print">Quét mã QR để thanh toán</div>
         <div class="qr-note no-print">(Nội dung chuyển khoản sẽ hiển thị đúng)</div>
       </div>
@@ -614,31 +644,20 @@
     }
 
     // Thêm dòng
-function addRow(desc = '', qty = 1, price = 0) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-        <!-- 👉 Kéo dài cột mô tả lên 45% -->
-        <td style="width: 45%; min-width: 180px;">
-            <input value="${desc}" placeholder="Tên dịch vụ / sản phẩm" style="width: 100%;">
+    function addRow(desc = '', qty = 1, price = 0) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input value="${desc}" placeholder="Tên dịch vụ / sản phẩm"></td>
+        <td style="text-align:center;"><input type="number" value="${qty}" min="1" oninput="calc()" style="text-align:center;"></td>
+        <td style="text-align:center;"><input type="number" value="${price}" min="0" step="1000" oninput="calc()" style="text-align:center;"></td>
+        <td class="line-total" style="text-align:right;">0</td>
+        <td class="no-print" style="text-align:center;">
+          <button class="remove-btn" onclick="this.closest('tr').remove();calc();">✕</button>
         </td>
-        <!-- 👉 Thu nhỏ cột số lượng còn 12% -->
-        <td style="width: 12%; text-align:center;">
-            <input type="number" value="${qty}" min="1" oninput="calc()" style="width: 100%; text-align:center;">
-        </td>
-        <!-- 👉 Thu nhỏ cột đơn giá còn 15% -->
-        <td style="width: 15%; text-align:center;">
-            <input type="number" value="${price}" min="0" step="1000" oninput="calc()" style="width: 100%; text-align:center;">
-        </td>
-        <!-- 👉 Thu nhỏ cột thành tiền còn 15% -->
-        <td class="line-total" style="width: 15%; text-align:right;">0</td>
-        <!-- 👉 Cột hành động giữ nguyên kích thước nhỏ -->
-        <td class="no-print" style="width: 13%; text-align:center;">
-            <button class="remove-btn" onclick="this.closest('tr').remove();calc();">x</button>
-        </td>
-    `;
-    items.appendChild(tr);
-    calc();
-}
+      `;
+      items.appendChild(tr);
+      calc();
+    }
 
     // Tính tổng
     function calc() {
@@ -688,7 +707,6 @@ function addRow(desc = '', qty = 1, price = 0) {
         return;
       }
 
-      // Tạo URL với đầy đủ tham số (có _t chống cache)
       const params = new URLSearchParams({
         amount: amount,
         accountName: owner || 'Chủ tài khoản',
@@ -701,9 +719,7 @@ function addRow(desc = '', qty = 1, price = 0) {
       qrImg.src = url;
       qrImg.alt = 'Đang tải QR...';
 
-      // Xử lý lỗi tải ảnh
       qrImg.onerror = function() {
-        // Thử lại lần 2 với fallback (bỏ amount nếu có lỗi)
         const fallback = new URLSearchParams({
           accountName: owner || 'Chủ tài khoản',
           description: desc || 'Thanh toán',
@@ -722,7 +738,6 @@ function addRow(desc = '', qty = 1, price = 0) {
     // ---------- KHỞI TẠO ----------
     addRow('Tư vấn giải pháp', 2, 1500000);
     addRow('Phát triển phần mềm', 1, 3500000);
-    // Cập nhật lần đầu
     setTimeout(() => calc(), 100);
   </script>
 
