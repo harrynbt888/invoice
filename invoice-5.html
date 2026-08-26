@@ -20,11 +20,22 @@
     .info-box h3 { margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
     .info-box input { font-size: 16px; font-weight: 600; border: none; border-bottom: 1px solid #ccc; background: transparent; padding: 4px 0; width: 100%; }
     .info-box input:focus { outline: none; border-bottom-color: #0f3d2e; }
+    
+    /* --- CẬP NHẬT CSS BẢNG HÓA ĐƠN --- */
     table { width: 100%; border-collapse: collapse; margin-top: 30px; }
     th { text-align: left; border-bottom: 2px solid #0f3d2e; padding: 10px 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
     td { padding: 8px 6px; border-bottom: 1px solid #e0e8e4; }
     th.center, td.center { text-align: center; }
     th.right, td.right { text-align: right; }
+
+    /* Kéo dài cột Mô tả */
+    table th:nth-child(1), table td:nth-child(1) { width: 50%; min-width: 300px; }
+    /* Thu hẹp cột SL và Đơn giá để chúng gần nhau hơn */
+    table th:nth-child(2), table td:nth-child(2) { width: 70px; }
+    table th:nth-child(3), table td:nth-child(3) { width: 120px; }
+    /* Cột Thành tiền */
+    table th:nth-child(4), table td:nth-child(4) { width: 140px; }
+
     input, select { width: 100%; border: none; background: transparent; font-size: 14px; font-family: inherit; color: #0f3d2e; }
     input:focus, select:focus { outline: none; }
     td.center input { text-align: center; }
@@ -32,8 +43,10 @@
     tfoot tr { border-top: 2px solid #0f3d2e; }
     tfoot td { padding-top: 12px; font-size: 16px; }
     #total { font-size: 18px; font-weight: 700; }
+    
     .bank-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 30px; }
     .bank-row { display: grid; grid-template-columns: 90px 1fr; gap: 8px; align-items: center; }
+    .bank-section .bank-row:last-child { grid-column: 1 / -1; }
     .bank-row span { font-size: 14px; font-weight: 600; color: #0f3d2e; }
     .bank-row select, .bank-row input { border-bottom: 1px solid #ccc; padding: 4px 0; }
     .bank-row select { border-bottom: 1px solid #ccc; background: transparent; cursor: pointer; }
@@ -62,6 +75,11 @@
       .date-row { justify-content: flex-start; }
       .info { flex-direction: column; gap: 10px; }
       .bank-section { grid-template-columns: 1fr; gap: 5px; }
+      .bank-section .bank-row:last-child { grid-column: auto; }
+      /* Trên mobile thì mở rộng lại các cột cho dễ nhập */
+      table th:nth-child(1), table td:nth-child(1) { width: auto; min-width: unset; }
+      table th:nth-child(2), table td:nth-child(2) { width: 50px; }
+      table th:nth-child(3), table td:nth-child(3) { width: 100px; }
     }
   </style>
 
@@ -243,7 +261,6 @@
         return;
       }
 
-      // Tạo URL với đầy đủ tham số
       const params = new URLSearchParams({
         amount: amount || 0,
         accountName: owner || 'Chủ tài khoản',
@@ -257,9 +274,7 @@
       qrImg.src = url;
       qrImg.alt = 'Đang tải mã QR...';
 
-      // Xử lý lỗi
       qrImg.onerror = function() {
-        // Thử lại lần 2 với fallback (bỏ amount nếu cần)
         const fallbackParams = new URLSearchParams({
           accountName: owner || 'Chủ tài khoản',
           description: desc || 'Thanh toán',
