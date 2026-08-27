@@ -229,6 +229,11 @@
           <th>Khách hàng</th>
           <td><input value="Nguyễn Văn A" /></td>
         </tr>
+        <!-- Thêm dòng Ngày giờ -->
+        <tr>
+          <th>Ngày </th>
+          <td><input id="invoiceDate" value="" /></td>
+        </tr>
       </table>
 
       <svg id="barcode"></svg>
@@ -283,36 +288,36 @@
         <div class="bank-row">
           <span>Ngân hàng</span>
           <select id="bank" class="no-print" oninput="syncBank()">
-        <option value="VCB">Vietcombank</option>
-          <option value="ABB">ABBank</option>
-          <option value="SHBVN">SOL</option>
-          <option value="ACB">ACB</option>
-          <option value="AGRIBANK">Agribank</option>
-          <option value="BAB">Bac A Bank</option>
-          <option value="BAOVIETBANK">BaoViet Bank</option>
-          <option value="BIDV">BIDV</option>
-          <option value="BVB">BVBank</option>
-          <option value="EIB">Eximbank</option>
-          <option value="HDB">HDBank</option>
-          <option value="ICB">VietinBank</option>
-          <option value="KLB">KienlongBank</option>
-          <option value="MB">MB Bank</option>
-          <option value="MSB">MSB</option>
-          <option value="NAB">Nam A Bank</option>
-          <option value="OCB">OCB</option>
-          <option value="PGB">PG Bank</option>
-          <option value="PVCOMBANK">PVcomBank</option>
-          <option value="SAIGONBANK">SaigonBank</option>
-          <option value="SCB">SCB</option>
-          <option value="SEAB">SeABank</option>
-          <option value="SHB">SHB</option>
-          <option value="STB">Sacombank</option>
-          <option value="TCB">Techcombank</option>
-          <option value="TPB">TPBank</option>
-          <option value="VIB">VIB</option>
-          <option value="VPB">VPBank</option>
-           <option value="NCB">NCB</option>
-           <option value="VIKKI">VIKKI</option>
+            <option value="VCB">Vietcombank</option>
+            <option value="ABB">ABBank</option>
+            <option value="SHBVN">SOL</option>
+            <option value="ACB">ACB</option>
+            <option value="AGRIBANK">Agribank</option>
+            <option value="BAB">Bac A Bank</option>
+            <option value="BAOVIETBANK">BaoViet Bank</option>
+            <option value="BIDV">BIDV</option>
+            <option value="BVB">BVBank</option>
+            <option value="EIB">Eximbank</option>
+            <option value="HDB">HDBank</option>
+            <option value="ICB">VietinBank</option>
+            <option value="KLB">KienlongBank</option>
+            <option value="MB">MB Bank</option>
+            <option value="MSB">MSB</option>
+            <option value="NAB">Nam A Bank</option>
+            <option value="OCB">OCB</option>
+            <option value="PGB">PG Bank</option>
+            <option value="PVCOMBANK">PVcomBank</option>
+            <option value="SAIGONBANK">SaigonBank</option>
+            <option value="SCB">SCB</option>
+            <option value="SEAB">SeABank</option>
+            <option value="SHB">SHB</option>
+            <option value="STB">Sacombank</option>
+            <option value="TCB">Techcombank</option>
+            <option value="TPB">TPBank</option>
+            <option value="VIB">VIB</option>
+            <option value="VPB">VPBank</option>
+            <option value="NCB">NCB</option>
+            <option value="VIKKI">VIKKI</option>
           </select>
           <span id="bankText" class="print-only"></span>
         </div>
@@ -416,6 +421,16 @@
       }
 
       window.onload = () => {
+        // Hàm hỗ trợ thêm số 0 phía trước nếu nhỏ hơn 10
+        const pad = (n) => n.toString().padStart(2, '0');
+        
+        // Lấy thời gian hiện tại
+        const now = new Date();
+        const formattedDateTime = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+        // Gán vào ô Ngày giờ
+        document.getElementById('invoiceDate').value = formattedDateTime;
+
         addItem("Sản phẩm 1", 1, 100000);
         syncBank();
       };
