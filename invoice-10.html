@@ -152,7 +152,7 @@
       border-bottom-color: #2c7be5;
     }
 
-    /* ---------- BẢNG VỚI TỈ LỆ CỐ ĐỊNH ---------- */
+    /* ---------- BẢNG VỚI TỈ LỆ CỐ ĐỊNH (ĐÃ SỬA LỖI IN) ---------- */
     .table-wrap {
       overflow-x: auto;
       margin: 20px 0 16px;
@@ -165,10 +165,10 @@
       font-size: 14px;
     }
 
-    /* Phân bổ chiều rộng cột: Mô tả chiếm 45%, còn lại chia đều */
+    /* Phân bổ chiều rộng cột: Mô tả 40%, Thành tiền 25% (rộng hơn để không mất VND) */
     .data-table th:nth-child(1),
     .data-table td:nth-child(1) {
-      width: 45%;
+      width: 40%;
       text-align: left;
       word-break: break-word;
       white-space: normal;
@@ -176,7 +176,7 @@
 
     .data-table th:nth-child(2),
     .data-table td:nth-child(2) {
-      width: 13%;
+      width: 8%;
       text-align: center;
     }
 
@@ -188,8 +188,10 @@
 
     .data-table th:nth-child(4),
     .data-table td:nth-child(4) {
-      width: 15%;
+      width: 25%;
       text-align: right;
+      white-space: nowrap; /* Chống ngắt dòng, không bị mất VND */
+      padding-right: 10px;
     }
 
     .data-table th:nth-child(5),
@@ -269,10 +271,13 @@
       color: #1e3b5c;
     }
 
-    #total {
-      font-size: 20px;
-      font-weight: 700;
-      color: #0d2c4a;
+    /* Ô Tổng cộng - Đảm bảo không bao giờ bị cắt chữ VND */
+    #total { 
+      white-space: nowrap; 
+      font-size: 18px; 
+      font-weight: 700; 
+      text-align: right; 
+      padding-right: 10px; 
     }
 
     /* ---------- ACTIONS ---------- */
@@ -343,7 +348,7 @@
       gap: 8px;
     }
 
-    /* Hàng Nội dung sẽ chiếm toàn bộ chiều rộng */
+    /* Ô Nội dung chiếm toàn bộ chiều rộng */
     .bank-row.full-width {
       grid-column: 1 / -1;
     }
@@ -554,8 +559,8 @@
         <tbody id="items"></tbody>
         <tfoot>
           <tr>
-            <td colspan="3" class="total-label">Tổng cộng</td>
-            <td style="text-align:right;" id="total">0 VND</td>
+            <td colspan="3" class="total-label"><b>TỔNG CỘNG</b></td>
+            <td style="text-align: right; white-space: nowrap; padding-right: 10px;" id="total">0 VND</td>
             <td class="no-print"></td>
           </tr>
         </tfoot>
@@ -610,7 +615,7 @@
           <label>Số TK</label>
           <input id="account" value="0123456789" oninput="syncQR()" />
         </div>
-        <!-- Hàng Nội dung được kéo dài toàn bộ chiều rộng -->
+        <!-- Ô Nội dung được kéo dài toàn bộ chiều rộng -->
         <div class="bank-row full-width">
           <label>Nội dung</label>
           <input id="description" value="chuyen khoan VAN QUYNH JGKA762H" oninput="syncQR()" style="width: 150%;" />
