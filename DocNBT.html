@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hướng dẫn sử dụng - SINH TRẮC & HÓA ĐƠN ĐIỆN TỬ</title>
+  <title>Hướng dẫn - SINH TRẮC & HÓA ĐƠN ĐIỆN TỬ</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -107,6 +107,34 @@
       margin-left: 8px;
     }
 
+    /* STATUS LEGEND */
+    .status-legend {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: 60px;
+      margin-bottom: 16px;
+      border: 1px solid #e8edf3;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .status-legend .active {
+      color: #065f46;
+    }
+    .status-legend .active i {
+      color: #0d9488;
+      margin-right: 6px;
+    }
+    .status-legend .paused {
+      color: #b91c1c;
+    }
+    .status-legend .paused i {
+      color: #b91c1c;
+      margin-right: 6px;
+    }
+
     /* CARD GRID */
     .card-grid {
       display: grid;
@@ -122,6 +150,7 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.04);
       border: 1px solid #e8edf3;
       transition: all 0.25s ease;
+      position: relative;
     }
     .card:hover {
       transform: translateY(-4px);
@@ -129,15 +158,27 @@
       border-color: #b8d0e5;
     }
 
+    /* Card trạng thái tạm ngưng – mờ đi và có viền đỏ nhạt */
+    .card.paused {
+      opacity: 0.7;
+      border-color: #fecaca;
+      background: #fef2f2;
+    }
+    .card.paused:hover {
+      opacity: 0.85;
+    }
+
     .card .bank-name {
       display: flex;
       align-items: center;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 8px 12px;
       font-size: 18px;
       font-weight: 700;
       color: #0b2b44;
       margin-bottom: 14px;
     }
+
     .card .bank-name .badge {
       font-size: 11px;
       font-weight: 600;
@@ -150,6 +191,45 @@
     .card .bank-name .badge.green { background: #d1fae5; color: #065f46; }
     .card .bank-name .badge.yellow { background: #fef3c7; color: #92400e; }
     .card .bank-name .badge.blue { background: #dbeafe; color: #1e40af; }
+
+    /* TRẠNG THÁI BADGE + NÚT CHỈNH SỬA */
+    .status-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    .status-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 14px;
+      border-radius: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-badge.active {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .status-badge.paused {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .toggle-status-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .toggle-status-btn:hover {
+      background: #e8edf3;
+      color: #0b2b44;
+    }
 
     .card .info-row {
       display: flex;
@@ -230,22 +310,6 @@
       flex-shrink: 0;
     }
 
-    /* SPECIAL CARD - FULL WIDTH */
-    .card-full {
-      grid-column: 1 / -1;
-    }
-
-    .card-full .flex-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-top: 12px;
-    }
-    .card-full .flex-row .col {
-      flex: 1;
-      min-width: 200px;
-    }
-
     /* INVOICE SECTION */
     .invoice-guide {
       background: linear-gradient(145deg, #f8fafc, #eef2f7);
@@ -319,6 +383,17 @@
       font-size: 13px;
       font-weight: 600;
       color: #1e40af;
+      cursor: pointer;
+      transition: 0.2s;
+      border: none;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .invoice-guide .highlight-box .tag:hover {
+      background: #bfdbfe;
+      transform: translateY(-2px);
     }
 
     /* RESPONSIVE */
@@ -331,13 +406,15 @@
       .main-header h1 { font-size: 26px; }
       .card-grid { grid-template-columns: 1fr; }
       .invoice-guide { padding: 20px 18px; }
-      .card-full .flex-row { flex-direction: column; }
+      .status-legend { justify-content: center; }
     }
 
     @media (max-width: 480px) {
       .main-header h1 { font-size: 22px; }
       .section-title h2 { font-size: 20px; }
       .card { padding: 18px 16px; }
+      .status-wrapper { margin-left: 0; width: 100%; justify-content: flex-start; }
+      .card .bank-name { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -345,7 +422,7 @@
 
 <div class="container">
 
-  <!-- ===== HEADER ===== -->
+  <!-- HEADER -->
   <header class="main-header">
     <div>
       <h1>📋 Hướng dẫn <span>tổng hợp</span></h1>
@@ -356,387 +433,28 @@
     </div>
   </header>
 
-  <!-- ========================== -->
+  <!-- ======================================================== -->
   <!-- PHẦN 1: SINH TRẮC NGÂN HÀNG -->
-  <!-- ========================== -->
+  <!-- ======================================================== -->
   <div class="section-title">
     <div class="icon-box blue"><i class="fas fa-fingerprint"></i></div>
     <h2>Sinh trắc ngân hàng <span class="sub">— Hướng dẫn đặt video</span></h2>
   </div>
 
-  <div class="card-grid">
+  <!-- Bảng chú thích trạng thái -->
+  <div class="status-legend">
+    <span class="active"><i class="fas fa-circle"></i> Đang sử dụng</span>
+    <span class="paused"><i class="fas fa-circle"></i> Tạm ngưng</span>
+    <span style="color:#64748b;font-weight:400;margin-left:8px;">(click vào <i class="fas fa-pen"></i> để chuyển trạng thái)</span>
+  </div>
 
-    <!-- VCB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#0d9488;"></i> VCB
-        <span class="badge green">Vietcombank</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 1</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.VCB/main/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 2</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.VCB/assistant/2.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Khung lớn, zoom gần. Giữ yên khuôn mặt, không cười, không chớp mắt.
-      </div>
-    </div>
+  <div class="card-grid" id="bankGrid">
+    <!-- Các card sẽ được JavaScript tạo động -->
+  </div>
 
-    <!-- BIDV -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#0d9488;"></i> BIDV
-        <span class="badge green">BIDV</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 1</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.bidv/main/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 2</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.bidv/assistant/2.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Khung lớn, zoom gần. Giữ yên khuôn mặt, không cười, không chớp mắt.
-      </div>
-    </div>
-
-    <!-- ICB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#1a4b6d;"></i> ICB
-        <span class="badge blue">VietinBank</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 1</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vietinbank.ipay/main/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 2</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vietinbank.ipay/assistant/2.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.
-      </div>
-    </div>
-
-    <!-- EIB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#7c3aed;"></i> EIB
-        <span class="badge purple">Eximbank</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 1</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.EximBankOmni/main/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 2</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.EximBankOmni/assistant/2.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.
-      </div>
-    </div>
-
-    <!-- VB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#f97316;"></i> VB
-        <span class="badge yellow">Vietbank</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 1</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.vietbank/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 2</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.vietbank/2.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.
-      </div>
-    </div>
-
-    <!-- NAB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#0d9488;"></i> NAB
-        <span class="badge green">Nam A Bank</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/ops.namabank.com.vn/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1440×1080</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên (hình 2).
-      </div>
-      <div class="step-list">
-        <li><span class="num">1</span> Cài <strong>NAMA FACE v1.0.8</strong></li>
-        <li><span class="num">2</span> Đặt ảnh dữ liệu vào <code>/Download/nama/mode_1</code> → <code>mode_10</code></li>
-        <li><span class="num">3</span> Canh giữa → zoom như hình</li>
-      </div>
-    </div>
-
-    <!-- VNeID -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-id-card" style="color:#7c3aed;"></i> VNeID
-        <span class="badge purple">VNeID</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 1</span>
-        <span class="value"><code>/sdcard/DICM/Camera/com.ncb.bank/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 2</span>
-        <span class="value"><code>/sdcard/DICM/Camera/com.ncb.bank/Virtual_JPEG.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên.
-      </div>
-    </div>
-
-    <!-- NCB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#0d9488;"></i> NCB
-        <span class="badge green">NCB</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DICM/Camera/com.ncb.bank/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1280×720</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Canh đầu chủ thẻ ở giữa, hơi gần sát 1 tí. Chỉ cần 1 video cho cả đăng nhập và chuyển tiền.
-      </div>
-    </div>
-
-    <!-- SHB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#f97316;"></i> SHB
-        <span class="badge yellow">SHB</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/vn.shb.saha.mbanking/1280/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/vn.shb.saha.mbanking/1440/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/vn.shb.saha.mbanking/jpeg/1.MP4</code></span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> 3 video với các kích thước: 1280×720, 1440×1080, 1080×1440. Cần 2 bước: ở xa 2s → zoom gần (Scale +15%).
-      </div>
-    </div>
-
-    <!-- MB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#1a4b6d;"></i> MB
-        <span class="badge blue">MB Bank</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-image"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DICM/Camera/com.mbmobile/1.mp4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1024×768</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Sử dụng hình ảnh làm video. Khung vừa. Dùng chung cho đăng nhập, kích hoạt OTP, chuyển tiền.
-      </div>
-    </div>
-
-    <!-- HDB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#0d9488;"></i> HDB
-        <span class="badge green">HDBank</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 1</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.hdbank/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 2</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.hdbank/Virtual_JPEG.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1080×1920</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Sử dụng hình ảnh làm video. Khuôn mặt chính giữa. Cần kích hoạt file .so để sử dụng.
-      </div>
-    </div>
-
-    <!-- VP -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#7c3aed;"></i> VP
-        <span class="badge purple">VPBank</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DICM/Camera/com.vnpay.vpbankonline/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1280×960</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Đăng nhập: QR từ thiết bị cũ, video 5-8s, giữ mặt, quay từ từ sang trái/phải. Chuyển tiền: chỉ cần nhìn thẳng.
-      </div>
-    </div>
-
-    <!-- ACB -->
-    <div class="card">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#1a4b6d;"></i> ACB
-        <span class="badge blue">ACB</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 1</span>
-        <span class="value"><code>/sdcard/DICM/Camera/mobile.acb.com.vn/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video 2</span>
-        <span class="value"><code>/sdcard/DICM/Camera/mobile.acb.com.vn/Virtual_JPEG.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-lightbulb"></i> Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên.
-      </div>
-    </div>
-
-    <!-- BAB – Tạm ngưng -->
-    <div class="card" style="opacity:0.6;">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#94a3b8;"></i> BAB
-        <span class="badge" style="background:#e2e8f0;color:#475569;">Tạm ngưng</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.bab.retailUAT/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1728×1728</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-clock"></i> Tạm ngưng chưa cập nhật. Bắt 2 lần: lần 1 chớp mắt, lần 2 giữ yên.
-      </div>
-    </div>
-
-    <!-- SOL – Tạm ngưng -->
-    <div class="card" style="opacity:0.6;">
-      <div class="bank-name">
-        <i class="fas fa-university" style="color:#94a3b8;"></i> SOL
-        <span class="badge" style="background:#e2e8f0;color:#475569;">Tạm ngưng</span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-video"></i>
-        <span class="label">Video</span>
-        <span class="value"><code>/sdcard/DCIM/Camera/com.shinhan.global.vn.bank/1.MP4</code></span>
-      </div>
-      <div class="info-row">
-        <i class="fas fa-arrows-alt"></i>
-        <span class="label">Kích thước</span>
-        <span class="value">1440×1080</span>
-      </div>
-      <div class="note">
-        <i class="fas fa-clock"></i> Tạm ngưng chưa cập nhật. Giữ yên giữa khung, không cười, không chớp mắt.
-      </div>
-    </div>
-
-  </div> <!-- end card-grid -->
-
-
-  <!-- ========================== -->
-  <!-- PHẦN 2: HÓA ĐƠN ĐIỆN TỬ   -->
-  <!-- ========================== -->
+  <!-- ======================================================== -->
+  <!-- PHẦN 2: HÓA ĐƠN ĐIỆN TỬ -->
+  <!-- ======================================================== -->
   <div class="section-title" style="margin-top:48px;">
     <div class="icon-box orange"><i class="fas fa-file-invoice"></i></div>
     <h2>Hóa đơn điện tử <span class="sub">— Hướng dẫn sử dụng</span></h2>
@@ -754,7 +472,9 @@
 
     <div class="highlight-box">
       <span class="link"><i class="fas fa-link"></i> https://harrynbt888.github.io/invoice/</span>
-      <span class="tag"><i class="fas fa-external-link-alt"></i> Mở trình duyệt</span>
+      <button class="tag" onclick="window.open('https://harrynbt888.github.io/invoice/', '_blank')">
+        <i class="fas fa-external-link-alt"></i> Mở trình duyệt
+      </button>
     </div>
 
     <div class="step">
@@ -809,17 +529,229 @@
   </div> <!-- end invoice-guide -->
 
 
-  <!-- ===== FOOTER ===== -->
+  <!-- FOOTER -->
   <div style="text-align:center;padding:32px 0 12px;border-top:1px solid #e8edf3;margin-top:32px;">
     <p style="font-size:14px;color:#94a3b8;">
       <i class="fas fa-code"></i> Tài liệu hướng dẫn tổng hợp &bull; Cập nhật 31/08/2026
     </p>
     <p style="font-size:13px;color:#b0c4d8;margin-top:4px;">
-      Dành cho mục đích tham khảo và hướng dẫn nội bộ
+      Click <i class="fas fa-pen"></i> để chuyển trạng thái ngân hàng &bull; Trạng thái được lưu tự động
     </p>
   </div>
 
 </div> <!-- end container -->
+
+<script>
+  // ================================================================
+  // Dữ liệu ngân hàng
+  // ================================================================
+  const bankData = [
+    { id: 'VCB', name: 'Vietcombank', badge: 'green', icon: 'fa-university', color: '#0d9488',
+      videos: ['/sdcard/DCIM/Camera/com.VCB/main/1.MP4', '/sdcard/DCIM/Camera/com.VCB/assistant/2.MP4'],
+      sizes: '1: 640×480 | 2: 1080×1440',
+      note: 'Khung lớn, zoom gần. Giữ yên khuôn mặt, không cười, không chớp mắt.',
+      defaultStatus: 'active' },
+    { id: 'BIDV', name: 'BIDV', badge: 'green', icon: 'fa-university', color: '#0d9488',
+      videos: ['/sdcard/DCIM/Camera/com.vnpay.bidv/main/1.MP4', '/sdcard/DCIM/Camera/com.vnpay.bidv/assistant/2.MP4'],
+      sizes: '1: 640×480 | 2: 1080×1440',
+      note: 'Khung lớn, zoom gần. Giữ yên khuôn mặt, không cười, không chớp mắt.',
+      defaultStatus: 'active' },
+    { id: 'ICB', name: 'VietinBank', badge: 'blue', icon: 'fa-university', color: '#1a4b6d',
+      videos: ['/sdcard/DCIM/Camera/com.vietinbank.ipay/main/1.MP4', '/sdcard/DCIM/Camera/com.vietinbank.ipay/assistant/2.MP4'],
+      sizes: '1: 640×480 | 2: 1080×1440',
+      note: 'Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.',
+      defaultStatus: 'active' },
+    { id: 'EIB', name: 'Eximbank', badge: 'purple', icon: 'fa-university', color: '#7c3aed',
+      videos: ['/sdcard/DCIM/Camera/com.vnpay.EximBankOmni/main/1.MP4', '/sdcard/DCIM/Camera/com.vnpay.EximBankOmni/assistant/2.MP4'],
+      sizes: '1: 640×480 | 2: 1080×1440',
+      note: 'Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.',
+      defaultStatus: 'active' },
+    { id: 'VB', name: 'Vietbank', badge: 'yellow', icon: 'fa-university', color: '#f97316',
+      videos: ['/sdcard/DCIM/Camera/com.vnpay.vietbank/1.MP4', '/sdcard/DCIM/Camera/com.vnpay.vietbank/2.MP4'],
+      sizes: '1: 640×480 | 2: 1080×1440',
+      note: 'Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.',
+      defaultStatus: 'active' },
+    { id: 'NAB', name: 'Nam A Bank', badge: 'green', icon: 'fa-university', color: '#0d9488',
+      videos: ['/sdcard/DCIM/Camera/ops.namabank.com.vn/1.MP4'],
+      sizes: '1440×1080',
+      note: 'Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên (hình 2). Cài NAMA FACE v1.0.8, đặt ảnh vào /Download/nama/mode_1 → mode_10.',
+      defaultStatus: 'active',
+      hasSteps: true },
+    { id: 'VNeID', name: 'VNeID', badge: 'purple', icon: 'fa-id-card', color: '#7c3aed',
+      videos: ['/sdcard/DICM/Camera/com.ncb.bank/1.MP4', '/sdcard/DICM/Camera/com.ncb.bank/Virtual_JPEG.MP4'],
+      sizes: '1: 640×480 | 2: 1080×1440',
+      note: 'Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên.',
+      defaultStatus: 'active' },
+    { id: 'NCB', name: 'NCB', badge: 'green', icon: 'fa-university', color: '#0d9488',
+      videos: ['/sdcard/DICM/Camera/com.ncb.bank/1.MP4'],
+      sizes: '1280×720',
+      note: 'Canh đầu chủ thẻ ở giữa, hơi gần sát 1 tí. Chỉ cần 1 video cho cả đăng nhập và chuyển tiền.',
+      defaultStatus: 'active' },
+    { id: 'SHB', name: 'SHB', badge: 'yellow', icon: 'fa-university', color: '#f97316',
+      videos: ['/sdcard/DCIM/Camera/vn.shb.saha.mbanking/1280/1.MP4', '/sdcard/DCIM/Camera/vn.shb.saha.mbanking/1440/1.MP4', '/sdcard/DCIM/Camera/vn.shb.saha.mbanking/jpeg/1.MP4'],
+      sizes: '1280×720, 1440×1080, 1080×1440',
+      note: '3 video với các kích thước khác nhau. Cần 2 bước: ở xa 2s → zoom gần (Scale +15%).',
+      defaultStatus: 'active' },
+    { id: 'MB', name: 'MB Bank', badge: 'blue', icon: 'fa-university', color: '#1a4b6d',
+      videos: ['/sdcard/DICM/Camera/com.mbmobile/1.mp4'],
+      sizes: '1024×768',
+      note: 'Sử dụng hình ảnh làm video. Khung vừa. Dùng chung cho đăng nhập, kích hoạt OTP, chuyển tiền.',
+      defaultStatus: 'active' },
+    { id: 'HDB', name: 'HDBank', badge: 'green', icon: 'fa-university', color: '#0d9488',
+      videos: ['/sdcard/DCIM/Camera/com.vnpay.hdbank/1.MP4', '/sdcard/DCIM/Camera/com.vnpay.hdbank/Virtual_JPEG.MP4'],
+      sizes: '1080×1920',
+      note: 'Sử dụng hình ảnh làm video. Khuôn mặt chính giữa. Cần kích hoạt file .so để sử dụng.',
+      defaultStatus: 'active' },
+    { id: 'VP', name: 'VPBank', badge: 'purple', icon: 'fa-university', color: '#7c3aed',
+      videos: ['/sdcard/DICM/Camera/com.vnpay.vpbankonline/1.MP4'],
+      sizes: '1280×960',
+      note: 'Đăng nhập: QR từ thiết bị cũ, video 5-8s, giữ mặt, quay từ từ sang trái/phải. Chuyển tiền: chỉ cần nhìn thẳng.',
+      defaultStatus: 'active' },
+    { id: 'ACB', name: 'ACB', badge: 'blue', icon: 'fa-university', color: '#1a4b6d',
+      videos: ['/sdcard/DICM/Camera/mobile.acb.com.vn/1.MP4', '/sdcard/DICM/Camera/mobile.acb.com.vn/Virtual_JPEG.MP4'],
+      sizes: '1: 640×480 | 2: 1080×1440',
+      note: 'Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên.',
+      defaultStatus: 'active' },
+    { id: 'BAB', name: 'Bac A Bank', badge: 'gray', icon: 'fa-university', color: '#94a3b8',
+      videos: ['/sdcard/DCIM/Camera/com.bab.retailUAT/1.MP4'],
+      sizes: '1728×1728',
+      note: 'Tạm ngưng chưa cập nhật. Bắt 2 lần: lần 1 chớp mắt, lần 2 giữ yên.',
+      defaultStatus: 'paused' },
+    { id: 'SOL', name: 'Shinhan', badge: 'gray', icon: 'fa-university', color: '#94a3b8',
+      videos: ['/sdcard/DCIM/Camera/com.shinhan.global.vn.bank/1.MP4'],
+      sizes: '1440×1080',
+      note: 'Tạm ngưng chưa cập nhật. Giữ yên giữa khung, không cười, không chớp mắt.',
+      defaultStatus: 'paused' }
+  ];
+
+  // ================================================================
+  // Hàm lưu và lấy trạng thái từ localStorage
+  // ================================================================
+  function getStatus(bankId) {
+    const stored = localStorage.getItem('bankStatus_' + bankId);
+    if (stored) return stored;
+    // Fallback: tìm defaultStatus từ dữ liệu
+    const bank = bankData.find(b => b.id === bankId);
+    return bank ? bank.defaultStatus : 'active';
+  }
+
+  function setStatus(bankId, status) {
+    localStorage.setItem('bankStatus_' + bankId, status);
+  }
+
+  // ================================================================
+  // Tạo card động
+  // ================================================================
+  function renderCards() {
+    const grid = document.getElementById('bankGrid');
+    grid.innerHTML = '';
+
+    bankData.forEach(bank => {
+      const status = getStatus(bank.id);
+      const isPaused = status === 'paused';
+
+      const card = document.createElement('div');
+      card.className = 'card' + (isPaused ? ' paused' : '');
+      card.dataset.bankId = bank.id;
+
+      const badgeClass = bank.badge === 'gray' ? '' : bank.badge;
+      const badgeStyle = bank.badge === 'gray' ? 'background:#e2e8f0;color:#475569;' : '';
+
+      // Xây dựng HTML cho info rows
+      let infoRowsHTML = '';
+      bank.videos.forEach((video, idx) => {
+        infoRowsHTML += `
+          <div class="info-row">
+            <i class="fas fa-video"></i>
+            <span class="label">Video ${idx+1}</span>
+            <span class="value"><code>${video}</code></span>
+          </div>
+        `;
+      });
+      infoRowsHTML += `
+        <div class="info-row">
+          <i class="fas fa-arrows-alt"></i>
+          <span class="label">Kích thước</span>
+          <span class="value">${bank.sizes}</span>
+        </div>
+      `;
+
+      // Steps (chỉ cho NAB)
+      let stepsHTML = '';
+      if (bank.hasSteps) {
+        stepsHTML = `
+          <div class="step-list">
+            <li><span class="num">1</span> Cài <strong>NAMA FACE v1.0.8</strong></li>
+            <li><span class="num">2</span> Đặt ảnh dữ liệu vào <code>/Download/nama/mode_1</code> → <code>mode_10</code></li>
+            <li><span class="num">3</span> Canh giữa → zoom như hình</li>
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="bank-name">
+          <i class="fas ${bank.icon}" style="color:${bank.color};"></i> ${bank.id}
+          <span class="badge ${badgeClass}" style="${badgeStyle}">${bank.name}</span>
+          <div class="status-wrapper">
+            <span class="status-badge ${status}">
+              <i class="fas ${isPaused ? 'fa-pause-circle' : 'fa-check-circle'}"></i>
+              ${isPaused ? 'Tạm ngưng' : 'Đang sử dụng'}
+            </span>
+            <button class="toggle-status-btn" data-bank-id="${bank.id}" title="Chuyển trạng thái">
+              <i class="fas fa-pen"></i>
+            </button>
+          </div>
+        </div>
+        ${infoRowsHTML}
+        <div class="note">
+          <i class="fas fa-lightbulb"></i> ${bank.note}
+        </div>
+        ${stepsHTML}
+      `;
+
+      grid.appendChild(card);
+    });
+
+    // Gán sự kiện cho các nút toggle
+    document.querySelectorAll('.toggle-status-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const bankId = this.dataset.bankId;
+        toggleStatus(bankId);
+      });
+    });
+  }
+
+  // ================================================================
+  // Hàm toggle trạng thái
+  // ================================================================
+  function toggleStatus(bankId) {
+    const current = getStatus(bankId);
+    const newStatus = current === 'active' ? 'paused' : 'active';
+    setStatus(bankId, newStatus);
+
+    // Cập nhật card tương ứng
+    const card = document.querySelector(`.card[data-bank-id="${bankId}"]`);
+    if (card) {
+      const isPaused = newStatus === 'paused';
+      card.classList.toggle('paused', isPaused);
+
+      const badge = card.querySelector('.status-badge');
+      if (badge) {
+        badge.className = `status-badge ${newStatus}`;
+        badge.innerHTML = `
+          <i class="fas ${isPaused ? 'fa-pause-circle' : 'fa-check-circle'}"></i>
+          ${isPaused ? 'Tạm ngưng' : 'Đang sử dụng'}
+        `;
+      }
+    }
+  }
+
+  // ================================================================
+  // Khởi chạy
+  // ================================================================
+  document.addEventListener('DOMContentLoaded', renderCards);
+</script>
 
 </body>
 </html>
