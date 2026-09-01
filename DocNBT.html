@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hướng dẫn sử dụng - SINH TRẮC & HÓA ĐƠN ĐIỆN TỬ</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #f0f4f8;
+      color: #1a2634;
+      padding: 30px 16px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .main-header {
+      background: linear-gradient(145deg, #0b2b44, #1a4b6d);
+      border-radius: 28px;
+      padding: 40px 48px;
+      margin-bottom: 32px;
+      color: #fff;
+      box-shadow: 0 8px 32px rgba(11, 43, 68, 0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .main-header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .main-header h1 span {
+      color: #7ec8e3;
+    }
+    .main-header p {
+      font-size: 16px;
+      opacity: 0.8;
+      margin-top: 6px;
+    }
+
+    .header-badge {
+      background: rgba(255,255,255,0.15);
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-size: 14px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .header-badge i {
+      margin-right: 8px;
+      color: #7ec8e3;
+    }
+
+    /* SECTION TITLE */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 36px 0 20px;
+    }
+    .section-title .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .section-title .icon-box.blue { background: #1a4b6d; }
+    .section-title .icon-box.green { background: #0d9488; }
+    .section-title .icon-box.purple { background: #7c3aed; }
+    .section-title .icon-box.orange { background: #f97316; }
+
+    .section-title h2 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0b2b44;
+    }
+    .section-title .sub {
+      font-size: 14px;
+      font-weight: 400;
+      color: #64748b;
+      margin-left: 8px;
+    }
+
+    /* CARD GRID */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px 22px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      border: 1px solid #e8edf3;
+      transition: all 0.25s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+      border-color: #b8d0e5;
+    }
+
+    .card .bank-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0b2b44;
+      margin-bottom: 14px;
+    }
+    .card .bank-name .badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: #eef2f7;
+      padding: 2px 12px;
+      border-radius: 30px;
+      color: #4a5d72;
+    }
+    .card .bank-name .badge.red { background: #fee2e2; color: #b91c1c; }
+    .card .bank-name .badge.green { background: #d1fae5; color: #065f46; }
+    .card .bank-name .badge.yellow { background: #fef3c7; color: #92400e; }
+    .card .bank-name .badge.blue { background: #dbeafe; color: #1e40af; }
+
+    .card .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13.5px;
+      color: #334155;
+      padding: 6px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .card .info-row:last-of-type {
+      border-bottom: none;
+    }
+    .card .info-row i {
+      width: 20px;
+      color: #1a4b6d;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .card .info-row .label {
+      font-weight: 600;
+      color: #64748b;
+      min-width: 70px;
+    }
+    .card .info-row .value {
+      font-weight: 500;
+      word-break: break-word;
+    }
+    .card .info-row .value code {
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      color: #0b2b44;
+      display: inline-block;
+      word-break: break-all;
+    }
+
+    .card .note {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #475569;
+      border-left: 3px solid #1a4b6d;
+    }
+    .card .note i {
+      color: #1a4b6d;
+      margin-right: 6px;
+    }
+
+    .card .step-list {
+      margin-top: 12px;
+      padding-left: 0;
+      list-style: none;
+    }
+    .card .step-list li {
+      font-size: 13px;
+      color: #334155;
+      padding: 4px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .card .step-list li .num {
+      background: #e8edf3;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #0b2b44;
+      flex-shrink: 0;
+    }
+
+    /* SPECIAL CARD - FULL WIDTH */
+    .card-full {
+      grid-column: 1 / -1;
+    }
+
+    .card-full .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 12px;
+    }
+    .card-full .flex-row .col {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    /* INVOICE SECTION */
+    .invoice-guide {
+      background: linear-gradient(145deg, #f8fafc, #eef2f7);
+      border-radius: 24px;
+      padding: 32px 36px;
+      margin: 24px 0;
+      border: 1px solid #e0e8f0;
+    }
+
+    .invoice-guide .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e0e8f0;
+    }
+    .invoice-guide .step:last-child {
+      border-bottom: none;
+    }
+    .invoice-guide .step .num {
+      background: #0b2b44;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .invoice-guide .step .content {
+      flex: 1;
+    }
+    .invoice-guide .step .content h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0b2b44;
+    }
+    .invoice-guide .step .content p {
+      font-size: 14px;
+      color: #475569;
+      margin-top: 2px;
+    }
+
+    .invoice-guide .highlight-box {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-top: 16px;
+      border: 1px dashed #1a4b6d;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .invoice-guide .highlight-box .link {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a4b6d;
+    }
+    .invoice-guide .highlight-box .link i {
+      margin-right: 8px;
+    }
+    .invoice-guide .highlight-box .tag {
+      background: #dbeafe;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e40af;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .main-header {
+        padding: 28px 24px;
+        flex-direction: column;
+        text-align: center;
+      }
+      .main-header h1 { font-size: 26px; }
+      .card-grid { grid-template-columns: 1fr; }
+      .invoice-guide { padding: 20px 18px; }
+      .card-full .flex-row { flex-direction: column; }
+    }
+
+    @media (max-width: 480px) {
+      .main-header h1 { font-size: 22px; }
+      .section-title h2 { font-size: 20px; }
+      .card { padding: 18px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ===== HEADER ===== -->
+  <header class="main-header">
+    <div>
+      <h1>📋 Hướng dẫn <span>tổng hợp</span></h1>
+      <p>Quy trình sinh trắc ngân hàng &amp; Hóa đơn điện tử</p>
+    </div>
+    <div class="header-badge">
+      <i class="fas fa-print"></i> Cập nhật: 31/08/2026
+    </div>
+  </header>
+
+  <!-- ========================== -->
+  <!-- PHẦN 1: SINH TRẮC NGÂN HÀNG -->
+  <!-- ========================== -->
+  <div class="section-title">
+    <div class="icon-box blue"><i class="fas fa-fingerprint"></i></div>
+    <h2>Sinh trắc ngân hàng <span class="sub">— Hướng dẫn đặt video</span></h2>
+  </div>
+
+  <div class="card-grid">
+
+    <!-- VCB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#0d9488;"></i> VCB
+        <span class="badge green">Vietcombank</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 1</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.VCB/main/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 2</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.VCB/assistant/2.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Khung lớn, zoom gần. Giữ yên khuôn mặt, không cười, không chớp mắt.
+      </div>
+    </div>
+
+    <!-- BIDV -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#0d9488;"></i> BIDV
+        <span class="badge green">BIDV</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 1</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.bidv/main/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 2</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.bidv/assistant/2.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Khung lớn, zoom gần. Giữ yên khuôn mặt, không cười, không chớp mắt.
+      </div>
+    </div>
+
+    <!-- ICB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#1a4b6d;"></i> ICB
+        <span class="badge blue">VietinBank</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 1</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vietinbank.ipay/main/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 2</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vietinbank.ipay/assistant/2.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.
+      </div>
+    </div>
+
+    <!-- EIB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#7c3aed;"></i> EIB
+        <span class="badge purple">Eximbank</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 1</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.EximBankOmni/main/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 2</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.EximBankOmni/assistant/2.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.
+      </div>
+    </div>
+
+    <!-- VB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#f97316;"></i> VB
+        <span class="badge yellow">Vietbank</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 1</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.vietbank/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 2</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.vietbank/2.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Khung nhỏ vừa. Giữ yên khuôn mặt, không cười, không chớp mắt.
+      </div>
+    </div>
+
+    <!-- NAB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#0d9488;"></i> NAB
+        <span class="badge green">Nam A Bank</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/ops.namabank.com.vn/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1440×1080</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên (hình 2).
+      </div>
+      <div class="step-list">
+        <li><span class="num">1</span> Cài <strong>NAMA FACE v1.0.8</strong></li>
+        <li><span class="num">2</span> Đặt ảnh dữ liệu vào <code>/Download/nama/mode_1</code> → <code>mode_10</code></li>
+        <li><span class="num">3</span> Canh giữa → zoom như hình</li>
+      </div>
+    </div>
+
+    <!-- VNeID -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-id-card" style="color:#7c3aed;"></i> VNeID
+        <span class="badge purple">VNeID</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 1</span>
+        <span class="value"><code>/sdcard/DICM/Camera/com.ncb.bank/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 2</span>
+        <span class="value"><code>/sdcard/DICM/Camera/com.ncb.bank/Virtual_JPEG.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên.
+      </div>
+    </div>
+
+    <!-- NCB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#0d9488;"></i> NCB
+        <span class="badge green">NCB</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DICM/Camera/com.ncb.bank/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1280×720</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Canh đầu chủ thẻ ở giữa, hơi gần sát 1 tí. Chỉ cần 1 video cho cả đăng nhập và chuyển tiền.
+      </div>
+    </div>
+
+    <!-- SHB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#f97316;"></i> SHB
+        <span class="badge yellow">SHB</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/vn.shb.saha.mbanking/1280/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/vn.shb.saha.mbanking/1440/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/vn.shb.saha.mbanking/jpeg/1.MP4</code></span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> 3 video với các kích thước: 1280×720, 1440×1080, 1080×1440. Cần 2 bước: ở xa 2s → zoom gần (Scale +15%).
+      </div>
+    </div>
+
+    <!-- MB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#1a4b6d;"></i> MB
+        <span class="badge blue">MB Bank</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-image"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DICM/Camera/com.mbmobile/1.mp4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1024×768</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Sử dụng hình ảnh làm video. Khung vừa. Dùng chung cho đăng nhập, kích hoạt OTP, chuyển tiền.
+      </div>
+    </div>
+
+    <!-- HDB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#0d9488;"></i> HDB
+        <span class="badge green">HDBank</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 1</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.hdbank/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 2</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.vnpay.hdbank/Virtual_JPEG.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1080×1920</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Sử dụng hình ảnh làm video. Khuôn mặt chính giữa. Cần kích hoạt file .so để sử dụng.
+      </div>
+    </div>
+
+    <!-- VP -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#7c3aed;"></i> VP
+        <span class="badge purple">VPBank</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DICM/Camera/com.vnpay.vpbankonline/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1280×960</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Đăng nhập: QR từ thiết bị cũ, video 5-8s, giữ mặt, quay từ từ sang trái/phải. Chuyển tiền: chỉ cần nhìn thẳng.
+      </div>
+    </div>
+
+    <!-- ACB -->
+    <div class="card">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#1a4b6d;"></i> ACB
+        <span class="badge blue">ACB</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 1</span>
+        <span class="value"><code>/sdcard/DICM/Camera/mobile.acb.com.vn/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video 2</span>
+        <span class="value"><code>/sdcard/DICM/Camera/mobile.acb.com.vn/Virtual_JPEG.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1: 640×480 &nbsp;|&nbsp; 2: 1080×1440</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-lightbulb"></i> Canh đầu chủ thẻ ở giữa, giữ yên 1-2s, sau đó zoom lên.
+      </div>
+    </div>
+
+    <!-- BAB – Tạm ngưng -->
+    <div class="card" style="opacity:0.6;">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#94a3b8;"></i> BAB
+        <span class="badge" style="background:#e2e8f0;color:#475569;">Tạm ngưng</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.bab.retailUAT/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1728×1728</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-clock"></i> Tạm ngưng chưa cập nhật. Bắt 2 lần: lần 1 chớp mắt, lần 2 giữ yên.
+      </div>
+    </div>
+
+    <!-- SOL – Tạm ngưng -->
+    <div class="card" style="opacity:0.6;">
+      <div class="bank-name">
+        <i class="fas fa-university" style="color:#94a3b8;"></i> SOL
+        <span class="badge" style="background:#e2e8f0;color:#475569;">Tạm ngưng</span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-video"></i>
+        <span class="label">Video</span>
+        <span class="value"><code>/sdcard/DCIM/Camera/com.shinhan.global.vn.bank/1.MP4</code></span>
+      </div>
+      <div class="info-row">
+        <i class="fas fa-arrows-alt"></i>
+        <span class="label">Kích thước</span>
+        <span class="value">1440×1080</span>
+      </div>
+      <div class="note">
+        <i class="fas fa-clock"></i> Tạm ngưng chưa cập nhật. Giữ yên giữa khung, không cười, không chớp mắt.
+      </div>
+    </div>
+
+  </div> <!-- end card-grid -->
+
+
+  <!-- ========================== -->
+  <!-- PHẦN 2: HÓA ĐƠN ĐIỆN TỬ   -->
+  <!-- ========================== -->
+  <div class="section-title" style="margin-top:48px;">
+    <div class="icon-box orange"><i class="fas fa-file-invoice"></i></div>
+    <h2>Hóa đơn điện tử <span class="sub">— Hướng dẫn sử dụng</span></h2>
+  </div>
+
+  <div class="invoice-guide">
+
+    <div class="step">
+      <div class="num">1</div>
+      <div class="content">
+        <h4>Truy cập trình tạo hóa đơn</h4>
+        <p>Mở link dưới đây để bắt đầu tạo hóa đơn cho giao dịch.</p>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <span class="link"><i class="fas fa-link"></i> https://harrynbt888.github.io/invoice/</span>
+      <span class="tag"><i class="fas fa-external-link-alt"></i> Mở trình duyệt</span>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div class="content">
+        <h4>Điều chỉnh thông tin hóa đơn</h4>
+        <p>Các ô <span style="color:#b91c1c;font-weight:700;">màu đỏ</span> có thể thay đổi nội dung tùy chỉnh theo từng đơn hàng.</p>
+        <ul style="list-style:none;padding:0;margin-top:8px;">
+          <li style="padding:4px 0;font-size:14px;color:#475569;">✓ <strong>Khách hàng</strong> – Tên, địa chỉ, mã số thuế</li>
+          <li style="padding:4px 0;font-size:14px;color:#475569;">✓ <strong>Sản phẩm</strong> – Mô tả, số lượng, đơn giá</li>
+          <li style="padding:4px 0;font-size:14px;color:#475569;">✓ <strong>Ngân hàng</strong> – Chọn ngân hàng, nhập số tài khoản</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <div class="content">
+        <h4>Thêm / Xóa sản phẩm</h4>
+        <p>Nhấn <strong>"＋ Thêm dòng"</strong> để thêm sản phẩm nếu đơn hàng lớn. Nhấn <strong>"✕"</strong> để xóa sản phẩm không cần thiết.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">4</div>
+      <div class="content">
+        <h4>QR code tự động</h4>
+        <p>Sau khi chọn <strong>ngân hàng</strong>, nhập <strong>số tài khoản</strong> và <strong>tên chủ tài khoản</strong>, mã QR sẽ tự động hiển thị. Số tiền thanh toán được cập nhật tự động.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">5</div>
+      <div class="content">
+        <h4>In và lưu hóa đơn</h4>
+        <p>Nhấn <strong>"🖨 In hóa đơn"</strong>. Hóa đơn sẽ được tối ưu để vừa 1 trang A4. Bạn có thể:</p>
+        <ul style="list-style:none;padding:0;margin-top:6px;">
+          <li style="padding:3px 0;font-size:14px;color:#475569;">📸 <strong>Chụp màn hình</strong> – Gửi cho ngân hàng</li>
+          <li style="padding:3px 0;font-size:14px;color:#475569;">💾 <strong>Lưu thành PDF</strong> – Chọn "Save as PDF" khi in</li>
+          <li style="padding:3px 0;font-size:14px;color:#475569;">🖨️ <strong>In giấy</strong> – In trực tiếp nếu cần bản cứng</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="background:#eef2f7;border-radius:16px;padding:16px 20px;margin-top:16px;border-left:4px solid #f97316;">
+      <p style="font-size:14px;color:#475569;">
+        <i class="fas fa-check-circle" style="color:#0d9488;margin-right:8px;"></i>
+        <strong>Lưu ý:</strong> Không cần in ra file giấy, chỉ cần chụp màn hình hóa đơn để gửi ngân hàng khi được yêu cầu.
+      </p>
+    </div>
+
+  </div> <!-- end invoice-guide -->
+
+
+  <!-- ===== FOOTER ===== -->
+  <div style="text-align:center;padding:32px 0 12px;border-top:1px solid #e8edf3;margin-top:32px;">
+    <p style="font-size:14px;color:#94a3b8;">
+      <i class="fas fa-code"></i> Tài liệu hướng dẫn tổng hợp &bull; Cập nhật 31/08/2026
+    </p>
+    <p style="font-size:13px;color:#b0c4d8;margin-top:4px;">
+      Dành cho mục đích tham khảo và hướng dẫn nội bộ
+    </p>
+  </div>
+
+</div> <!-- end container -->
+
+</body>
+</html>
