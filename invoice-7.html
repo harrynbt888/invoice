@@ -15,7 +15,7 @@
     .shop-name { width: 100%; max-width: 520px; margin-bottom: 8px; }
     .shop-name textarea { width: 100%; min-height: 34px; resize: none; overflow: hidden; color: white; font-size: 26px; font-weight: bold; line-height: 1.2; padding: 0; text-align: left; border: none; border-bottom: 1px solid rgba(255,255,255,.7); background: transparent; outline: none; font-family: Arial, sans-serif; }
     .subtitle input { color: white; opacity: 0.9; font-size: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.35); }
-    .invoice-title { text-align: right; min-width: 240px; }
+    .invoice-title { text-align: right; min-width: 320px; /* Đã tăng lên để chứa mã dài */ }
     .invoice-title h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 1px; }
     label { display: block; font-size: 12px; color: #64748b; margin-top: 8px; }
     .topbar label { color: rgba(255,255,255,.9); }
@@ -59,13 +59,14 @@
           <textarea id="shopName" rows="1" oninput="autoResizeShopName()">HARRY STORE</textarea>
         </div>
         <div class="subtitle">
-          <input id="subtitleText" value="Hóa đơn điện tử / Electronic Invoice" />
+          <input id="subtitleText" value="Hóa đơn điện tử" />
         </div>
       </div>
       <div class="invoice-title">
         <h1>HÓA ĐƠN</h1>
         <label>Mã hóa đơn</label>
-        <input id="invoiceId" value="HD000001" oninput="updateAll()" />
+        <!-- Đã sửa: Mã hóa đơn dài hơn nữa -->
+        <input id="invoiceId" value="HD000000000000001" oninput="updateAll()" />
         <label>Ngày lập</label>
         <input id="invoiceDate" />
       </div>
