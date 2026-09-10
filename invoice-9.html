@@ -1,295 +1,294 @@
 <!doctype html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8" />
-<title>Hóa đơn A4 ngang</title>
+  <meta charset="UTF-8" />
+  <title>Hóa đơn A4 ngang</title>
 
-<style>
-@page {
-  size: A4 landscape;
-  margin: 7mm;
-}
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 7mm;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  background: #f3f4f6;
-  font-family: Arial, sans-serif;
-  font-size: 11px;
-  color: #111827;
-}
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      color: #111827;
+    }
 
-.invoice {
-  width: 283mm;
-  min-height: 196mm;
-  margin: 0 auto;
-  background: #fff;
-  padding: 7mm;
-  border-top: 6px solid #f97316;
-}
+    .invoice {
+      width: 283mm;
+      min-height: 196mm;
+      margin: 0 auto;
+      background: #fff;
+      padding: 7mm;
+      border-top: 6px solid #f97316;
+    }
 
-input,
-select {
-  width: 100%;
-  border: none;
-  border-bottom: 1px dashed #aaa;
-  background: transparent;
-  font-size: 11px;
-  padding: 2px;
-  outline: none;
-}
+    input,
+    select {
+      width: 100%;
+      border: none;
+      border-bottom: 1px dashed #aaa;
+      background: transparent;
+      font-size: 11px;
+      padding: 2px;
+      outline: none;
+    }
 
-.header {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  background: #111827;
-  color: white;
-  padding: 9px 12px;
-  border-radius: 10px;
-  align-items: center;
-}
+    .header {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      background: #111827;
+      color: white;
+      padding: 9px 12px;
+      border-radius: 10px;
+      align-items: center;
+    }
 
-.header input {
-  color: white;
-  border-bottom: 1px solid rgba(255,255,255,.45);
-}
+    .header input {
+      color: white;
+      border-bottom: 1px solid rgba(255, 255, 255, .45);
+    }
 
-.shop input {
-  font-size: 20px;
-  font-weight: bold;
-}
+    .shop input {
+      font-size: 20px;
+      font-weight: bold;
+    }
 
-.title {
-  text-align: center;
-}
+    .title {
+      text-align: center;
+    }
 
-.title h1 {
-  margin: 0;
-  color: #f97316;
-  font-size: 24px;
-  letter-spacing: 2px;
-}
+    .title h1 {
+      margin: 0;
+      color: #f97316;
+      font-size: 24px;
+      letter-spacing: 2px;
+    }
 
-.meta {
-  text-align: right;
-}
+    .meta {
+      text-align: right;
+    }
 
-.meta input {
-  text-align: right;
-}
+    .meta input {
+      text-align: right;
+    }
 
-.info-line {
-  display: grid;
-  grid-template-columns: 1.2fr .8fr .8fr 1fr 1.1fr;
-  gap: 8px;
-  margin-top: 8px;
-  padding: 8px;
-  border: 1px solid #fed7aa;
-  border-radius: 10px;
-  background: #fff7ed;
-}
+    .info-line {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr .8fr 1fr 1.1fr;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 8px;
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+      background: #fff7ed;
+    }
 
-label {
-  display: block;
-  font-size: 9px;
-  color: #6b7280;
-  margin-bottom: 2px;
-  text-transform: uppercase;
-}
+    label {
+      display: block;
+      font-size: 9px;
+      color: #6b7280;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 8px;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
 
-th {
-  background: #f97316;
-  color: white;
-  padding: 5px;
-  font-size: 10px;
-}
+    th {
+      background: #f97316;
+      color: white;
+      padding: 5px;
+      font-size: 10px;
+    }
 
-td {
-  border: 1px solid #e5e7eb;
-  padding: 3px;
-  text-align: center;
-}
+    td {
+      border: 1px solid #e5e7eb;
+      padding: 3px;
+      text-align: center;
+    }
 
-td.name {
-  text-align: left;
-}
+    td.name {
+      text-align: left;
+    }
 
-.right {
-  text-align: right;
-}
+    .right {
+      text-align: right;
+    }
 
-.center {
-  text-align: center;
-}
+    .center {
+      text-align: center;
+    }
 
-.btn {
-  background: #f97316;
-  color: white;
-  border: none;
-  border-radius: 7px;
-  padding: 6px 10px;
-  margin-top: 6px;
-  font-size: 11px;
-  font-weight: bold;
-  cursor: pointer;
-}
+    .btn {
+      background: #f97316;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 10px;
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-.delete-btn {
-  background: #fee2e2;
-  color: #dc2626;
-  border: none;
-  border-radius: 5px;
-  padding: 2px 5px;
-  cursor: pointer;
-}
+    .delete-btn {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      border-radius: 5px;
+      padding: 2px 5px;
+      cursor: pointer;
+    }
 
-.bottom {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 10px;
-  margin-top: 8px;
-}
+    .bottom {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 10px;
+      margin-top: 8px;
+    }
 
-.code-box {
-  display: grid;
-  grid-template-columns: 1fr 130px;
-  gap: 8px;
-  align-items: center;
-  border: 1px solid #fed7aa;
-  background: #fff7ed;
-  border-radius: 10px;
-  padding: 8px;
-}
+    .code-box {
+      display: grid;
+      grid-template-columns: 1fr 130px;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid #fed7aa;
+      background: #fff7ed;
+      border-radius: 10px;
+      padding: 8px;
+    }
 
-.code {
-  text-align: center;
-}
+    .code {
+      text-align: center;
+    }
 
-.code img {
-  width: 110px;
-}
+    .code img {
+      width: 110px;
+    }
 
-.summary {
-  border: 2px solid #111827;
-  border-radius: 10px;
-  padding: 8px;
-}
+    .summary {
+      border: 2px solid #111827;
+      border-radius: 10px;
+      padding: 8px;
+    }
 
-.summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 5px 0;
-}
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 5px 0;
+    }
 
-.summary-row input {
-  width: 65px;
-  text-align: right;
-}
+    .summary-row input {
+      width: 65px;
+      text-align: right;
+    }
 
-.final {
-  border-top: 2px dashed #f97316;
-  padding-top: 7px;
-  margin-top: 7px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #ea580c;
-}
+    .final {
+      border-top: 2px dashed #f97316;
+      padding-top: 7px;
+      margin-top: 7px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #ea580c;
+    }
 
-.note {
-  margin-top: 6px;
-  border-left: 4px solid #f97316;
-  background: #f9fafb;
-  padding: 6px;
-}
+    .note {
+      margin-top: 6px;
+      border-left: 4px solid #f97316;
+      background: #f9fafb;
+      padding: 6px;
+    }
 
-.footer {
-  margin-top: 6px;
-  text-align: center;
-  color: #6b7280;
-  font-style: italic;
-}
+    .footer {
+      margin-top: 6px;
+      text-align: center;
+      color: #6b7280;
+      font-style: italic;
+    }
 
-.no-print {
-  display: inline-block;
-}
+    .no-print {
+      display: inline-block;
+    }
 
-@media print {
-  body {
-    background: white;
-  }
+    @media print {
+      body {
+        background: white;
+      }
 
-  .invoice {
-    width: auto;
-    min-height: auto;
-    padding: 0;
-    border-top: 5px solid #f97316;
-  }
+      .invoice {
+        width: auto;
+        min-height: auto;
+        padding: 0;
+        border-top: 5px solid #f97316;
+      }
 
-  .no-print {
-    display: none !important;
-  }
+      .no-print {
+        display: none !important;
+      }
 
-  input,
-  select {
-    border: none;
-    pointer-events: none;
-  }
+      input,
+      select {
+        border: none;
+        pointer-events: none;
+      }
 
-  .header,
-  th {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
-}
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+      .header,
+      th {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div class="invoice">
+  <div class="invoice">
 
-  <div class="header">
-    <div class="shop">
-      <input value="HARRY STORE" />
-      <div>Sales Invoice</div>
+    <div class="header">
+      <div class="shop">
+        <input value="HARRY STORE" />
+        <div>Sales Invoice</div>
+      </div>
+
+      <div class="title">
+        <h1>HÓA ĐƠN</h1>
+      </div>
+
+      <div class="meta">
+        <div>Mã HĐ: <input id="invoiceId" value="HD000001" oninput="updateAll()" /></div>
+        <div>Ngày: <input id="invoiceDate" /></div>
+      </div>
     </div>
 
-    <div class="title">
-      <h1>HÓA ĐƠN</h1>
-    </div>
+    <div class="info-line">
+      <div>
+        <label>Khách hàng</label>
+        <input value="Khách lẻ" />
+      </div>
 
-    <div class="meta">
-      <div>Mã HĐ: <input id="invoiceId" value="HD000001" oninput="updateAll()" /></div>
-      <div>Ngày: <input id="invoiceDate" /></div>
-    </div>
-  </div>
+      <div>
+        <label>Số điện thoại</label>
+        <input value="0900000000" />
+      </div>
 
-  <div class="info-line">
-    <div>
-      <label>Khách hàng</label>
-      <input value="Khách lẻ" />
-    </div>
-
-    <div>
-      <label>Số điện thoại</label>
-      <input value="0900000000" />
-    </div>
-
-    <div>
-      <label>Ngân hàng</label>
-      <select id="bank" onchange="updateQR()">
-    <option value="VCB">Vietcombank</option>
+      <div>
+        <label>Ngân hàng</label>
+        <select id="bank" onchange="updateQR()">
+          <option value="VCB">Vietcombank</option>
           <option value="ABB">ABBank</option>
           <option value="SHBVN">SOL</option>
           <option value="ACB">ACB</option>
@@ -317,98 +316,97 @@ td.name {
           <option value="TPB">TPBank</option>
           <option value="VIB">VIB</option>
           <option value="VPB">VPBank</option>
-           <option value="NCB">NCB</option>
-           <option value="VIKKI">VIKKI</option>
-      </select>
+          <option value="NCB">NCB</option>
+          <option value="VIKKI">VIKKI</option>
+        </select>
+      </div>
+
+      <div>
+        <label>STK</label>
+        <input id="account" value="0123456789" oninput="updateQR()" />
+      </div>
+
+      <div>
+        <label>Chủ tài khoản</label>
+        <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
+      </div>
     </div>
 
-    <div>
-      <label>STK</label>
-      <input id="account" value="0123456789" oninput="updateQR()" />
+    <table>
+      <thead>
+        <tr>
+          <th width="35">STT</th>
+          <th>Tên hàng hóa</th>
+          <th width="55">SL</th>
+          <th width="95">Đơn giá</th>
+          <th width="110">Thành tiền</th>
+          <th width="45" class="no-print">Xóa</th>
+        </tr>
+      </thead>
+      <tbody id="items"></tbody>
+    </table>
+
+    <button class="btn no-print" onclick="addRow()">➕ Thêm dòng</button>
+
+    <div class="bottom">
+      <div class="code-box">
+        <div class="code">
+        </div>
+
+        <div class="code">
+          <img id="qr" />
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>Tạm tính:</span>
+          <b id="sum">0 đ</b>
+        </div>
+
+        <div class="summary-row">
+          <span>Chiết khấu (%):</span>
+          <input id="discount" type="number" value="0" oninput="updateAll()" />
+        </div>
+
+        <div class="summary-row final">
+          <span>Thanh toán:</span>
+          <span id="final">0 đ</span>
+        </div>
+      </div>
     </div>
 
-    <div>
-      <label>Chủ tài khoản</label>
-      <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
+    <div class="note">
+      Ghi chú:
+      <input value="Cảm ơn quý khách đã mua hàng." />
     </div>
+
+    <div class="footer">
+      Hóa đơn được tạo tự động. Vui lòng kiểm tra thông tin trước khi thanh toán.
+    </div>
+
+    <button class="btn no-print" onclick="window.print()">🖨 In hóa đơn</button>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th width="35">STT</th>
-        <th>Tên hàng hóa</th>
-        <th width="55">SL</th>
-        <th width="95">Đơn giá</th>
-        <th width="110">Thành tiền</th>
-        <th width="45" class="no-print">Xóa</th>
-      </tr>
-    </thead>
-    <tbody id="items"></tbody>
-  </table>
+  <script>
+    const items = document.getElementById("items");
+    const discount = document.getElementById("discount");
+    const total = document.getElementById("sum");
+    const final = document.getElementById("final");
 
-  <button class="btn no-print" onclick="addRow()">➕ Thêm dòng</button>
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
-  <div class="bottom">
-    <div class="code-box">
-      <div class="code">
-        <svg id="barcode"></svg>
-      </div>
+    function addRow(name = "", qty = 1, price = 0) {
+      const tr = document.createElement("tr");
 
-      <div class="code">
-        <img id="qr" />
-      </div>
-    </div>
-
-    <div class="summary">
-      <div class="summary-row">
-        <span>Tạm tính:</span>
-        <b id="sum">0 đ</b>
-      </div>
-
-      <div class="summary-row">
-        <span>Chiết khấu (%):</span>
-        <input id="discount" type="number" value="0" oninput="updateAll()" />
-      </div>
-
-      <div class="summary-row final">
-        <span>Thanh toán:</span>
-        <span id="final">0 đ</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="note">
-    Ghi chú:
-    <input value="Cảm ơn quý khách đã mua hàng." />
-  </div>
-
-  <div class="footer">
-    Hóa đơn được tạo tự động. Vui lòng kiểm tra thông tin trước khi thanh toán.
-  </div>
-
-  <button class="btn no-print" onclick="window.print()">🖨 In hóa đơn</button>
-</div>
-
-<script>
-const items = document.getElementById("items");
-const discount = document.getElementById("discount");
-const total = document.getElementById("sum");
-const final = document.getElementById("final");
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function addRow(name = "", qty = 1, price = 0) {
-  const tr = document.createElement("tr");
-
-  tr.innerHTML = `
+      tr.innerHTML = `
     <td class="center"></td>
     <td class="name">
       <input value="${escapeHtml(name)}" oninput="updateAll()" />
@@ -425,71 +423,66 @@ function addRow(name = "", qty = 1, price = 0) {
     </td>
   `;
 
-  items.appendChild(tr);
-  updateAll();
-}
+      items.appendChild(tr);
+      updateAll();
+    }
 
-function removeRow(btn) {
-  btn.closest("tr").remove();
-  updateAll();
-}
+    function removeRow(btn) {
+      btn.closest("tr").remove();
+      updateAll();
+    }
 
-function fmt(n) {
-  return (n || 0).toLocaleString("vi-VN") + " đ";
-}
+    function fmt(n) {
+      return (n || 0).toLocaleString("vi-VN") + " đ";
+    }
 
-function updateAll() {
-  let sum = 0;
+    function updateAll() {
+      let sum = 0;
 
-  items.querySelectorAll("tr").forEach((tr, index) => {
-    tr.children[0].textContent = index + 1;
+      items.querySelectorAll("tr").forEach((tr, index) => {
+        tr.children[0].textContent = index + 1;
 
-    const qty = +tr.children[2].querySelector("input").value || 0;
-    const price = +tr.children[3].querySelector("input").value || 0;
-    const line = qty * price;
+        const qty = +tr.children[2].querySelector("input").value || 0;
+        const price = +tr.children[3].querySelector("input").value || 0;
+        const line = qty * price;
 
-    tr.querySelector(".line").textContent = fmt(line);
-    sum += line;
-  });
+        tr.querySelector(".line").textContent = fmt(line);
+        sum += line;
+      });
 
-  const d = +discount.value || 0;
-  const pay = Math.round(sum * (1 - d / 100));
+      const d = +discount.value || 0;
+      const pay = Math.round(sum * (1 - d / 100));
 
-  total.textContent = fmt(sum);
-  final.textContent = fmt(pay);
+      total.textContent = fmt(sum);
+      final.textContent = fmt(pay);
 
-  JsBarcode("#barcode", invoiceId.value || "HD000001", {
-    displayValue: true,
-    height: 24,
-    width: 1.1,
-    margin: 0
-  });
 
-  updateQR();
-}
+      updateQR();
+    }
 
-function updateQR() {
-  const amount = final.textContent.replace(/\D/g, "");
+    function updateQR() {
+      const amount = final.textContent.replace(/\D/g, "");
 
-  qr.src =
-    `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` +
-    `?amount=${amount}` +
-    `&addInfo=${encodeURIComponent(invoiceId.value)}` +
-    `&accountName=${encodeURIComponent(owner.value)}`;
-}
+      qr.src =
+        `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png` +
+        `?amount=${amount}` +
+        `&addInfo=${encodeURIComponent(invoiceId.value)}` +
+        `&accountName=${encodeURIComponent(owner.value)}`;
+    }
 
-function setToday() {
-  const d = new Date();
-  invoiceDate.value =
-    String(d.getDate()).padStart(2, "0") + "/" +
-    String(d.getMonth() + 1).padStart(2, "0") + "/" +
-    d.getFullYear();
-}
+    function setToday() {
+      const d = new Date();
+      invoiceDate.value =
+        String(d.getDate()).padStart(2, "0") + "/" +
+        String(d.getMonth() + 1).padStart(2, "0") + "/" +
+        d.getFullYear();
+    }
 
-window.onload = () => {
-  setToday();
-  addRow("Sản phẩm mẫu", 1, 100000);
-};
-</script>
+    window.onload = () => {
+      setToday();
+      addRow("Sản phẩm mẫu", 1, 100000);
+    };
+  </script>
 </body>
+
 </html>

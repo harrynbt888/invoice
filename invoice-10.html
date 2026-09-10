@@ -420,19 +420,6 @@
       margin-top: 4px;
     }
 
-    /* Barcode */
-    .barcode-wrap {
-      text-align: center;
-      margin-top: 18px;
-      padding-top: 10px;
-      border-top: 1px solid #e6eef8;
-    }
-
-    .barcode-wrap svg {
-      max-width: 220px;
-      height: auto;
-    }
-
     /* ---------- PRINT ---------- */
     @media print {
       body {
@@ -497,10 +484,6 @@
       }
     }
   </style>
-
-  <!-- Thư viện JsBarcode -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js">
-  </script>
 </head>
 
 <body>
@@ -632,10 +615,7 @@
       </div>
     </div>
 
-    <!-- Mã vạch -->
-    <div class="barcode-wrap">
-      <svg id="barcode"></svg>
-    </div>
+    <!-- Mã vạch --
 
   </div>
 
@@ -678,18 +658,7 @@
       });
       document.getElementById('total').textContent = fmt(sum);
 
-      // Barcode
-      try {
-        JsBarcode('#barcode', document.getElementById('invoiceNo').value || 'HD-0000', {
-          displayValue: true,
-          fontSize: 14,
-          height: 40,
-          width: 1.8,
-          background: '#ffffff',
-          lineColor: '#1e3b5c',
-          margin: 6
-        });
-      } catch (e) {}
+    
 
       // QR
       syncQR();

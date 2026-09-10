@@ -48,8 +48,6 @@
     @media print { body { background: white; } .invoice { margin: 0; box-shadow: none; border-radius: 0; max-width: none; } .no-print { display: none !important; } input, select, textarea { border: none !important; pointer-events: none; } .topbar, th { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
     @media (max-width: 700px) { .grid, .bottom { grid-template-columns: 1fr; } .topbar { flex-direction: column; } .invoice-title { text-align: left; min-width: auto; } .topbar input { text-align: left; } }
   </style>
-
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
   <div class="invoice">
@@ -132,7 +130,7 @@
       <button class="btn no-print" onclick="addRow()">➕ Thêm sản phẩm</button>
 
       <div class="bottom">
-        <div class="card"><h3>Mã thanh toán</h3><div class="code"><svg id="barcode"></svg><img id="qr" /></div></div>
+        <div class="card"><h3>Mã thanh toán</h3><div class="code"><img id="qr" /></div></div>
         <div class="summary">
           <div class="summary-row"><span>Tạm tính:</span><b id="sum">0 đ</b></div>
           <div class="summary-row"><span>Chiết khấu (%):</span><input id="discount" type="number" value="0" oninput="updateAll()" /></div>
@@ -192,7 +190,6 @@
       const pay = Math.round(sum * (1 - d / 100));
       total.textContent = fmt(sum);
       final.textContent = fmt(pay);
-      JsBarcode("#barcode", "HS", { format: "CODE128", displayValue: false, height: 42, width: 2, margin: 0 });
       updateQR();
       autoResizeShopName();
     }

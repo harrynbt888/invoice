@@ -296,12 +296,6 @@
         total.textContent = fmt(sum);
         final.textContent = fmt(pay);
 
-        JsBarcode("#barcode", invoiceId.value || "HD000001", {
-          displayValue: true,
-          height: 40,
-          width: 2,
-        });
-
         updateQR();
       }
 

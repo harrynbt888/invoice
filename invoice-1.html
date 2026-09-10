@@ -64,12 +64,6 @@
         width: 35%;
       }
 
-      /* BARCODE */
-      svg {
-        display: block;
-        margin: 6px auto;
-      }
-
       /* ITEM TABLE */
       table {
         width: 100%;
@@ -236,8 +230,6 @@
         </tr>
       </table>
 
-      <svg id="barcode"></svg>
-
       <!-- ITEMS -->
       <table>
         <thead>
@@ -392,11 +384,7 @@
         total.textContent = fmt(sum);
         final.textContent = fmt(pay);
 
-        JsBarcode("#barcode", invoiceId.value, {
-          displayValue: false,
-          height: 30,
-          width: 2,
-        });
+      
         syncBank();
       }
 

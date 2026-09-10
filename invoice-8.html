@@ -211,8 +211,6 @@ td {
 }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-
 </head>
 
 <body>
@@ -306,7 +304,7 @@ td {
 
   <div class="bottom">
     <div class="box code">
-      <svg id="barcode"></svg><br />
+  <br />
       <img id="qr" />
     </div>
 
@@ -391,13 +389,6 @@ function updateAll() {
 
   total.textContent = fmt(sum);
   final.textContent = fmt(pay);
-
-  JsBarcode("#barcode", invoiceId.value || "HD000001", {
-    displayValue: true,
-    height: 32,
-    width: 1.5,
-    margin: 0
-  });
 
   updateQR();
 }
