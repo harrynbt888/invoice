@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Hóa đơn điện tử</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px 12px;background:#eef1f6;
+       font-family:"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;color:#1f2937}
+  .invoice{width:210mm;min-height:297mm;margin:0 auto;background:#fff;
+           padding:16mm 14mm;box-shadow:0 10px 30px rgba(15,23,42,.12);border-radius:4px}
+
+  [contenteditable]{outline:none;border-radius:4px;padding:2px 4px;margin:-2px -4px;
+                    transition:background .15s}
+  [contenteditable]:hover{background:#f1f5f9}
+  [contenteditable]:focus{background:#e0edff;box-shadow:0 0 0 2px #93c5fd inset}
+
+  input.num{border:none;border-radius:4px;padding:2px 6px;font:inherit;text-align:right;
+            width:100%;background:transparent;outline:none;color:inherit}
+  input.num:hover{background:#f1f5f9}
+  input.num:focus{background:#e0edff;box-shadow:0 0 0 2px #93c5fd inset}
+
+  .seller .name{font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.3px}
+
+  h1{text-align:center;font-size:20px;letter-spacing:.5px;margin:22px 0 6px;color:#0f172a}
+  .sub{text-align:center;font-style:italic;color:#6b7280;font-size:13px}
+  .meta{text-align:center;margin-top:4px}
+  .meta b{color:#111827}
+
+  .buyer{margin-top:18px;line-height:1.7}
+  .buyer .k{display:inline-block;min-width:96px;color:#374151;font-weight:600}
+  .buyer .v{color:#111827}
+
+  table{width:100%;border-collapse:collapse;margin-top:14px}
+  th,td{border:1px solid #d1d5db;padding:8px 10px;font-size:13.5px}
+  th{background:#f8fafc;font-weight:600;color:#374151;text-align:center;font-size:13px}
+  td{vertical-align:middle}
+  .c{text-align:center}
+  .r{text-align:right}
+  .item-name{color:#111827}
+  .money{font-variant-numeric:tabular-nums;font-weight:500}
+
+  .btn-del{border:none;background:#fee2e2;color:#b91c1c;width:22px;height:22px;
+           line-height:1;border-radius:50%;cursor:pointer;font-size:14px;padding:0;
+           font-weight:700;transition:.15s}
+  .btn-del:hover{background:#fecaca;color:#991b1b}
+
+  .summary{display:flex;justify-content:flex-end;margin-top:14px}
+  .summary table{width:auto;min-width:340px;border:none;margin:0}
+  .summary td{border:none;padding:5px 8px;font-size:14px}
+  .summary .lbl{color:#374151;text-align:left}
+  .summary .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:500;color:#111827}
+  .summary .total td{border-top:1px solid #9ca3af;border-bottom:1px solid #9ca3af;
+                     font-size:15.5px;font-weight:700;padding-top:8px;padding-bottom:8px}
+
+  .words{margin-top:12px;font-style:italic;color:#374151}
+  .words b{color:#111827;font-style:normal}
+
+  .payment{margin-top:18px;display:flex;gap:16px;align-items:stretch;
+           border:1px solid #e5e7eb;border-radius:8px;padding:12px 14px;background:#fafbff}
+  .payment .info{flex:1;line-height:1.9}
+  .payment .info .k{display:inline-block;min-width:118px;color:#374151;font-weight:600}
+  .payment .info .v{color:#111827}
+  .payment .info .title{font-weight:700;color:#0f172a;font-size:13.5px;
+                        text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+
+  select.bank{font:inherit;color:#111827;padding:2px 6px;border:1px solid #d1d5db;
+              border-radius:4px;background:#fff;outline:none;min-width:200px;cursor:pointer}
+  select.bank:focus{border-color:#93c5fd;box-shadow:0 0 0 2px #e0edff}
+
+  .payment .qr{width:170px;flex:none;display:flex;flex-direction:column;
+               align-items:center;gap:6px}
+  .payment .qr img{width:150px;height:150px;border-radius:6px;
+               border:1px solid #d1d5db;background:#fff;object-fit:contain}
+  .payment .qr .cap{font-size:11.5px;color:#6b7280;text-align:center;line-height:1.3}
+
+  .note-foot{margin-top:22px;padding-top:10px;border-top:1px dashed #d1d5db;
+             font-size:11.5px;color:#6b7280;font-style:italic;text-align:center}
+
+  .toolbar{max-width:210mm;margin:0 auto 12px;display:flex;gap:10px;align-items:center}
+  .toolbar button{font:inherit;font-weight:600;padding:9px 16px;border:none;border-radius:6px;
+                  background:#2563eb;color:#fff;cursor:pointer;transition:.15s}
+  .toolbar button:hover{background:#1d4ed8}
+  .toolbar button.ghost{background:#fff;color:#2563eb;border:1px solid #bfdbfe}
+  .toolbar button.ghost:hover{background:#eff6ff}
+  .toolbar .hint{margin-left:auto;color:#64748b;font-size:12.5px}
+
+  @page{size:A4;margin:10mm}
+  @media print{
+    body{background:#fff;padding:0}
+    .no-print{display:none!important}
+    .col-del{display:none!important}
+    .invoice{width:auto;min-height:auto;margin:0;padding:0;box-shadow:none;border-radius:0}
+    [contenteditable]:hover,[contenteditable]:focus,input.num:hover,input.num:focus{
+      background:transparent!important;box-shadow:none!important}
+    select.bank{border:none!important;background:transparent!important;
+                appearance:none;-webkit-appearance:none;
+                box-shadow:none!important;padding-left:0}
+    .payment{background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    tr{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <button onclick="window.print()">🖨️ In / Lưu PDF</button>
+  <button class="ghost" onclick="addRow()">＋ Thêm dòng</button>
+  <button class="ghost" onclick="updateQR(num(document.getElementById('tong').textContent))">🔄 Cập nhật QR</button>
+  <span class="hint">Bấm vào chữ để sửa — số tự tính, QR tự cập nhật</span>
+</div>
+
+<div class="invoice">
+
+  <!-- Người bán -->
+  <div class="seller">
+    <div class="name" contenteditable="true">CÔNG TY TNHH ABC</div>
+  </div>
+
+  <!-- Tiêu đề -->
+  <h1>HÓA ĐƠN ĐIỆN TỬ</h1>
+  <div class="meta">
+    Ngày <b contenteditable="true">14</b> tháng <b contenteditable="true">09</b> năm <b contenteditable="true">2026</b>
+  </div>
+
+  <!-- Người mua -->
+  <div class="buyer">
+    <div><span class="k">Người mua:</span><span class="v" contenteditable="true">Nguyễn Văn A</span></div>
+    <div><span class="k">Thanh toán:</span><span class="v" contenteditable="true">Chuyển khoản</span></div>
+  </div>
+
+  <!-- Bảng hàng hóa -->
+  <table>
+    <thead>
+      <tr>
+        <th style="width:44px">STT</th>
+        <th>Tên hàng hóa, dịch vụ</th>
+        <th style="width:70px">ĐVT</th>
+        <th style="width:80px">Số lượng</th>
+        <th style="width:120px">Đơn giá</th>
+        <th style="width:130px">Thành tiền</th>
+        <th class="col-del no-print" style="width:36px"></th>
+      </tr>
+    </thead>
+    <tbody id="items">
+      <tr>
+        <td class="c">1</td>
+        <td class="item-name" contenteditable="true">Thiết kế website theo yêu cầu</td>
+        <td class="c" contenteditable="true">Gói</td>
+        <td class="r"><input class="num sl" value="1" oninput="calc()"></td>
+        <td class="r"><input class="num dg" value="15000000" oninput="calc()"></td>
+        <td class="r money tt">0</td>
+        <td class="c col-del no-print"><button class="btn-del" title="Xóa dòng" onclick="removeRow(this)">×</button></td>
+      </tr>
+      <tr>
+        <td class="c">2</td>
+        <td class="item-name" contenteditable="true">Phí duy trì hosting &amp; tên miền (12 tháng)</td>
+        <td class="c" contenteditable="true">Năm</td>
+        <td class="r"><input class="num sl" value="1" oninput="calc()"></td>
+        <td class="r"><input class="num dg" value="2500000" oninput="calc()"></td>
+        <td class="r money tt">0</td>
+        <td class="c col-del no-print"><button class="btn-del" title="Xóa dòng" onclick="removeRow(this)">×</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Tổng kết -->
+  <div class="summary">
+    <table>
+      <tr class="total">
+        <td class="lbl">Tổng cộng tiền thanh toán:</td>
+        <td class="val"><span id="tong">0</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="words">Số tiền viết bằng chữ: <b id="bangchu">Không đồng</b></div>
+
+  <!-- ==== Thông tin thanh toán + QR ==== -->
+  <div class="payment">
+    <div class="info">
+      <div class="title">Thông tin chuyển khoản</div>
+
+      <div>
+        <span class="k">Ngân hàng:</span>
+        <select class="bank" id="bankCode" onchange="updateQR(num(document.getElementById('tong').textContent))">
+          <option value="VCB">Vietcombank</option>
+          <option value="ABB">ABBank</option>
+          <option value="SHBVN">SOL</option>
+          <option value="ACB">ACB</option>
+          <option value="AGRIBANK">Agribank</option>
+          <option value="BAB">Bac A Bank</option>
+          <option value="BAOVIETBANK">BaoViet Bank</option>
+          <option value="BIDV">BIDV</option>
+          <option value="BVB">BVBank</option>
+          <option value="EIB">Eximbank</option>
+          <option value="HDB">HDBank</option>
+          <option value="ICB">VietinBank</option>
+          <option value="KLB">KienlongBank</option>
+          <option value="MB">MB Bank</option>
+          <option value="MSB">MSB</option>
+          <option value="NAB">Nam A Bank</option>
+          <option value="OCB">OCB</option>
+          <option value="PGB">PG Bank</option>
+          <option value="PVCOMBANK">PVcomBank</option>
+          <option value="SAIGONBANK">SaigonBank</option>
+          <option value="SCB">SCB</option>
+          <option value="SEAB">SeABank</option>
+          <option value="SHB">SHB</option>
+          <option value="STB">Sacombank</option>
+          <option value="TCB">Techcombank</option>
+          <option value="TPB">TPBank</option>
+          <option value="VIB">VIB</option>
+          <option value="VPB">VPBank</option>
+          <option value="NCB">NCB</option>
+          <option value="VIKKI">VIKKI</option>
+        </select>
+      </div>
+
+      <div><span class="k">Số tài khoản:</span><span class="v" id="bankAcc" contenteditable="true">0071000123456</span></div>
+      <div><span class="k">Chủ tài khoản:</span><span class="v" id="bankOwner" contenteditable="true">CONG TY TNHH ABC</span></div>
+      <div><span class="k">Nội dung CK:</span><span class="v" id="bankMemo" contenteditable="true">Thanh toan HD 0000123</span></div>
+    </div>
+    <div class="qr">
+      <img id="qrImg" alt="Mã QR chuyển khoản"
+           src="https://img.vietqr.io/image/VCB-0071000123456-compact.png?amount=0&addInfo=Thanh%20toan%20HD%200000123&accountName=CONG%20TY%20TNHH%20ABC">
+      <div class="cap">Mã QR chuyển khoản<br>(VietQR)</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========== ĐỌC SỐ THÀNH CHỮ ========== */
+const CS=['không','một','hai','ba','bốn','năm','sáu','bảy','tám','chín'];
+const DV=['','nghìn','triệu','tỷ','nghìn tỷ','triệu tỷ'];
+
+function docBa(n,full){
+  const tr=Math.floor(n/100), ch=Math.floor(n%100/10), dv=n%10, o=[];
+  if(tr||full)o.push(CS[tr]+' trăm');
+  if(ch===0){ if(dv&&(tr||full))o.push('lẻ'); if(dv)o.push(CS[dv]); }
+  else if(ch===1){ o.push('mười');
+    if(dv===1)o.push('một'); else if(dv===5)o.push('lăm'); else if(dv)o.push(CS[dv]); }
+  else{ o.push(CS[ch]+' mươi');
+    if(dv===1)o.push('mốt'); else if(dv===4)o.push('tư');
+    else if(dv===5)o.push('lăm'); else if(dv)o.push(CS[dv]); }
+  return o.join(' ');
+}
+function docSo(n){
+  n=Math.round(Math.abs(n));
+  if(!n)return 'Không đồng';
+  const g=[]; while(n>0){g.push(n%1000);n=Math.floor(n/1000);}
+  const p=[];
+  for(let i=g.length-1;i>=0;i--){
+    if(!g[i])continue;
+    const s=docBa(g[i], i<g.length-1);
+    p.push(DV[i]?s+' '+DV[i]:s);
+  }
+  let t=p.join(' ').replace(/\s+/g,' ').trim();
+  return t[0].toUpperCase()+t.slice(1)+' đồng';
+}
+
+/* ========== TIỆN ÍCH SỐ ========== */
+const num = s => parseFloat(String(s).replace(/\./g,'').replace(/,/g,'.')) || 0;
+const fmt = n => Math.round(n).toLocaleString('vi-VN');
+
+/* ========== TÍNH TOÁN (đã bỏ VAT) ========== */
+function calc(){
+  let sum=0;
+  document.querySelectorAll('#items tr').forEach(tr=>{
+    const sl=num(tr.querySelector('.sl').value);
+    const dg=num(tr.querySelector('.dg').value);
+    const tt=sl*dg;
+    tr.querySelector('.tt').textContent=fmt(tt);
+    sum+=tt;
+  });
+  document.getElementById('tong').textContent=fmt(sum);
+  document.getElementById('bangchu').textContent=docSo(sum);
+  updateQR(sum);
+}
+
+/* ========== MÃ QR VIETQR ========== */
+function updateQR(amount){
+  const bank  = document.getElementById('bankCode').value;
+  const acc   = document.getElementById('bankAcc').innerText.trim();
+  const owner = document.getElementById('bankOwner').innerText.trim();
+  const memo  = document.getElementById('bankMemo').innerText.trim();
+  const amt   = amount || 0;
+
+  const url = `https://img.vietqr.io/image/${bank}-${acc}-compact.png`
+            + `?amount=${amt}`
+            + `&addInfo=${encodeURIComponent(memo)}`
+            + `&accountName=${encodeURIComponent(owner)}`;
+
+  document.getElementById('qrImg').src = url;
+}
+
+['bankAcc','bankOwner','bankMemo'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input', ()=>updateQR(num(document.getElementById('tong').textContent)));
+  el.addEventListener('blur',  ()=>updateQR(num(document.getElementById('tong').textContent)));
+});
+
+/* ========== THÊM / XÓA DÒNG ========== */
+function addRow(){
+  const tb=document.getElementById('items');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td class="c"></td>
+    <td class="item-name" contenteditable="true"></td>
+    <td class="c" contenteditable="true"></td>
+    <td class="r"><input class="num sl" value="1" oninput="calc()"></td>
+    <td class="r"><input class="num dg" value="0" oninput="calc()"></td>
+    <td class="r money tt">0</td>
+    <td class="c col-del no-print"><button class="btn-del" title="Xóa dòng" onclick="removeRow(this)">×</button></td>`;
+  tb.appendChild(tr);
+  tr.querySelector('.item-name').focus();
+  calc();
+}
+
+function removeRow(btn){
+  const tb=document.getElementById('items');
+  if(tb.rows.length<=1){
+    const tr=btn.closest('tr');
+    tr.querySelectorAll('[contenteditable]').forEach(el=>el.textContent='');
+    tr.querySelector('.sl').value='1';
+    tr.querySelector('.dg').value='0';
+  }else{
+    btn.closest('tr').remove();
+  }
+  calc();
+}
+
+document.addEventListener('blur',e=>{
+  if(e.target.classList&&e.target.classList.contains('dg')){
+    const v=num(e.target.value); e.target.value=fmt(v); calc();
+  }
+},true);
+
+/* ========== KHỞI TẠO ========== */
+document.querySelectorAll('.dg').forEach(i=>i.value=fmt(num(i.value)));
+document.querySelectorAll('#items tr').forEach((tr,i)=>tr.querySelector('td').textContent=i+1);
+calc();
+</script>
+</body>
+</html>
