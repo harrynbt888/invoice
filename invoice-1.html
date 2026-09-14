@@ -192,6 +192,19 @@
         .print-only {
           display: inline;
         }
+        /* === Đảm bảo QR in ra đầy đủ === */
+        .qr {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+        .qr img {
+          width: 120px !important;
+          height: 120px !important;
+          display: block !important;
+          margin: 0 auto !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
       }
     </style>
 
@@ -223,9 +236,8 @@
           <th>Khách hàng</th>
           <td><input value="Nguyễn Văn A" /></td>
         </tr>
-        <!-- Thêm dòng Ngày giờ -->
         <tr>
-          <th>Ngày </th>
+          <th>Ngày</th>
           <td><input id="invoiceDate" value="" /></td>
         </tr>
       </table>
@@ -337,12 +349,12 @@
         </div>
 
         <div class="qr">
-          <img id="qr" />
+          <img id="qr" crossorigin="anonymous" />
           <div style="font-size: 10px">Quét QR thanh toán</div>
         </div>
       </div>
 
-      <button class="btn btn-print no-print" onclick="window.print()">
+      <button class="btn btn-print no-print" onclick="printInvoice()">
         🖨 In hóa đơn
       </button>
       <div class="footer">Cảm ơn quý khách!</div>
@@ -384,7 +396,6 @@
         total.textContent = fmt(sum);
         final.textContent = fmt(pay);
 
-      
         syncBank();
       }
 
@@ -397,7 +408,50 @@
 
       function updateQR() {
         const amount = final.textContent.replace(/\D/g, "");
-        qr.src = `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png?amount=${amount}&addInfo=${invoiceId.value}&accountName=${owner.value}`;
+        const url =
+          `https://img.vietqr.io/image/${bank.value}-${account.value}-compact.png` +
+          `?amount=${amount}` +
+          `&addInfo=${encodeURIComponent(invoiceId.value)}` +
+          `&accountName=${encodeURIComponent(owner.value)}`;
+
+        const img = document.getElementById("qr");
+        img.crossOrigin = "anonymous";
+        img.src = url;
+      }
+
+      /* ============ IN — ĐỢI QR LOAD XONG MỚI IN ============ */
+      async function printInvoice() {
+        const img = document.getElementById("qr");
+        const url = img.src;
+
+        try {
+          // Tải ảnh QR thành blob → đảm bảo có sẵn trong bộ nhớ khi in
+          const res = await fetch(url, { cache: "force-cache" });
+          const blob = await res.blob();
+          const blobUrl = URL.createObjectURL(blob);
+
+          img.src = blobUrl;
+          await img.decode();
+
+          window.print();
+
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        } catch (e) {
+          // Fallback nếu fetch lỗi (CORS/mạng)
+          if (img.complete && img.naturalHeight !== 0) {
+            window.print();
+          } else {
+            let printed = false;
+            const doPrint = () => {
+              if (printed) return;
+              printed = true;
+              window.print();
+            };
+            img.onload = doPrint;
+            img.onerror = doPrint;
+            setTimeout(doPrint, 1500);
+          }
+        }
       }
 
       function loadLogo(input) {
@@ -409,15 +463,15 @@
       }
 
       window.onload = () => {
-        // Hàm hỗ trợ thêm số 0 phía trước nếu nhỏ hơn 10
-        const pad = (n) => n.toString().padStart(2, '0');
-        
-        // Lấy thời gian hiện tại
+        const pad = (n) => n.toString().padStart(2, "0");
         const now = new Date();
-        const formattedDateTime = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        const formattedDateTime = `${pad(now.getDate())}/${pad(
+          now.getMonth() + 1
+        )}/${now.getFullYear()} ${pad(now.getHours())}:${pad(
+          now.getMinutes()
+        )}`;
 
-        // Gán vào ô Ngày giờ
-        document.getElementById('invoiceDate').value = formattedDateTime;
+        document.getElementById("invoiceDate").value = formattedDateTime;
 
         addItem("Sản phẩm 1", 1, 100000);
         syncBank();

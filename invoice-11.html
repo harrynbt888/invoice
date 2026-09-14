@@ -365,9 +365,10 @@
     }
 
     .bank-row select,
-    .bank-row input {
+    .bank-row input,
+    .bank-row textarea {
       border: none;
-      border-bottom: 1.5px solid #d5e4e0;
+      border-bottom: 1.5px solid #d5e4e0; /* GẠCH KẺ DƯỚI RÕ RÀNG */
       background: transparent;
       padding: 2px 0;
       font-size: 12px;
@@ -375,11 +376,25 @@
       font-family: inherit;
       width: 100%;
     }
+
+    /* Đảm bảo textarea luôn có gạch kẻ dưới */
+    .bank-row textarea {
+      resize: vertical;
+      min-height: 36px; /* tăng chiều cao tối thiểu để dễ nhìn */
+      line-height: 1.4;
+      border-bottom: 1.5px solid #d5e4e0; /* khẳng định lại */
+      padding: 4px 0;
+      display: block; /* tránh lỗi hiển thị */
+      margin-bottom: 2px; /* tạo khoảng cách với dòng cảnh báo */
+    }
+
     .bank-row select:focus,
-    .bank-row input:focus {
+    .bank-row input:focus,
+    .bank-row textarea:focus {
       outline: none;
       border-bottom-color: #1a9c72;
     }
+
     .bank-row select {
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236a8a9c' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
@@ -527,9 +542,16 @@
         font-size: 10px;
       }
       .bank-row select,
-      .bank-row input {
+      .bank-row input,
+      .bank-row textarea {
         font-size: 11px;
         padding: 0;
+        border-bottom: 1px solid #000 !important; /* khi in đậm hơn */
+      }
+      .bank-row textarea {
+        padding: 2px 0;
+        resize: none;
+        border-bottom: 1px solid #000 !important;
       }
       .warning-note {
         display: none;
@@ -771,35 +793,35 @@
             <label>Ngân hàng</label>
             <select id="bank" onchange="syncQR()">
               <option value="VCB">Vietcombank</option>
-            <option value="ABB">ABBank</option>
-            <option value="SHBVN">SOL</option>
-            <option value="ACB">ACB</option>
-            <option value="AGRIBANK">Agribank</option>
-            <option value="BAB">Bac A Bank</option>
-            <option value="BAOVIETBANK">BaoViet Bank</option>
-            <option value="BIDV">BIDV</option>
-            <option value="BVB">BVBank</option>
-            <option value="EIB">Eximbank</option>
-            <option value="HDB">HDBank</option>
-            <option value="ICB">VietinBank</option>
-            <option value="KLB">KienlongBank</option>
-            <option value="MB">MB Bank</option>
-            <option value="MSB">MSB</option>
-            <option value="NAB">Nam A Bank</option>
-            <option value="OCB">OCB</option>
-            <option value="PGB">PG Bank</option>
-            <option value="PVCOMBANK">PVcomBank</option>
-            <option value="SAIGONBANK">SaigonBank</option>
-            <option value="SCB">SCB</option>
-            <option value="SEAB">SeABank</option>
-            <option value="SHB">SHB</option>
-            <option value="STB">Sacombank</option>
-            <option value="TCB">Techcombank</option>
-            <option value="TPB">TPBank</option>
-            <option value="VIB">VIB</option>
-            <option value="VPB">VPBank</option>
-            <option value="NCB">NCB</option>
-            <option value="VIKKI">VIKKI</option>
+              <option value="ABB">ABBank</option>
+              <option value="SHBVN">SOL</option>
+              <option value="ACB">ACB</option>
+              <option value="AGRIBANK">Agribank</option>
+              <option value="BAB">Bac A Bank</option>
+              <option value="BAOVIETBANK">BaoViet Bank</option>
+              <option value="BIDV">BIDV</option>
+              <option value="BVB">BVBank</option>
+              <option value="EIB">Eximbank</option>
+              <option value="HDB">HDBank</option>
+              <option value="ICB">VietinBank</option>
+              <option value="KLB">KienlongBank</option>
+              <option value="MB">MB Bank</option>
+              <option value="MSB">MSB</option>
+              <option value="NAB">Nam A Bank</option>
+              <option value="OCB">OCB</option>
+              <option value="PGB">PG Bank</option>
+              <option value="PVCOMBANK">PVcomBank</option>
+              <option value="SAIGONBANK">SaigonBank</option>
+              <option value="SCB">SCB</option>
+              <option value="SEAB">SeABank</option>
+              <option value="SHB">SHB</option>
+              <option value="STB">Sacombank</option>
+              <option value="TCB">Techcombank</option>
+              <option value="TPB">TPBank</option>
+              <option value="VIB">VIB</option>
+              <option value="VPB">VPBank</option>
+              <option value="NCB">NCB</option>
+              <option value="VIKKI">VIKKI</option>
             </select>
           </div>
           <div class="bank-row">
@@ -808,7 +830,8 @@
           </div>
           <div class="bank-row" style="grid-template-columns:1fr;">
             <label>Nội dung</label>
-            <input id="description" value="chuyen khoan VAN QUYNH" oninput="syncQR()">
+            <!-- textarea 2 dòng, đã có gạch kẻ dưới từ CSS -->
+            <textarea id="description" rows="2" oninput="syncQR()" placeholder="Nhập nội dung chuyển khoản...">chuyen khoan VAN QUYNH</textarea>
           </div>
           <div class="warning-note no-print">⚠️ Thay đổi số tài khoản để QR hoạt động</div>
         </div>

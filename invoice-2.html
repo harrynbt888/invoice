@@ -61,6 +61,7 @@
       /* BARCODE */
       .barcode-wrap {
         margin: 6px 0;
+        text-align: center;
       }
       .barcode-wrap svg {
         height: 36px;
@@ -76,12 +77,12 @@
         padding: 4px;
       }
 
-      /* TABLE - ĐIỀU CHỈNH ĐỘ RỘNG CỘT */
+      /* TABLE */
       .table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 6px;
-        table-layout: fixed; /* giúp kiểm soát chiều rộng chính xác */
+        table-layout: fixed;
       }
       .table th,
       .table td {
@@ -96,42 +97,34 @@
         background: #f5f7fa;
       }
 
-      /* ĐỘ RỘNG CỤ THỂ CHO TỪNG CỘT */
       .table th:nth-child(1),
-      .table td:nth-child(1) {
-        width: 30px; /* STT */
-      }
+      .table td:nth-child(1) { width: 30px; }
+
       .table th:nth-child(2),
       .table td:nth-child(2) {
-        width: auto; /* Tên hàng – chiếm phần còn lại */
+        width: auto;
         min-width: 150px;
         text-align: left;
         white-space: normal;
         word-break: break-word;
         padding: 6px;
       }
-      .table th:nth-child(3),
-      .table td:nth-child(3) {
-        width: 50px; /* ĐVT */
-      }
-      .table th:nth-child(4),
-      .table td:nth-child(4) {
-        width: 50px; /* SL */
-      }
-      .table th:nth-child(5),
-      .table td:nth-child(5) {
-        width: 80px; /* Đơn giá */
-      }
-      .table th:nth-child(6),
-      .table td:nth-child(6) {
-        width: 80px; /* Thành tiền */
-      }
-      .table th:nth-child(7),
-      .table td:nth-child(7) {
-        width: 30px; /* Nút xóa */
-      }
 
-      /* Đảm bảo input trong các cột nhỏ vừa khung */
+      .table th:nth-child(3),
+      .table td:nth-child(3) { width: 50px; }
+
+      .table th:nth-child(4),
+      .table td:nth-child(4) { width: 50px; }
+
+      .table th:nth-child(5),
+      .table td:nth-child(5) { width: 80px; }
+
+      .table th:nth-child(6),
+      .table td:nth-child(6) { width: 80px; }
+
+      .table th:nth-child(7),
+      .table td:nth-child(7) { width: 30px; }
+
       .table td input {
         width: 100%;
         box-sizing: border-box;
@@ -155,6 +148,8 @@
       }
       .qr-wrap img {
         width: 140px;
+        height: 140px;
+        object-fit: contain;
       }
 
       /* BUTTON */
@@ -176,6 +171,19 @@
         select {
           border: none;
           color: #000;
+        }
+        /* Đảm bảo QR in ra đầy đủ */
+        .qr-wrap {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+        .qr-wrap img {
+          width: 140px !important;
+          height: 140px !important;
+          display: block !important;
+          margin: 0 auto !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
       }
     </style>
@@ -311,7 +319,7 @@
 
       <!-- QR DƯỚI THÔNG TIN NGƯỜI NHẬN -->
       <div class="qr-wrap">
-        <img id="qr" />
+        <img id="qr" crossorigin="anonymous" alt="QR thanh toán" />
       </div>
 
       <div
@@ -326,7 +334,7 @@
         Cảm ơn quý khách đã mua hàng!
       </div>
 
-      <button class="btn no-print" onclick="window.print()">
+      <button class="btn no-print" onclick="printInvoice()">
         🖨 In hóa đơn
       </button>
     </div>
@@ -372,17 +380,53 @@
         total.textContent = fmt(sum);
         final.textContent = fmt(pay);
 
-        JsBarcode("#barcode", invoiceId.value, {
-          displayValue: false,
-          height: 36,
-          width: 2,
-        });
         updateQR();
       }
 
       function updateQR() {
         const amount = final.textContent.replace(/\D/g, "");
-        qr.src = `https://img.vietqr.io/image/${bank.value}-${account.value}-compact2.png?amount=${amount}&addInfo=${invoiceId.value}&accountName=${owner.value}`;
+        const url =
+          `https://img.vietqr.io/image/${bank.value}-${account.value}-compact.png` +
+          `?amount=${amount}` +
+          `&addInfo=${encodeURIComponent(invoiceId.value)}` +
+          `&accountName=${encodeURIComponent(owner.value)}`;
+
+        const img = document.getElementById("qr");
+        img.crossOrigin = "anonymous";
+        img.src = url;
+      }
+
+      /* ============ IN — ĐỢI QR LOAD XONG MỚI IN ============ */
+      async function printInvoice() {
+        const img = document.getElementById("qr");
+        const url = img.src;
+
+        try {
+          const res = await fetch(url, { cache: "force-cache" });
+          const blob = await res.blob();
+          const blobUrl = URL.createObjectURL(blob);
+
+          img.src = blobUrl;
+          await img.decode();
+
+          window.print();
+
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        } catch (e) {
+          if (img.complete && img.naturalHeight !== 0) {
+            window.print();
+          } else {
+            let printed = false;
+            const doPrint = () => {
+              if (printed) return;
+              printed = true;
+              window.print();
+            };
+            img.onload = doPrint;
+            img.onerror = doPrint;
+            setTimeout(doPrint, 1500);
+          }
+        }
       }
 
       function loadLogo(input) {
