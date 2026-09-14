@@ -255,7 +255,7 @@
         _t: Date.now() // chống cache
       });
 
-      const url = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${params.toString()}`;
+      const url = `https://img.vietqr.io/image/${bank}-${account}-compact.png?${params.toString()}`;
 
       qrImg.src = url;
       qrImg.alt = 'Đang tải mã QR...';
@@ -269,7 +269,7 @@
         });
         if (amount > 0) fallbackParams.set('amount', amount);
         const fallbackUrl =
-          `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${fallbackParams.toString()}`;
+          `https://img.vietqr.io/image/${bank}-${account}-compact.png?${fallbackParams.toString()}`;
         this.src = fallbackUrl;
         this.onerror = function() {
           this.src = '';

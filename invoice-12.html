@@ -813,7 +813,7 @@
         // 1. Tạo link VietQR API (Ưu tiên hàng đầu)
         const encodedInfo = encodeURIComponent(invoiceId);
         const encodedOwner = encodeURIComponent(owner);
-        const vietQrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${encodedInfo}&accountName=${encodedOwner}`;
+        const vietQrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact.png?amount=${amount}&addInfo=${encodedInfo}&accountName=${encodedOwner}`;
 
         // 2. Thiết lập cơ chế Fallback nếu VietQR lỗi
         img.onerror = function() {

@@ -783,7 +783,7 @@
         qrRetried = false;
 
         // 1. Link VietQR
-        const vietQrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?amount=${amount}&addInfo=${invoiceId}&accountName=${owner}`;
+        const vietQrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact.png?amount=${amount}&addInfo=${invoiceId}&accountName=${owner}`;
 
         // 2. Gán sự kiện onerror
         img.onerror = function() {

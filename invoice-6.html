@@ -386,7 +386,7 @@
           _t: Date.now()
         });
 
-        qrImg.src = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${params.toString()}`;
+        qrImg.src = `https://img.vietqr.io/image/${bank}-${account}-compact.png?${params.toString()}`;
 
         // Xử lý lỗi nếu QR không tải được (ví dụ sai thông tin)
         qrImg.onerror = function() {

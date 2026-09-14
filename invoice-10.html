@@ -689,7 +689,7 @@
         _t: Date.now()
       });
 
-      const url = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${params.toString()}`;
+      const url = `https://img.vietqr.io/image/${bank}-${account}-compact.png?${params.toString()}`;
       qrImg.src = url;
       qrImg.alt = 'Đang tải QR...';
 
@@ -701,7 +701,7 @@
           _t: Date.now()
         });
         if (amount > 0) fallback.set('amount', amount);
-        this.src = `https://img.vietqr.io/image/${bank}-${account}-compact2.png?${fallback.toString()}`;
+        this.src = `https://img.vietqr.io/image/${bank}-${account}-compact.png?${fallback.toString()}`;
         this.onerror = function() {
           this.src = '';
           this.alt = '❌ Lỗi tạo QR. Kiểm tra ngân hàng và số tài khoản.';

@@ -303,7 +303,7 @@
         const amount = final.textContent.replace(/\D/g, "");
 
         qr.src =
-          `https://img.vietqr.io/image/${info.value}-${account.value}-compact2.png` +
+          `https://img.vietqr.io/image/${info.value}-${account.value}-compact.png` +
           `?amount=${amount}&addInfo=${encodeURIComponent(invoiceId.value)}` +
           `&accountName=${encodeURIComponent(owner.value)}`;
       }
