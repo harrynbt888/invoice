@@ -5,10 +5,7 @@
     <title>Invoice</title>
 
     <style>
-      @page {
-        size: A4;
-        margin: 20mm;
-      }
+      @page { size: A4; margin: 20mm; }
 
       body {
         margin: 0;
@@ -32,118 +29,34 @@
         align-items: flex-start;
       }
 
-      .brand {
-        display: flex;
-        gap: 12px;
-      }
+      .brand { display: flex; gap: 12px; }
+      .brand input { border: none; font-size: 18px; font-weight: 600; }
+      .brand .small { font-size: 13px; color: #555; }
 
-      .brand input {
-        border: none;
-        font-size: 18px;
-        font-weight: 600;
-      }
+      .invoice-title { text-align: right; }
+      .invoice-title h1 { margin: 0; letter-spacing: 2px; }
 
-      .brand .small {
-        font-size: 13px;
-        color: #555;
-      }
-
-      .invoice-title {
-        text-align: right;
-      }
-
-      .invoice-title h1 {
-        margin: 0;
-        letter-spacing: 2px;
-      }
-
-      .invoice-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .invoice-meta div {
-        display: flex;
-        justify-content: flex-end;
-        gap: 6px;
-      }
-
-      .invoice-meta input {
-        border: none;
-        width: 120px;
-        text-align: right;
-      }
+      .invoice-meta { display: flex; flex-direction: column; gap: 4px; }
+      .invoice-meta div { display: flex; justify-content: flex-end; gap: 6px; }
+      .invoice-meta input { border: none; width: 120px; text-align: right; }
 
       /* INFO */
-      .info {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 40px;
-      }
-
-      .info h3 {
-        font-size: 13px;
-        letter-spacing: 1px;
-      }
-
-      .info input {
-        border: none;
-        display: block;
-        margin: 2px 0;
-        width: 260px;
-      }
+      .info { display: flex; justify-content: space-between; margin-top: 40px; }
+      .info h3 { font-size: 13px; letter-spacing: 1px; }
+      .info input { border: none; display: block; margin: 2px 0; width: 260px; }
 
       /* TABLE */
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 40px;
-        font-size: 14px;
-      }
-
-      thead th {
-        text-align: left;
-        border-bottom: 2px solid #333;
-        padding: 8px;
-      }
-
-      tbody td {
-        border-bottom: 1px solid #ddd;
-        padding: 8px;
-      }
-
-      td.center {
-        text-align: center;
-      }
-
-      td.right {
-        text-align: right;
-      }
-
-      td input {
-        width: 100%;
-        border: none;
-      }
-
-      .delete {
-        color: #c00;
-        cursor: pointer;
-      }
+      table { width: 100%; border-collapse: collapse; margin-top: 40px; font-size: 14px; }
+      thead th { text-align: left; border-bottom: 2px solid #333; padding: 8px; }
+      tbody td { border-bottom: 1px solid #ddd; padding: 8px; }
+      td.center { text-align: center; }
+      td.right { text-align: right; }
+      td input { width: 100%; border: none; }
+      .delete { color: #c00; cursor: pointer; }
 
       /* TOTAL */
-      .total-box {
-        margin-top: 20px;
-        width: 260px;
-        margin-left: auto;
-      }
-
-      .total-box div {
-        display: flex;
-        justify-content: space-between;
-        padding: 4px 0;
-      }
-
+      .total-box { margin-top: 20px; width: 260px; margin-left: auto; }
+      .total-box div { display: flex; justify-content: space-between; padding: 4px 0; }
       .total-box .final {
         font-weight: bold;
         border-top: 2px solid #333;
@@ -151,70 +64,64 @@
       }
 
       /* BANK */
-      .bank {
-        margin-top: 40px;
-      }
-
+      .bank { margin-top: 40px; }
       .bank-row {
         display: grid;
         grid-template-columns: 120px 1fr;
         gap: 8px;
         margin: 6px 0;
       }
+      .bank input, .bank select { border: none; width: 100%; }
 
-      .bank input,
-      .bank select {
-        border: none;
-        width: 100%;
+      /* QR — vẽ client-side, khung tự co */
+      .qr { margin-top: 10px; }
+      #qr {
+        display: inline-block;
+        padding: 6px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        line-height: 0;
       }
-
-      .qr {
-        margin-top: 10px;
-      }
-
-      .qr img {
-        width: 120px;
+      #qr img {
+        display: block !important;
+        width: 160px !important;
+        height: 160px !important;
+        image-rendering: -webkit-optimize-contrast;
       }
 
       /* ACTIONS */
-      .actions {
-        margin-top: 30px;
-        display: flex;
-        gap: 10px;
-      }
-
-      button {
-        padding: 8px 14px;
-        border: none;
-        cursor: pointer;
-      }
-
-      .add {
-        background: #eee;
-      }
-      .print {
-        background: #111;
-        color: #fff;
-      }
+      .actions { margin-top: 30px; display: flex; gap: 10px; }
+      button { padding: 8px 14px; border: none; cursor: pointer; }
+      .add { background: #eee; }
+      .print { background: #111; color: #fff; }
 
       /* PRINT */
-      .print-only {
-        display: none;
-      }
+      .print-only { display: none; }
 
       @media print {
-        body {
-          background: #fff;
+        body { background: #fff; }
+        .no-print { display: none; }
+        input, select { pointer-events: none; }
+
+        .qr { page-break-inside: avoid; break-inside: avoid; }
+        #qr {
+          display: inline-block !important;
+          width: auto !important;
+          height: auto !important;
+          padding: 6px !important;
         }
-        .no-print {
-          display: none;
-        }
-        input,
-        select {
-          pointer-events: none;
+        #qr img {
+          width: 160px !important;
+          height: 160px !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
       }
     </style>
+
+    <!-- Thư viện sinh QR client-side (nhẹ, không logo) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   </head>
 
   <body>
@@ -264,7 +171,7 @@
         </div>
       </div>
 
-      <!-- BANK (đã thêm trường Nội dung) -->
+      <!-- BANK -->
       <div class="bank">
         <div class="bank-row">
           <span>NGÂN HÀNG</span>
@@ -309,14 +216,13 @@
           <span>Chủ Tài Khoản</span>
           <input id="owner" value="NGUYEN VAN A" oninput="syncQR()" />
         </div>
-        <!-- THÊM TRƯỜNG NỘI DUNG (description) -->
         <div class="bank-row">
           <span>Nội dung</span>
           <input id="content" value="Thanh toán hóa đơn" oninput="syncQR()" />
         </div>
 
         <div class="qr">
-          <img id="qr" />
+          <div id="qr"></div>
         </div>
       </div>
 
@@ -328,6 +234,72 @@
     </div>
 
     <script>
+      // ============================================================
+      //  MÃ BIN NGÂN HÀNG (theo NAPAS - dùng cho VietQR EMVCo)
+      // ============================================================
+      const BANK_BIN = {
+        VCB: "970436", TCB: "970407", ICB: "970415", BIDV: "970418",
+        AGRIBANK: "970405", MB: "970422", ACB: "970416", VPB: "970432",
+        TPB: "970423", STB: "970403", HDB: "970437", SHB: "970443",
+        VIB: "970441", MSB: "970426", OCB: "970448", SEAB: "970440",
+        EIB: "970431", NAB: "970428", SCB: "970429", PGB: "970430",
+        KLB: "970452", BVB: "970454", BAOVIETBANK: "970438",
+        PVCOMBANK: "970412", SAIGONBANK: "970400", ABB: "970425",
+        NCB: "970419", SHBVN: "970409", BAB: "970409", VIKKI: "970406"
+      };
+
+      // TLV: tag + length (2 số) + value
+      function tlv(tag, val) {
+        const len = String(val.length).padStart(2, "0");
+        return tag + len + val;
+      }
+
+      // CRC-16/CCITT-FALSE (chuẩn EMVCo)
+      function crc16(str) {
+        let crc = 0xffff;
+        for (let i = 0; i < str.length; i++) {
+          crc ^= str.charCodeAt(i) << 8;
+          for (let j = 0; j < 8; j++) {
+            crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+            crc &= 0xffff;
+          }
+        }
+        return crc.toString(16).toUpperCase().padStart(4, "0");
+      }
+
+      // Sinh chuỗi EMVCo VietQR (NAPAS 247)
+      function buildVietQR(bankCode, account, amount, addInfo, accountName) {
+        const bin = BANK_BIN[bankCode];
+        if (!bin) return null;
+
+        const beneficiary = tlv("00", bin) + tlv("01", account);
+        const merchantInfo =
+          tlv("00", "A000000727") +
+          tlv("01", beneficiary) +
+          tlv("02", "QRIBFTTA");
+        const tag38 = tlv("38", merchantInfo);
+
+        let tag62 = "";
+        if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+
+        let payload =
+          tlv("00", "01") +
+          tlv("01", "12") +
+          tag38 +
+          tlv("53", "704") +
+          (amount > 0 ? tlv("54", String(amount)) : "") +
+          tlv("58", "VN") +
+          (accountName ? tlv("59", accountName.substring(0, 25)) : "") +
+          tlv("60", "HO CHI MINH") +
+          tag62;
+
+        payload += "6304";
+        return payload + crc16(payload);
+      }
+
+      // ============================================================
+      //  QUẢN LÝ DÒNG HÀNG
+      // ============================================================
       const items = document.getElementById("items");
       const total = document.getElementById("total");
 
@@ -358,41 +330,53 @@
           sum += t;
         });
 
-        document.getElementById("total").textContent =
-          sum.toLocaleString("vi-VN");
-
+        document.getElementById("total").textContent = sum.toLocaleString("vi-VN");
         syncQR();
       }
 
+      // ============================================================
+      //  VẼ QR BẰNG qrcode-generator (KHÔNG LOGO, KHÔNG CHỮ)
+      // ============================================================
       function syncQR() {
-        const amount = total.textContent.replace(/\D/g, "");
-        const bank = document.getElementById("bank").value;
-        const account = document.getElementById("account").value;
-        const owner = document.getElementById("owner").value;
-        const content = document.getElementById("content").value; // lấy nội dung
+        const amount = parseInt(total.textContent.replace(/\D/g, "")) || 0;
+        const bankCode = document.getElementById("bank").value;
+        const account  = document.getElementById("account").value.trim();
+        const owner    = document.getElementById("owner").value.trim();
+        const content  = document.getElementById("content").value.trim();
 
-        // Tạo URL với tham số description (addInfo cũng được hỗ trợ)
-        const qrImg = document.getElementById("qr");
-        if (!bank || !account) {
-          qrImg.src = "";
+        const qrBox = document.getElementById("qr");
+        qrBox.innerHTML = "";
+
+        if (!bankCode || !account) {
+          qrBox.innerHTML =
+            '<div style="font-size:12px;color:#999;padding:20px">Nhập đủ thông tin NH</div>';
           return;
         }
 
-        // Mã hóa nội dung và thêm timestamp để tránh cache
-        const params = new URLSearchParams({
-          amount: amount || "0",
-          accountName: owner || "",
-          description: content || "",
-          _t: Date.now()
-        });
+        const payload = buildVietQR(
+          bankCode,
+          account,
+          amount,
+          content || "Thanh toán",
+          owner || "Chủ tài khoản"
+        );
 
-        qrImg.src = `https://img.vietqr.io/image/${bank}-${account}-compact.png?${params.toString()}`;
+        if (!payload) {
+          qrBox.innerHTML =
+            '<div style="font-size:12px;color:#c00;padding:20px">Không hỗ trợ NH này</div>';
+          return;
+        }
 
-        // Xử lý lỗi nếu QR không tải được (ví dụ sai thông tin)
-        qrImg.onerror = function() {
-          this.src = "";
-          this.alt = "Lỗi tạo QR, kiểm tra lại thông tin";
-        };
+        try {
+          const qr = qrcode(0, "M");
+          qr.addData(payload);
+          qr.make();
+          // cellSize=4, margin=4 module
+          qrBox.innerHTML = qr.createImgTag(4, 4);
+        } catch (err) {
+          qrBox.innerHTML =
+            '<div style="font-size:12px;color:#c00;padding:20px">Lỗi tạo QR</div>';
+        }
       }
 
       // Khởi tạo với một vài dòng mẫu

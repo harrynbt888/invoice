@@ -6,230 +6,75 @@
   <title>Hóa đơn bán hàng</title>
 
   <style>
-    @page {
-      size: A4;
-      margin: 10mm;
-    }
+    @page { size: A4; margin: 10mm; }
+    body { margin: 0; font-family: Arial, sans-serif; font-size: 13px; background: #f5f5f5; }
+    .invoice { border: 1px solid #000; padding: 10mm; background: #fff; max-width: 750px; margin: 20px auto; }
+    .header { text-align: center; }
+    .brand { font-size: 20px; font-weight: bold; color: #1fa14a; }
+    .company-info { font-size: 11px; margin-bottom: 6px; }
+    .divider { border-top: 1px dashed #000; margin: 8px 0; }
+    .title { text-align: center; font-size: 16px; font-weight: bold; margin: 6px 0; }
+    .info { display: flex; justify-content: space-between; font-size: 12px; margin: 8px 0; }
+    .info>div { width: 48%; }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      background: #f5f5f5;
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+    th, td { border: 1px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; }
+    td.name { text-align: left; }
 
-    .invoice {
-      border: 1px solid #000;
-      padding: 10mm;
-      background: #fff;
-      max-width: 750px;
-      margin: 20px auto;
-    }
+    .edit { width: 100%; box-sizing: border-box; border: none; border-bottom: 1px dashed #888;
+            font-size: 12px; background: transparent; padding: 2px 0; }
+    .edit:focus { outline: none; border-bottom-color: #1fa14a; }
+    select.edit { border: 1px solid #ccc; padding: 2px; background: #fff; }
 
-    .header {
-      text-align: center;
-    }
+    .delete-btn { border: 1px solid #cc0000; background: #fff; color: #cc0000; cursor: pointer;
+                  padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .delete-btn:hover { background: #ffecec; }
 
-    .brand {
-      font-size: 20px;
-      font-weight: bold;
-      color: #1fa14a;
-    }
+    .print-text { display: none; }
 
-    .company-info {
-      font-size: 11px;
-      margin-bottom: 6px;
-    }
+    .summary { width: 260px; margin-left: auto; margin-top: 6px; }
+    .summary td { padding: 3px 6px; border: none; }
+    .summary .label { text-align: right; width: 65%; }
+    .summary .value { text-align: right; width: 35%; }
+    .summary .final { font-weight: bold; }
 
-    .divider {
-      border-top: 1px dashed #000;
-      margin: 8px 0;
-    }
+    .bank { margin-top: 10px; font-size: 12px; padding: 8px 0; border-top: 1px dashed #000; }
 
-    .title {
-      text-align: center;
-      font-size: 16px;
-      font-weight: bold;
-      margin: 6px 0;
-    }
-
-    .info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      margin: 8px 0;
-    }
-
-    .info>div {
-      width: 48%;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      margin-top: 6px;
-    }
-
-    th,
-    td {
-      border: 1px solid #000;
-      padding: 4px 6px;
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    td.name {
-      text-align: left;
-    }
-
-    .edit {
-      width: 100%;
-      box-sizing: border-box;
-      border: none;
-      border-bottom: 1px dashed #888;
-      font-size: 12px;
-      background: transparent;
-      padding: 2px 0;
-    }
-
-    .edit:focus {
-      outline: none;
-      border-bottom-color: #1fa14a;
-    }
-
-    select.edit {
-      border: 1px solid #ccc;
-      padding: 2px;
-      background: #fff;
-    }
-
-    .delete-btn {
-      border: 1px solid #cc0000;
-      background: #fff;
-      color: #cc0000;
-      cursor: pointer;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-    }
-
-    .delete-btn:hover {
-      background: #ffecec;
-    }
-
-    .print-text {
-      display: none;
-    }
-
-    .summary {
-      width: 260px;
-      margin-left: auto;
-      margin-top: 6px;
-    }
-
-    .summary td {
-      padding: 3px 6px;
-      border: none;
-    }
-
-    .summary .label {
-      text-align: right;
-      width: 65%;
-    }
-
-    .summary .value {
-      text-align: right;
-      width: 35%;
-    }
-
-    .summary .final {
-      font-weight: bold;
-    }
-
-    .bank {
-      margin-top: 10px;
-      font-size: 12px;
-      padding: 8px 0;
-      border-top: 1px dashed #000;
-    }
-
-    .bank img {
+    /* QR — ép cứng kích thước, không cho ảnh vượt khung */
+    #qr {
       width: 140px;
+      height: 140px;
       margin-top: 6px;
-      border: 1px solid #ddd;
-      padding: 4px;
-    }
-
-    .print-image {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .print-image img {
-      max-width: 180px;
-      max-height: 180px;
       display: block;
-      margin: 0 auto 4px;
+      overflow: hidden;
+    }
+    #qr img {
+      display: block !important;
+      width: 140px !important;
+      height: 140px !important;
+      image-rendering: -webkit-optimize-contrast;
     }
 
-    .footer {
-      margin-top: 10px;
-      font-size: 11px;
-    }
+    .print-image { text-align: center; margin-bottom: 8px; }
+    .print-image img { max-width: 180px; max-height: 180px; display: block; margin: 0 auto 4px; }
 
-    .center {
-      text-align: center;
-      font-style: italic;
-      margin-top: 8px;
-    }
+    .footer { margin-top: 10px; font-size: 11px; }
+    .center { text-align: center; font-style: italic; margin-top: 8px; }
 
-    /* Khi in: ẩn các thành phần chỉnh sửa, hiển thị print-text */
     @media print {
-      .edit,
-      .no-print,
-      .delete-btn {
-        display: none !important;
-      }
-
-      .print-text {
-        display: inline !important;
-      }
-
-      .invoice {
-        border: 1px solid #000 !important;
-        margin: 0 !important;
-        padding: 8mm !important;
-      }
-
-      .bank img {
-        border: 1px solid #000;
-      }
-
-      .print-image img {
-        display: block !important;
-        max-width: 160px;
-      }
-
-      /* Đảm bảo QR hiển thị */
-      #qr {
-        display: inline-block !important;
-      }
-
-      /* Ẩn nút thêm và nút in */
-      .no-print {
-        display: none !important;
-      }
-
-      /* Ẩn file input */
-      input[type="file"] {
-        display: none !important;
-      }
+      .edit, .no-print, .delete-btn { display: none !important; }
+      .print-text { display: inline !important; }
+      .invoice { border: 1px solid #000 !important; margin: 0 !important; padding: 8mm !important; }
+      .print-image img { display: block !important; max-width: 160px; }
+      #qr { width: 140px !important; height: 140px !important; display: block !important; }
+      #qr img { width: 140px !important; height: 140px !important; }
+      .no-print { display: none !important; }
+      input[type="file"] { display: none !important; }
     }
   </style>
 
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js">
-  </script>
+  <!-- Thư viện sinh QR nhẹ, ổn định -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
 
 <body>
@@ -244,18 +89,14 @@
 
     <div class="title">HÓA ĐƠN</div>
 
-    <!-- Barcode -->
-
     <!-- Thông tin chung -->
     <div class="info">
       <div>
         Mã HĐ: <input class="edit" id="invoiceId" value="HD001749" oninput="updateAll()" />
         <span class="print-text" id="invoicePrint">HD001749</span><br />
-
         Ngày: <input class="edit" id="invoiceDate" value="13/11/2013" oninput="updateAll()" />
         <span class="print-text" id="datePrint">13/11/2013</span>
       </div>
-
       <div>
         Khách hàng: <input class="edit" id="customerName" value="NGUYEN THI B" oninput="updateAll()" />
         <span class="print-text" id="customerPrint">NGUYEN THI B</span>
@@ -306,36 +147,36 @@
 
       Ngân hàng:
       <select id="bank" class="edit" onchange="updateQR()">
-       <option value="VCB">Vietcombank</option>
-          <option value="ABB">ABBank</option>
-          <option value="SHBVN">SOL</option>
-          <option value="ACB">ACB</option>
-          <option value="AGRIBANK">Agribank</option>
-          <option value="BAB">Bac A Bank</option>
-          <option value="BAOVIETBANK">BaoViet Bank</option>
-          <option value="BIDV">BIDV</option>
-          <option value="BVB">BVBank</option>
-          <option value="EIB">Eximbank</option>
-          <option value="HDB">HDBank</option>
-          <option value="ICB">VietinBank</option>
-          <option value="KLB">KienlongBank</option>
-          <option value="MB">MB Bank</option>
-          <option value="MSB">MSB</option>
-          <option value="NAB">Nam A Bank</option>
-          <option value="OCB">OCB</option>
-          <option value="PGB">PG Bank</option>
-          <option value="PVCOMBANK">PVcomBank</option>
-          <option value="SAIGONBANK">SaigonBank</option>
-          <option value="SCB">SCB</option>
-          <option value="SEAB">SeABank</option>
-          <option value="SHB">SHB</option>
-          <option value="STB">Sacombank</option>
-          <option value="TCB">Techcombank</option>
-          <option value="TPB">TPBank</option>
-          <option value="VIB">VIB</option>
-          <option value="VPB">VPBank</option>
-           <option value="NCB">NCB</option>
-           <option value="VIKKI">VIKKI</option>
+        <option value="VCB">Vietcombank</option>
+        <option value="ABB">ABBank</option>
+        <option value="SHBVN">SOL</option>
+        <option value="ACB">ACB</option>
+        <option value="AGRIBANK">Agribank</option>
+        <option value="BAB">Bac A Bank</option>
+        <option value="BAOVIETBANK">BaoViet Bank</option>
+        <option value="BIDV">BIDV</option>
+        <option value="BVB">BVBank</option>
+        <option value="EIB">Eximbank</option>
+        <option value="HDB">HDBank</option>
+        <option value="ICB">VietinBank</option>
+        <option value="KLB">KienlongBank</option>
+        <option value="MB">MB Bank</option>
+        <option value="MSB">MSB</option>
+        <option value="NAB">Nam A Bank</option>
+        <option value="OCB">OCB</option>
+        <option value="PGB">PG Bank</option>
+        <option value="PVCOMBANK">PVcomBank</option>
+        <option value="SAIGONBANK">SaigonBank</option>
+        <option value="SCB">SCB</option>
+        <option value="SEAB">SeABank</option>
+        <option value="SHB">SHB</option>
+        <option value="STB">Sacombank</option>
+        <option value="TCB">Techcombank</option>
+        <option value="TPB">TPBank</option>
+        <option value="VIB">VIB</option>
+        <option value="VPB">VPBank</option>
+        <option value="NCB">NCB</option>
+        <option value="VIKKI">VIKKI</option>
       </select>
       <span class="print-text" id="bankPrint">Vietcombank</span><br />
 
@@ -345,7 +186,7 @@
       Chủ TK: <input id="owner" class="edit" value="NGUYEN VAN A" oninput="updateQR()" />
       <span class="print-text" id="ownerPrint">NGUYEN VAN A</span><br />
 
-      <img id="qr" />
+      <div id="qr"></div>
     </div>
 
     <div class="divider"></div>
@@ -357,10 +198,72 @@
   </div>
 
   <script>
-    // ---------- HÀM TIỆN ----------
-    function fmt(n) {
-      return n.toLocaleString('vi-VN');
+    // ============================================================
+    //  MÃ BIN NGÂN HÀNG (theo NAPAS - dùng cho VietQR EMVCo)
+    // ============================================================
+    const BANK_BIN = {
+      VCB: '970436', TCB: '970407', ICB: '970415', BIDV: '970418',
+      AGRIBANK: '970405', MB: '970422', ACB: '970416', VPB: '970432',
+      TPB: '970423', STB: '970403', HDB: '970437', SHB: '970443',
+      VIB: '970441', MSB: '970426', OCB: '970448', SEAB: '970440',
+      EIB: '970431', NAB: '970428', SCB: '970429', PGB: '970430',
+      KLB: '970452', BVB: '970454', BAOVIETBANK: '970438',
+      PVCOMBANK: '970412', SAIGONBANK: '970400', ABB: '970425',
+      NCB: '970419', SHBVN: '970409', BAB: '970409', VIKKI: '970406'
+    };
+
+    // TLV: tag + length (2 số) + value
+    function tlv(tag, val) {
+      const len = String(val.length).padStart(2, '0');
+      return tag + len + val;
     }
+
+    // CRC-16/CCITT-FALSE (chuẩn EMVCo)
+    function crc16(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) {
+          crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+          crc &= 0xFFFF;
+        }
+      }
+      return crc.toString(16).toUpperCase().padStart(4, '0');
+    }
+
+    // Sinh chuỗi EMVCo VietQR (NAPAS 247)
+    function buildVietQR(bankCode, account, amount, addInfo, accountName) {
+      const bin = BANK_BIN[bankCode];
+      if (!bin) return null;
+
+      const beneficiary = tlv('00', bin) + tlv('01', account);
+      const merchantInfo = tlv('00', 'A000000727')
+                         + tlv('01', beneficiary)
+                         + tlv('02', 'QRIBFTTA');
+      const tag38 = tlv('38', merchantInfo);
+
+      let tag62 = '';
+      if (addInfo) tag62 = tlv('62', tlv('01', addInfo));
+
+      let payload =
+        tlv('00', '01') +
+        tlv('01', '12') +
+        tag38 +
+        tlv('53', '704') +
+        (amount > 0 ? tlv('54', String(amount)) : '') +
+        tlv('58', 'VN') +
+        (accountName ? tlv('59', accountName.substring(0, 25)) : '') +
+        tlv('60', 'HO CHI MINH') +
+        tag62;
+
+      payload += '6304';
+      return payload + crc16(payload);
+    }
+
+    // ============================================================
+    //  TIỆN ÍCH
+    // ============================================================
+    function fmt(n) { return n.toLocaleString('vi-VN'); }
 
     function escapeHtml(str) {
       return String(str)
@@ -371,10 +274,11 @@
         .replaceAll("'", '&#039;');
     }
 
-    // ---------- QUẢN LÝ DANH SÁCH SẢN PHẨM ----------
+    // ============================================================
+    //  SẢN PHẨM
+    // ============================================================
     const items = document.getElementById('items');
 
-    // Thêm một dòng mới
     function addItem(name = '', price = 0, qty = 1, ck = 0) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -394,9 +298,7 @@
           <input class="edit item-ck" type="number" value="${ck}" oninput="updateAll()" />
           <span class="print-text item-ck-print">${ck}%</span>
         </td>
-        <td>
-          <span class="line">0</span>
-        </td>
+        <td><span class="line">0</span></td>
         <td class="no-print">
           <button type="button" class="delete-btn" onclick="removeItem(this)">Xóa</button>
         </td>
@@ -405,7 +307,6 @@
       updateAll();
     }
 
-    // Xóa một dòng
     function removeItem(btn) {
       const tr = btn.closest('tr');
       if (items.children.length <= 1) {
@@ -416,124 +317,105 @@
       updateAll();
     }
 
-    // ---------- CẬP NHẬT TẤT CẢ ----------
+    // ============================================================
+    //  CẬP NHẬT
+    // ============================================================
     function updateAll() {
       let sum = 0;
 
-      // Duyệt từng dòng
       document.querySelectorAll('#items tr').forEach(tr => {
-        const nameInput = tr.querySelector('.item-name');
-        const priceInput = tr.querySelector('.item-price');
-        const qtyInput = tr.querySelector('.item-qty');
-        const ckInput = tr.querySelector('.item-ck');
-
-        const name = nameInput.value || '';
-        const price = +priceInput.value || 0;
-        const qty = +qtyInput.value || 0;
-        const ck = +ckInput.value || 0;
+        const name = tr.querySelector('.item-name').value || '';
+        const price = +tr.querySelector('.item-price').value || 0;
+        const qty = +tr.querySelector('.item-qty').value || 0;
+        const ck = +tr.querySelector('.item-ck').value || 0;
 
         const lineTotal = Math.round(price * qty * (1 - ck / 100));
         sum += lineTotal;
 
-        // Cập nhật cột Thành tiền
         tr.querySelector('.line').textContent = fmt(lineTotal);
-
-        // Cập nhật print-text của dòng
         tr.querySelector('.item-name-print').textContent = name;
         tr.querySelector('.item-price-print').textContent = fmt(price);
         tr.querySelector('.item-qty-print').textContent = qty;
         tr.querySelector('.item-ck-print').textContent = ck + '%';
       });
 
-      // Tính chiết khấu toàn bộ
       const d = +document.getElementById('discount').value || 0;
       const pay = Math.round(sum * (1 - d / 100));
 
       document.getElementById('total').textContent = fmt(sum);
       document.getElementById('final').textContent = fmt(pay);
 
-      // Cập nhật print-text các trường chung
       document.getElementById('invoicePrint').textContent = document.getElementById('invoiceId').value;
       document.getElementById('datePrint').textContent = document.getElementById('invoiceDate').value;
       document.getElementById('customerPrint').textContent = document.getElementById('customerName').value;
       document.getElementById('discountPrint').textContent = d + '%';
 
-      // Cập nhật barcode
-      try {
-        JsBarcode('#barcode', document.getElementById('invoiceId').value || 'HD000000', {
-          displayValue: false,
-          height: 36,
-          width: 2,
-          margin: 0,
-          background: '#ffffff',
-          lineColor: '#000000'
-        });
-      } catch (e) { }
-
-      // Cập nhật QR
       updateQR();
     }
 
-    // ---------- CẬP NHẬT QR ----------
+    // ============================================================
+    //  VẼ QR BẰNG qrcode-generator (không logo, không chữ)
+    // ============================================================
     function updateQR() {
       const bank = document.getElementById('bank').value;
       const account = document.getElementById('account').value.trim();
       const owner = document.getElementById('owner').value.trim();
       const invoiceId = document.getElementById('invoiceId').value.trim();
 
-      // Lấy số tiền từ final (đã có dấu phân cách, bỏ dấu)
       const amountText = document.getElementById('final').textContent.replace(/\D/g, '');
-      const amount = amountText || '0';
+      const amount = parseInt(amountText, 10) || 0;
 
-      const addInfo = encodeURIComponent('HD ' + invoiceId);
-      const accountName = encodeURIComponent(owner || 'Chủ tài khoản');
-
-      // Cập nhật print-text cho bank info
       document.getElementById('bankPrint').textContent = document.getElementById('bank').selectedOptions[0].text;
       document.getElementById('accountPrint').textContent = account;
       document.getElementById('ownerPrint').textContent = owner;
 
-      const qrImg = document.getElementById('qr');
+      const qrBox = document.getElementById('qr');
+      qrBox.innerHTML = '';
+
       if (!bank || !account) {
-        qrImg.src = '';
-        qrImg.alt = 'Vui lòng nhập đầy đủ thông tin ngân hàng.';
+        qrBox.innerHTML = '<div style="font-size:11px;color:#999">Nhập đủ thông tin NH</div>';
         return;
       }
 
-      const url =
-        `https://img.vietqr.io/image/${bank}-${account}-compact.png?amount=${amount}&addInfo=${addInfo}&accountName=${accountName}`;
-      qrImg.src = url;
-      qrImg.alt = 'QR thanh toán';
+      const payload = buildVietQR(bank, account, amount, 'HD ' + invoiceId, owner);
+      if (!payload) {
+        qrBox.innerHTML = '<div style="font-size:11px;color:#c00">Không hỗ trợ NH này</div>';
+        return;
+      }
 
-      // Xử lý lỗi khi ảnh không tải được
-      qrImg.onerror = function() {
-        this.src = '';
-        this.alt = 'Lỗi tạo QR. Kiểm tra thông tin.';
-      };
+      try {
+        // typeNumber=0 → tự động; 'M' → mức sửa lỗi trung bình
+        const qr = qrcode(0, 'M');
+        qr.addData(payload);
+        qr.make();
+        // cellSize=4, margin=4 modules
+        qrBox.innerHTML = qr.createImgTag(4, 4);
+      } catch (err) {
+        qrBox.innerHTML = '<div style="font-size:11px;color:#c00">Lỗi tạo QR</div>';
+      }
     }
 
-    // ---------- TẢI ẢNH ----------
+    // ============================================================
+    //  ẢNH
+    // ============================================================
     function loadImage(e) {
       const img = document.getElementById('printImg');
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(ev) {
-        img.src = ev.target.result;
-      };
+      reader.onload = ev => { img.src = ev.target.result; };
       reader.readAsDataURL(file);
     }
 
-    // ---------- KHỞI TẠO ----------
+    // ============================================================
+    //  KHỞI TẠO
+    // ============================================================
     window.onload = function() {
-      // Thêm dòng mẫu (nếu chưa có)
       if (items.children.length === 0) {
         addItem('VÁY NỮ MÀU ROSE', 210000, 2, 0);
       } else {
         updateAll();
       }
-
-      // Cập nhật QR lần đầu
       setTimeout(updateQR, 300);
     };
   </script>

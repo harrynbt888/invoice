@@ -10,13 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
+    <!-- Thư viện sinh QR client-side (nhẹ, không logo) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+
     <style>
         /* ----- RESET ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: #f2f5f9;
@@ -40,11 +39,9 @@
             border: 1px solid #e9edf2;
         }
 
-        .no-print {
-            display: inline-block;
-        }
+        .no-print { display: inline-block; }
 
-        /* ----- HEADER: dọc, căn giữa ----- */
+        /* ----- HEADER ----- */
         .header {
             background: #e0f2fe;
             padding: 14px 16px;
@@ -77,7 +74,6 @@
             margin-top: 8px;
         }
 
-        /* Đã xóa khung chứa barcode. Input mã chiếm diện tích lớn hơn */
         .header-meta .barcode-box {
             display: flex;
             align-items: center;
@@ -94,8 +90,7 @@
             font-weight: 500;
             color: #0c4a6e;
         }
-        
-        /* 👉 Đã kéo dài input mã lên tối đa */
+
         .header-meta .barcode-box input {
             border: none;
             border-bottom: 1.5px dashed #94a3b8;
@@ -121,9 +116,7 @@
             color: #0c4a6e;
             flex-shrink: 0;
         }
-        .header-meta .date-group label {
-            font-weight: 500;
-        }
+        .header-meta .date-group label { font-weight: 500; }
         .header-meta .date-group input {
             width: 32px;
             text-align: center;
@@ -137,15 +130,10 @@
             outline: none;
             border-bottom-color: #0c4a6e;
         }
-        .header-meta .date-group input:nth-child(3) {
-            width: 54px;
-        }
+        .header-meta .date-group input:nth-child(3) { width: 54px; }
 
         /* ----- TITLE ----- */
-        .title-row {
-            text-align: center;
-            margin-bottom: 12px;
-        }
+        .title-row { text-align: center; margin-bottom: 12px; }
         .title-row h1 {
             font-size: 24px;
             font-weight: 700;
@@ -153,7 +141,7 @@
             color: #0f172a;
         }
 
-        /* ----- CUSTOMER INFO (dọc) ----- */
+        /* ----- CUSTOMER INFO ----- */
         .customer-info {
             display: flex;
             flex-wrap: wrap;
@@ -215,12 +203,8 @@
             vertical-align: middle;
             text-align: center;
         }
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-        .table tbody tr:hover {
-            background: #f8fafc;
-        }
+        .table tr:last-child td { border-bottom: none; }
+        .table tbody tr:hover { background: #f8fafc; }
 
         .table td .name-cell {
             min-width: 100px;
@@ -251,9 +235,7 @@
             outline: 2px solid #bfdbfe;
             background: #ffffff;
         }
-        .table td input[type="number"] {
-            -moz-appearance: textfield;
-        }
+        .table td input[type="number"] { -moz-appearance: textfield; }
         .table td input[type="number"]::-webkit-outer-spin-button,
         .table td input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -267,10 +249,7 @@
             width: 30px;
         }
 
-        .table td .line-total {
-            font-weight: 600;
-            color: #0f172a;
-        }
+        .table td .line-total { font-weight: 600; color: #0f172a; }
 
         .table td .del-btn {
             background: #fee2e2;
@@ -306,11 +285,9 @@
             align-items: center;
             gap: 6px;
         }
-        .add-row-btn:hover {
-            background: #cbd5e1;
-        }
+        .add-row-btn:hover { background: #cbd5e1; }
 
-        /* ----- TOTALS (dọc) ----- */
+        /* ----- TOTALS ----- */
         .totals {
             background: #f8fafc;
             border-radius: 12px;
@@ -332,13 +309,8 @@
             margin-top: 4px;
             padding-top: 8px;
         }
-        .totals .row .label {
-            font-weight: 500;
-            color: #475569;
-        }
-        .totals .row .value {
-            font-weight: 600;
-        }
+        .totals .row .label { font-weight: 500; color: #475569; }
+        .totals .row .value { font-weight: 600; }
         .totals .row.discount input {
             width: 60px;
             border: none;
@@ -366,7 +338,7 @@
             color: #78350f;
         }
 
-        /* ----- QR (dọc) ----- */
+        /* ----- QR ----- */
         .qr-panel {
             background: #f8fafc;
             border-radius: 12px;
@@ -408,39 +380,26 @@
             border-bottom-color: #0c4a6e;
         }
 
-        /* 👉 Tăng kích thước ô nhập Chủ TK lên 180px để nhập dài hơn */
-        .qr-panel .bank-info input#owner {
-            min-width: 180px;
-        }
+        .qr-panel .bank-info input#owner { min-width: 180px; }
 
+        /* QR — vẽ client-side, khung tự co */
         .qr-wrapper {
-            position: relative;
-            width: 130px;
-            height: 130px;
-            margin: 0 auto;
-        }
-        .qr-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            display: inline-block;
+            padding: 4px;
             background: white;
             border-radius: 10px;
-            padding: 4px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            line-height: 0;
         }
-        /* Fallback khi API lỗi */
-        .qr-fallback {
-            display: none;
-            width: 100%;
-            height: 100%;
-            background: #f1f5f9;
-            border-radius: 10px;
-            justify-content: center;
-            align-items: center;
-            font-weight: 600;
-            color: #475569;
-            flex-direction: column;
-            border: 1px solid #e2e8f0;
+        #qr {
+            display: inline-block;
+            line-height: 0;
+        }
+        #qr img {
+            display: block !important;
+            width: 130px !important;
+            height: 130px !important;
+            image-rendering: -webkit-optimize-contrast;
         }
 
         /* ----- FOOTER ----- */
@@ -468,17 +427,11 @@
             font-size: 13px;
             transition: 0.15s;
         }
-        .print-btn:hover {
-            background: #64748b;
-        }
+        .print-btn:hover { background: #64748b; }
 
-        /* ----- PRINT (1 trang A4) ----- */
+        /* ----- PRINT ----- */
         @media print {
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
-            }
+            body { background: white; padding: 0; margin: 0; }
             .invoice-wrapper {
                 box-shadow: none;
                 border-radius: 0;
@@ -486,9 +439,8 @@
                 max-width: 100%;
                 border: none;
             }
-            .no-print {
-                display: none !important;
-            }
+            .no-print { display: none !important; }
+
             .header {
                 background: #e0f2fe !important;
                 -webkit-print-color-adjust: exact;
@@ -516,95 +468,48 @@
                 print-color-adjust: exact;
                 border-left-color: #7fb9d9 !important;
             }
-            .qr-panel,
-            .totals {
+            .qr-panel, .totals {
                 background: #f8fafc !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            .invoice-wrapper {
-                padding: 8px 12px !important;
+
+            .invoice-wrapper { padding: 8px 12px !important; }
+            .header { padding: 8px 12px !important; margin-bottom: 8px !important; }
+            .company .name { font-size: 18px !important; }
+            .title-row h1 { font-size: 20px !important; }
+            .customer-info { padding: 4px 10px !important; margin-bottom: 8px !important; }
+            .table th { padding: 5px 4px !important; font-size: 11px !important; }
+            .table td { padding: 2px 3px !important; font-size: 11px !important; }
+            .totals { padding: 8px 14px !important; margin-bottom: 8px !important; }
+            .totals .row { font-size: 13px !important; padding: 2px 0 !important; }
+            .totals .final { font-size: 17px !important; padding: 6px 12px !important; }
+            .qr-panel { padding: 10px 12px !important; margin-bottom: 6px !important; }
+            .qr-wrapper { padding: 3px !important; }
+            #qr img {
+                width: 100px !important;
+                height: 100px !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
-            .header {
-                padding: 8px 12px !important;
-                margin-bottom: 8px !important;
-            }
-            .company .name {
-                font-size: 18px !important;
-            }
-            .title-row h1 {
-                font-size: 20px !important;
-            }
-            .customer-info {
-                padding: 4px 10px !important;
-                margin-bottom: 8px !important;
-            }
-            .table th {
-                padding: 5px 4px !important;
-                font-size: 11px !important;
-            }
-            .table td {
-                padding: 2px 3px !important;
-                font-size: 11px !important;
-            }
-            .totals {
-                padding: 8px 14px !important;
-                margin-bottom: 8px !important;
-            }
-            .totals .row {
-                font-size: 13px !important;
-                padding: 2px 0 !important;
-            }
-            .totals .final {
-                font-size: 17px !important;
-                padding: 6px 12px !important;
-            }
-            .qr-panel {
-                padding: 10px 12px !important;
-                margin-bottom: 6px !important;
-            }
-            .qr-wrapper {
-                width: 100px;
-                height: 100px;
-            }
-            .footer {
-                margin-top: 6px !important;
-                padding-top: 6px !important;
-                font-size: 10px !important;
-            }
-            .add-row-btn {
-                display: none !important;
-            }
+            .footer { margin-top: 6px !important; padding-top: 6px !important; font-size: 10px !important; }
+            .add-row-btn { display: none !important; }
             .header-meta .barcode-box {
                 background: white !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
+
+            .qr-panel { page-break-inside: avoid; break-inside: avoid; }
         }
 
         @media (max-width: 600px) {
-            .invoice-wrapper {
-                padding: 14px 16px;
-            }
-            .header-meta {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-            }
-            .header-meta .barcode-box {
-                justify-content: center;
-            }
-            .header-meta .date-group {
-                justify-content: center;
-            }
-            .customer-info {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 4px;
-            }
-            .customer-info input {
-                text-align: center;
-            }
+            .invoice-wrapper { padding: 14px 16px; }
+            .header-meta { flex-direction: column; align-items: stretch; gap: 8px; }
+            .header-meta .barcode-box { justify-content: center; }
+            .header-meta .date-group { justify-content: center; }
+            .customer-info { flex-direction: column; align-items: stretch; gap: 4px; }
+            .customer-info input { text-align: center; }
         }
     </style>
 </head>
@@ -612,7 +517,7 @@
 
 <div class="invoice-wrapper">
 
-    <!-- HEADER: dọc, căn giữa -->
+    <!-- HEADER -->
     <div class="header">
         <div class="company">
             <input class="name" value="CỬA HÀNG ABC" />
@@ -620,7 +525,6 @@
         <div class="header-meta">
             <span class="barcode-box">
                 <label>Mã</label>
-                <!-- Bây giờ ô input này đã rất dài, bạn có thể nhập thoải mái -->
                 <input id="invoiceId" value="HD00001" oninput="updateAll()" />
             </span>
             <span class="date-group">
@@ -664,7 +568,7 @@
         </button>
     </div>
 
-    <!-- TOTALS (dọc) -->
+    <!-- TOTALS -->
     <div class="totals">
         <div class="row">
             <span class="label">Tổng tiền</span>
@@ -680,7 +584,7 @@
         </div>
     </div>
 
-    <!-- QR (dọc) -->
+    <!-- QR -->
     <div class="qr-panel">
         <div class="bank-info">
             <label>Ngân hàng</label>
@@ -721,17 +625,12 @@
             <label>Số TK</label>
             <input id="account" value="0123456789" oninput="updateQR()" />
             <label>Chủ TK</label>
-            <!-- Input Chủ TK đã được CSS tăng min-width lên 180px -->
             <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
         </div>
-        
-        <!-- Wrapper chứa QR Code + Fallback -->
+
+        <!-- QR wrapper -->
         <div class="qr-wrapper">
-            <img id="qr" alt="QR thanh toán" />
-            <div id="qr-fallback" class="qr-fallback">
-                <i class="fas fa-qrcode" style="font-size:32px; margin-bottom:6px;"></i>
-                <span style="font-size:12px;">QR Code</span>
-            </div>
+            <div id="qr"></div>
         </div>
     </div>
 
@@ -749,8 +648,73 @@
 </div>
 
 <script>
+    // ============================================================
+    //  MÃ BIN NGÂN HÀNG (theo NAPAS - dùng cho VietQR EMVCo)
+    // ============================================================
+    const BANK_BIN = {
+        VCB: "970436", TCB: "970407", ICB: "970415", BIDV: "970418",
+        AGRIBANK: "970405", MB: "970422", ACB: "970416", VPB: "970432",
+        TPB: "970423", STB: "970403", HDB: "970437", SHB: "970443",
+        VIB: "970441", MSB: "970426", OCB: "970448", SEAB: "970440",
+        EIB: "970431", NAB: "970428", SCB: "970429", PGB: "970430",
+        KLB: "970452", BVB: "970454", BAOVIETBANK: "970438",
+        PVCOMBANK: "970412", SAIGONBANK: "970400", ABB: "970425",
+        NCB: "970419", SHBVN: "970409", BAB: "970409", VIKKI: "970406"
+    };
+
+    // TLV: tag + length (2 số) + value
+    function tlv(tag, val) {
+        const len = String(val.length).padStart(2, "0");
+        return tag + len + val;
+    }
+
+    // CRC-16/CCITT-FALSE (chuẩn EMVCo)
+    function crc16(str) {
+        let crc = 0xffff;
+        for (let i = 0; i < str.length; i++) {
+            crc ^= str.charCodeAt(i) << 8;
+            for (let j = 0; j < 8; j++) {
+                crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+                crc &= 0xffff;
+            }
+        }
+        return crc.toString(16).toUpperCase().padStart(4, "0");
+    }
+
+    // Sinh chuỗi EMVCo VietQR (NAPAS 247)
+    function buildVietQR(bankCode, account, amount, addInfo, accountName) {
+        const bin = BANK_BIN[bankCode];
+        if (!bin) return null;
+
+        const beneficiary = tlv("00", bin) + tlv("01", account);
+        const merchantInfo =
+            tlv("00", "A000000727") +
+            tlv("01", beneficiary) +
+            tlv("02", "QRIBFTTA");
+        const tag38 = tlv("38", merchantInfo);
+
+        let tag62 = "";
+        if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+
+        let payload =
+            tlv("00", "01") +
+            tlv("01", "12") +
+            tag38 +
+            tlv("53", "704") +
+            (amount > 0 ? tlv("54", String(amount)) : "") +
+            tlv("58", "VN") +
+            (accountName ? tlv("59", accountName.substring(0, 25)) : "") +
+            tlv("60", "HO CHI MINH") +
+            tag62;
+
+        payload += "6304";
+        return payload + crc16(payload);
+    }
+
+    // ============================================================
+    //  CORE LOGIC
+    // ============================================================
     const items = document.getElementById('items');
-    let qrRetried = false; // Cờ để kiểm tra đã thử fallback chưa
 
     function addItem(name = '', qty = 1, price = 0) {
         const tr = document.createElement('tr');
@@ -790,48 +754,52 @@
         document.getElementById('total').textContent = fmt(sum);
         document.getElementById('final').textContent = fmt(pay);
 
-        qrRetried = false; // Reset cờ khi tính toán lại
         updateQR();
     }
 
+    // ============================================================
+    //  VẼ QR BẰNG qrcode-generator (KHÔNG LOGO, KHÔNG CHỮ)
+    // ============================================================
     function updateQR() {
-        const amount = document.getElementById('final').textContent.replace(/\D/g, '');
-        const bank = document.getElementById('bank').value;
-        const account = document.getElementById('account').value;
-        const owner = document.getElementById('owner').value;
-        const invoiceId = document.getElementById('invoiceId').value;
-        
-        const img = document.getElementById('qr');
-        const fallback = document.getElementById('qr-fallback');
-        
-        // Reset trạng thái hiển thị
-        img.style.display = 'block';
-        fallback.style.display = 'none';
-        img.onerror = null;
-        qrRetried = false;
+        const amount = parseInt(document.getElementById('final').textContent.replace(/\D/g, '')) || 0;
+        const bankCode = document.getElementById('bank').value;
+        const account  = document.getElementById('account').value.trim();
+        const owner    = document.getElementById('owner').value.trim();
+        const invoiceIdVal = document.getElementById('invoiceId').value.trim();
 
-        // 1. Tạo link VietQR API (Ưu tiên hàng đầu)
-        const encodedInfo = encodeURIComponent(invoiceId);
-        const encodedOwner = encodeURIComponent(owner);
-        const vietQrUrl = `https://img.vietqr.io/image/${bank}-${account}-compact.png?amount=${amount}&addInfo=${encodedInfo}&accountName=${encodedOwner}`;
+        const qrBox = document.getElementById('qr');
+        qrBox.innerHTML = '';
 
-        // 2. Thiết lập cơ chế Fallback nếu VietQR lỗi
-        img.onerror = function() {
-            if (!qrRetried) {
-                qrRetried = true;
-                // Thử dùng QuickChart API (Không bị chặn quốc tế)
-                const qrText = `Ngân hàng: ${document.getElementById('bank').selectedOptions[0].text}\nSố TK: ${account}\nChủ TK: ${owner}\nSố tiền: ${amount} VND\nMã HD: ${invoiceId}`;
-                const qcUrl = `https://quickchart.io/qr?text=${encodeURIComponent(qrText)}&size=300&ecLevel=L&margin=0`;
-                img.src = qcUrl;
-            } else {
-                // Nếu QuickChart cũng lỗi, bung fallback giao diện
-                img.style.display = 'none';
-                fallback.style.display = 'flex';
-            }
-        };
+        if (!bankCode || !account) {
+            qrBox.innerHTML =
+                '<div style="font-size:11px;color:#999;padding:15px;text-align:center">Nhập đủ thông tin NH</div>';
+            return;
+        }
 
-        // Bắt đầu tải ảnh VietQR
-        img.src = vietQrUrl;
+        const payload = buildVietQR(
+            bankCode,
+            account,
+            amount,
+            invoiceIdVal || "Thanh toán",
+            owner || "Chủ tài khoản"
+        );
+
+        if (!payload) {
+            qrBox.innerHTML =
+                '<div style="font-size:11px;color:#c00;padding:15px;text-align:center">Không hỗ trợ NH này</div>';
+            return;
+        }
+
+        try {
+            const qr = qrcode(0, 'M');
+            qr.addData(payload);
+            qr.make();
+            // cellSize=4, margin=4 module
+            qrBox.innerHTML = qr.createImgTag(4, 4);
+        } catch (err) {
+            qrBox.innerHTML =
+                '<div style="font-size:11px;color:#c00;padding:15px;text-align:center">Lỗi tạo QR</div>';
+        }
     }
 
     window.onload = () => {
