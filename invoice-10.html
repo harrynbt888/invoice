@@ -9,7 +9,7 @@
     /* ---------- RESET & GLOBAL ---------- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    @page { size: A4; margin: 18mm; }
+    @page { size: A4; margin: 12mm; }
 
     body {
       background: #f0f4f9;
@@ -272,16 +272,17 @@
     /* ---------- BANK & QR ---------- */
     .bank-qr-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px 40px;
+      grid-template-columns: 1fr 200px;   /* giảm cột QR từ 1fr → 200px */
+      gap: 30px 30px;
       background: #f8faff;
       border-radius: 14px;
       padding: 22px 24px;
       margin-top: 24px;
       border: 1px solid #e6eef8;
+      align-items: center;
     }
 
-    .bank-fields { display: flex; flex-direction: column; gap: 14px; }
+    .bank-fields { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
     .bank-row {
       display: grid;
@@ -309,6 +310,7 @@
       color: #1a2a3a;
       font-family: inherit;
       width: 100%;
+      min-width: 0;
     }
 
     .bank-row select:focus,
@@ -332,31 +334,32 @@
       gap: 6px;
     }
 
-    /* QR — vẽ client-side, khung tự co */
+    /* QR — vẽ client-side, khung tự co, kích thước vừa đủ in */
     #qr {
       display: inline-block;
-      padding: 8px;
+      padding: 6px;
       background: #fff;
       border: 1px solid #dce3ed;
-      border-radius: 16px;
+      border-radius: 12px;
       line-height: 0;
     }
     #qr img {
       display: block !important;
-      width: 150px !important;
-      height: 150px !important;
+      width: 130px !important;      /* giảm từ 150 → 130 */
+      height: 130px !important;
       image-rendering: -webkit-optimize-contrast;
     }
 
     .qr-section .qr-label {
-      font-size: 13px;
+      font-size: 12px;
       color: #6b7f94;
       letter-spacing: 0.3px;
     }
 
     .qr-section .qr-note {
-      font-size: 12px;
+      font-size: 11px;
       color: #9aafc4;
+      text-align: center;
     }
 
     .warning-note {
@@ -371,7 +374,8 @@
       .invoice-wrapper {
         box-shadow: none;
         border-radius: 0;
-        padding: 20px 30px;
+        padding: 10px 20px;
+        max-width: 100%;
       }
       .no-print { display: none !important; }
       input, select {
@@ -384,19 +388,49 @@
         print-color-adjust: exact !important;
       }
 
-      .qr-section { page-break-inside: avoid; break-inside: avoid; }
+      /* Thu gọn khu vực ngân hàng + QR để không tràn trang */
+      .bank-qr-grid {
+        grid-template-columns: 1fr 160px !important;
+        gap: 16px 20px !important;
+        padding: 12px 16px !important;
+        margin-top: 12px !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .bank-fields { gap: 8px !important; }
+      .bank-row label { font-size: 11px !important; }
+      .bank-row select,
+      .bank-row input {
+        font-size: 12px !important;
+        padding: 3px 2px !important;
+      }
+      .warning-note { display: none; }
+
+      .qr-section { page-break-inside: avoid; break-inside: avoid; gap: 4px !important; }
       #qr {
-        display: inline-block !important;
-        width: auto !important;
-        height: auto !important;
-        padding: 8px !important;
+        padding: 4px !important;
+        border-radius: 8px !important;
       }
       #qr img {
-        width: 150px !important;
-        height: 150px !important;
+        width: 110px !important;      /* in ra 110px — vừa cột 160px */
+        height: 110px !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
+      .qr-section .qr-label { font-size: 10px !important; }
+      .qr-section .qr-note  { font-size: 9px !important; }
+
+      /* Thu gọn bảng và các khối khác để đủ 1 trang A4 */
+      .header { margin-bottom: 14px !important; padding-bottom: 12px !important; }
+      .brand-text h1 { font-size: 20px !important; }
+      .info-grid { margin-bottom: 14px !important; padding: 10px 14px !important; }
+      .info-field input { font-size: 14px !important; }
+      .table-wrap { margin: 10px 0 8px !important; }
+      .data-table th { padding: 6px 4px 8px !important; font-size: 11px !important; }
+      .data-table td { padding: 5px 4px !important; font-size: 12px !important; }
+      .actions { display: none !important; }
+      tfoot td { padding: 8px 4px 6px !important; font-size: 14px !important; }
+      #total { font-size: 16px !important; }
     }
 
     /* ---------- RESPONSIVE ---------- */
@@ -530,9 +564,9 @@
           <label>Số TK</label>
           <input id="account" value="0123456789" oninput="syncQR()" />
         </div>
-        <div class="bank-row full-width">
+        <div class="bank-row full-width" style="grid-template-columns: 100px 1fr;">
           <label>Nội dung</label>
-          <input id="description" value="chuyen khoan VAN QUYNH JGKA762H" oninput="syncQR()" style = "width: 300px;"/>
+          <input id="description" value="chuyen khoan VAN QUYNH JGKA762H" oninput="syncQR()" />
         </div>
         <div class="warning-note no-print">
           ⚠️ Thay đổi số tài khoản thật để QR hoạt động
@@ -654,6 +688,7 @@
 
     // ============================================================
     //  VẼ QR BẰNG qrcode-generator (KHÔNG LOGO, KHÔNG CHỮ)
+    //  cellSize nhỏ hơn để QR gọn, không tràn khi in
     // ============================================================
     function syncQR() {
       const bankCode = document.getElementById('bank').value;
@@ -691,8 +726,8 @@
         const qr = qrcode(0, 'M');
         qr.addData(payload);
         qr.make();
-        // cellSize=4, margin=4 module
-        qrBox.innerHTML = qr.createImgTag(4, 4);
+        // cellSize=3 (nhỏ hơn 4), margin=4 module → QR gọn hơn, vẫn scan tốt
+        qrBox.innerHTML = qr.createImgTag(3, 4);
       } catch (err) {
         qrBox.innerHTML =
           '<div style="font-size:12px;color:#c00;padding:20px">Lỗi tạo QR</div>';
