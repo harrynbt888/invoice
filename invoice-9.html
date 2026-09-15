@@ -40,6 +40,12 @@
       outline: none;
     }
 
+    /* Ô đơn giá — căn phải, số thẳng hàng */
+    input.price {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
     .header {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -67,6 +73,25 @@
 
     .meta { text-align: right; }
     .meta input { text-align: right; }
+
+    /* DATE LINE — Ngày ... tháng ... năm ... */
+    .date-line {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 11px;
+    }
+    .date-line input {
+      width: 28px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, .45);
+      color: white;
+      padding: 2px;
+      font-weight: 600;
+    }
+    .date-line input.yr { width: 44px; }
 
     .info-line {
       display: grid;
@@ -107,6 +132,7 @@
       font-weight: bold;
       cursor: pointer;
     }
+    .btn:hover { background: #ea580c; }
 
     .delete-btn {
       background: #fee2e2;
@@ -126,7 +152,7 @@
 
     .code-box {
       display: grid;
-      grid-template-columns: 1fr 130px;
+      grid-template-columns: 1fr 150px;
       gap: 8px;
       align-items: center;
       border: 1px solid #fed7aa;
@@ -137,7 +163,7 @@
 
     .code { text-align: center; }
 
-    /* QR — vẽ client-side, khung tự co */
+    /* QR — THU NHỎ */
     #qr {
       display: inline-block;
       padding: 6px;
@@ -148,10 +174,21 @@
     }
     #qr img {
       display: block !important;
-      width: 130px !important;
-      height: 130px !important;
+      width: 110px !important;
+      height: 110px !important;
       image-rendering: -webkit-optimize-contrast;
     }
+
+    /* Ghi chú dưới QR */
+    .qr-note {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #4b5563;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .qr-note p { margin: 2px 0; }
+    .qr-note p:first-child { font-weight: 600; color: #111827; }
 
     .summary {
       border: 2px solid #111827;
@@ -211,16 +248,14 @@
         -webkit-print-color-adjust: exact;
       }
 
-      .code { page-break-inside: avoid; break-inside: avoid; }
+      .code-box { page-break-inside: avoid; break-inside: avoid; }
       #qr {
         display: inline-block !important;
-        width: auto !important;
-        height: auto !important;
-        padding: 6px !important;
+        padding: 4px !important;
       }
       #qr img {
-        width: 130px !important;
-        height: 130px !important;
+        width: 110px !important;
+        height: 110px !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
@@ -245,8 +280,14 @@
       </div>
 
       <div class="meta">
-        <div>Mã HĐ: <input id="invoiceId" value="HD000001" oninput="updateAll()" /></div>
-        <div>Ngày: <input id="invoiceDate" /></div>
+        <div>Mã HĐ: <input id="invoiceId" value="HD000001" /></div>
+
+        <!-- Ngày dạng: Ngày ... tháng ... năm ... -->
+        <div class="date-line">
+          Ngày <input id="dateD" maxlength="2" />
+          tháng <input id="dateM" maxlength="2" />
+          năm <input id="dateY" class="yr" maxlength="4" />
+        </div>
       </div>
     </div>
 
@@ -308,14 +349,22 @@
       </div>
     </div>
 
+    <!-- Ô NỘI DUNG CHUYỂN KHOẢN (dòng riêng) -->
+    <div class="info-line" style="grid-template-columns: 1fr;">
+      <div>
+        <label>Nội dung chuyển khoản</label>
+        <input id="content" value="HD000001" oninput="updateQR()" />
+      </div>
+    </div>
+
     <table>
       <thead>
         <tr>
           <th width="35">STT</th>
           <th>Tên hàng hóa</th>
           <th width="55">SL</th>
-          <th width="95">Đơn giá</th>
-          <th width="110">Thành tiền</th>
+          <th width="110">Đơn giá</th>
+          <th width="120">Thành tiền</th>
           <th width="45" class="no-print">Xóa</th>
         </tr>
       </thead>
@@ -326,7 +375,12 @@
 
     <div class="bottom">
       <div class="code-box">
-        <div class="code"></div>
+        <div>
+          <div class="qr-note">
+            <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+            <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
+          </div>
+        </div>
 
         <div class="code">
           <div id="qr"></div>
@@ -409,8 +463,12 @@
         tlv("02", "QRIBFTTA");
       const tag38 = tlv("38", merchantInfo);
 
+      // Nội dung CK — đặt ở cả 62.01 (Bill Number) và 62.08 (Purpose)
       let tag62 = "";
-      if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+      if (addInfo) {
+        const inner = tlv("01", addInfo) + tlv("08", addInfo);
+        tag62 = tlv("62", inner);
+      }
 
       let payload =
         tlv("00", "01") +
@@ -425,6 +483,18 @@
 
       payload += "6304";
       return payload + crc16(payload);
+    }
+
+    // ============================================================
+    //  TIỆN ÍCH SỐ — hỗ trợ dấu chấm phân cách nghìn
+    // ============================================================
+    // "1.000.000" → 1000000 ; "1000000" → 1000000
+    function parseVN(s) {
+      return parseFloat(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+    // 1000000 → "1.000.000"
+    function formatVN(n) {
+      return Math.round(n || 0).toLocaleString('vi-VN');
     }
 
     // ============================================================
@@ -453,7 +523,7 @@
           <input value="${escapeHtml(name)}" oninput="updateAll()" />
         </td>
         <td><input type="number" value="${qty}" oninput="updateAll()" /></td>
-        <td><input type="number" value="${price}" oninput="updateAll()" /></td>
+        <td><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" oninput="updateAll()" onblur="formatPrice(this)" /></td>
         <td class="right line">0 đ</td>
         <td class="no-print">
           <button class="delete-btn" onclick="removeRow(this)">✕</button>
@@ -461,6 +531,13 @@
       `;
 
       items.appendChild(tr);
+      updateAll();
+    }
+
+    // Format đơn giá khi rời ô: "100000" → "100.000"
+    function formatPrice(el) {
+      const v = parseVN(el.value);
+      el.value = formatVN(v);
       updateAll();
     }
 
@@ -480,7 +557,7 @@
         tr.children[0].textContent = index + 1;
 
         const qty = +tr.children[2].querySelector("input").value || 0;
-        const price = +tr.children[3].querySelector("input").value || 0;
+        const price = parseVN(tr.children[3].querySelector("input").value);
         const line = qty * price;
 
         tr.querySelector(".line").textContent = fmt(line);
@@ -504,7 +581,7 @@
       const bankCode = document.getElementById("bank").value;
       const account  = document.getElementById("account").value.trim();
       const owner    = document.getElementById("owner").value.trim();
-      const invoiceIdVal = document.getElementById("invoiceId").value.trim();
+      const contentVal = document.getElementById("content").value.trim();
 
       const qrBox = document.getElementById("qr");
       qrBox.innerHTML = "";
@@ -519,7 +596,7 @@
         bankCode,
         account,
         amount,
-        invoiceIdVal || "Thanh toán",
+        contentVal || "Thanh toán",
         owner || "Chủ tài khoản"
       );
 
@@ -533,20 +610,21 @@
         const qr = qrcode(0, "M");
         qr.addData(payload);
         qr.make();
-        // cellSize=4, margin=4 module
-        qrBox.innerHTML = qr.createImgTag(4, 4);
+        // cellSize=3 cho QR gọn khung 110px
+        qrBox.innerHTML = qr.createImgTag(3, 4);
       } catch (err) {
         qrBox.innerHTML =
           '<div style="font-size:11px;color:#c00;padding:15px">Lỗi tạo QR</div>';
       }
     }
 
+    // Điền ngày hiện tại vào 3 ô riêng
     function setToday() {
-      const d = new Date();
-      invoiceDate.value =
-        String(d.getDate()).padStart(2, "0") + "/" +
-        String(d.getMonth() + 1).padStart(2, "0") + "/" +
-        d.getFullYear();
+      const pad = (n) => n.toString().padStart(2, "0");
+      const now = new Date();
+      document.getElementById("dateD").value = pad(now.getDate());
+      document.getElementById("dateM").value = pad(now.getMonth() + 1);
+      document.getElementById("dateY").value = now.getFullYear();
     }
 
     window.onload = () => {

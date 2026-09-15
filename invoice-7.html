@@ -3,36 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Invoice 7</title>
+  <title>Invoice - MoMo + Ngân hàng</title>
 
   <style>
     @page { size: A4; margin: 10mm; }
     * { box-sizing: border-box; }
     body { margin: 0; background: #eef4ff; font-family: Arial, sans-serif; color: #1f2937; font-size: 14px; }
-    .invoice { max-width: 900px; margin: 24px auto; background: #ffffff; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 35px rgba(37, 99, 235, 0.15); }
-    .topbar { background: linear-gradient(135deg, #2563eb, #06b6d4); color: white; padding: 26px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+    .invoice { max-width: 900px; margin: 24px auto; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 35px rgba(37,99,235,.15); }
+    .topbar { background: linear-gradient(135deg, #2563eb, #06b6d4); color: #fff; padding: 26px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
     .shop-block { flex: 1; min-width: 0; }
-    .shop-name { width: 100%; max-width: 520px; margin-bottom: 8px; }
-    .shop-name textarea { width: 100%; min-height: 34px; resize: none; overflow: hidden; color: white; font-size: 26px; font-weight: bold; line-height: 1.2; padding: 0; text-align: left; border: none; border-bottom: 1px solid rgba(255,255,255,.7); background: transparent; outline: none; font-family: Arial, sans-serif; }
-    .subtitle input { color: white; opacity: 0.9; font-size: 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.35); }
+    .shop-name textarea { width: 100%; max-width: 520px; min-height: 34px; resize: none; overflow: hidden; color: #fff; font-size: 26px; font-weight: bold; line-height: 1.2; padding: 0; border: none; border-bottom: 1px solid rgba(255,255,255,.7); background: transparent; outline: none; font-family: Arial, sans-serif; }
+    .subtitle input { color: #fff; opacity: .9; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,.35); }
     .invoice-title { text-align: right; min-width: 320px; }
     .invoice-title h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 1px; }
     label { display: block; font-size: 12px; color: #64748b; margin-top: 8px; }
     .topbar label { color: rgba(255,255,255,.9); }
     input, select { width: 100%; border: none; border-bottom: 1px dashed #94a3b8; background: transparent; padding: 6px 2px; font-size: 14px; outline: none; font-family: inherit; color: #1f2937; }
-    .topbar input { color: white; border-bottom: 1px solid rgba(255,255,255,.7); text-align: right; }
+    .topbar input { color: #fff; border-bottom: 1px solid rgba(255,255,255,.7); text-align: right; }
+
+    /* Ô đơn giá — căn phải, số thẳng hàng */
+    input.price {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* DATE LINE — Ngày ... tháng ... năm ... */
+    .date-line {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 6px;
+      font-size: 14px;
+      color: #fff;
+    }
+    .date-line input {
+      width: 34px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,.7);
+      color: #fff;
+      padding: 2px;
+      font-weight: 600;
+    }
+    .date-line input.yr { width: 52px; }
+
     .content { padding: 24px; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
     .card { border: 1px solid #dbeafe; background: #f8fbff; border-radius: 16px; padding: 16px; }
     .card h3 { margin: 0 0 12px; color: #2563eb; font-size: 15px; text-transform: uppercase; letter-spacing: .4px; }
     table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 14px; overflow: hidden; border-radius: 14px; border: 1px solid #dbeafe; }
-    th { background: #2563eb; color: white; padding: 10px; font-size: 13px; }
-    td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: center; background: white; }
+    th { background: #2563eb; color: #fff; padding: 10px; font-size: 13px; }
+    td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: center; background: #fff; }
     tbody tr:last-child td { border-bottom: none; }
     td.name { text-align: left; }
     .center { text-align: center; }
     .right { text-align: right; }
-    .btn { border: none; background: #2563eb; color: white; padding: 10px 14px; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 12px; }
+    .btn { border: none; background: #2563eb; color: #fff; padding: 10px 14px; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 12px; }
     .btn:hover { background: #1d4ed8; }
     .delete-btn { background: #fee2e2; color: #dc2626; border: none; border-radius: 8px; cursor: pointer; padding: 6px 8px; }
     .bottom { display: grid; grid-template-columns: 1fr 320px; gap: 18px; margin-top: 18px; }
@@ -42,10 +68,10 @@
     .final { margin-top: 12px; padding-top: 12px; border-top: 2px dashed #93c5fd; font-size: 20px; font-weight: bold; color: #2563eb; }
     .code { text-align: center; margin-top: 8px; }
 
-    /* QR — vẽ client-side, khung tự co */
+    /* QR — thu nhỏ */
     #qr {
       display: inline-block;
-      padding: 8px;
+      padding: 6px;
       background: #fff;
       border: 1px solid #dbeafe;
       border-radius: 12px;
@@ -53,39 +79,52 @@
     }
     #qr img {
       display: block !important;
-      width: 180px !important;
-      height: 180px !important;
+      width: 110px !important;
+      height: 110px !important;
       image-rendering: -webkit-optimize-contrast;
     }
+
+    /* Ghi chú dưới QR */
+    .qr-note {
+      margin-top: 10px;
+      font-size: 10px;
+      color: #4b5563;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .qr-note p { margin: 2px 0; }
+    .qr-note p:first-child { font-weight: 600; color: #111827; }
+
+    .momo-note {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: #e0f2fe;
+      border: 1px solid #7dd3fc;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #075985;
+      text-align: center;
+    }
+    .momo-note.show { display: block; }
 
     .note { margin-top: 18px; border-radius: 14px; background: #eff6ff; border: 1px dashed #93c5fd; padding: 12px; color: #475569; }
     .footer { text-align: center; padding: 18px; background: #f1f5f9; color: #64748b; font-style: italic; }
     .no-print { display: inline-block; }
+
     @media print {
-      body { background: white; }
+      body { background: #fff; }
       .invoice { margin: 0; box-shadow: none; border-radius: 0; max-width: none; }
       .no-print { display: none !important; }
       input, select, textarea { border: none !important; pointer-events: none; }
       .topbar, th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-
       .code { page-break-inside: avoid; break-inside: avoid; }
-      #qr {
-        display: inline-block !important;
-        width: auto !important;
-        height: auto !important;
-        padding: 8px !important;
-      }
-      #qr img {
-        width: 180px !important;
-        height: 180px !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
+      #qr { display: inline-block !important; padding: 6px !important; }
+      #qr img { width: 110px !important; height: 110px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
-    @media (max-width: 700px) { .grid, .bottom { grid-template-columns: 1fr; } .topbar { flex-direction: column; } .invoice-title { text-align: left; min-width: auto; } .topbar input { text-align: left; } }
+    @media (max-width: 700px) { .grid, .bottom { grid-template-columns: 1fr; } .topbar { flex-direction: column; } .invoice-title { text-align: left; min-width: auto; } .topbar input { text-align: left; } .date-line { justify-content: flex-start; } }
   </style>
 
-  <!-- Thư viện sinh QR client-side (nhẹ, không logo) -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
 <body>
@@ -102,9 +141,14 @@
       <div class="invoice-title">
         <h1>HÓA ĐƠN</h1>
         <label>Mã hóa đơn</label>
-        <input id="invoiceId" value="HD000000000000001" oninput="updateAll()" />
-        <label>Ngày lập</label>
-        <input id="invoiceDate" />
+        <input id="invoiceId" value="HD000000000000001" />
+
+        <!-- Ngày dạng: Ngày ... tháng ... năm ... -->
+        <div class="date-line">
+          Ngày <input id="dateD" maxlength="2" />
+          tháng <input id="dateM" maxlength="2" />
+          năm <input id="dateY" class="yr" maxlength="4" />
+        </div>
       </div>
     </div>
 
@@ -124,7 +168,15 @@
           <label>Chủ tài khoản</label>
           <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
           <label>Số tài khoản</label>
-          <input id="account" value="0123456789" oninput="updateQR()" />
+          <input id="account" value="99MM24011M34875080" oninput="updateQR()" />
+
+          <div id="momoBox" style="display:none">
+            <label>SĐT MoMo (3 số cuối dùng cho QR)</label>
+            <input id="momoPhone" value="0901234567" oninput="updateQR()" placeholder="Nhập SĐT MoMo" />
+            <label>Mã tham chiếu MoMo</label>
+            <input id="momoRef" value="MOMOW2W12345678" oninput="updateQR()" placeholder="MOMOW2W..." />
+          </div>
+
           <label>Ngân hàng</label>
           <select id="bank" onchange="updateQR()">
             <option value="VCB">Vietcombank</option>
@@ -136,6 +188,7 @@
             <option value="BAOVIETBANK">BaoViet Bank</option>
             <option value="BIDV">BIDV</option>
             <option value="BVB">BVBank</option>
+            <option value="MOMO">MoMo (BVBank)</option>
             <option value="EIB">Eximbank</option>
             <option value="HDB">HDBank</option>
             <option value="ICB">VietinBank</option>
@@ -158,11 +211,21 @@
             <option value="NCB">NCB</option>
             <option value="VIKKI">VIKKI</option>
           </select>
+
+          <!-- Ô NỘI DUNG CHUYỂN KHOẢN -->
+          <label>Nội dung chuyển khoản</label>
+          <input id="content" value="Thanh toán hóa đơn" oninput="updateQR()" />
         </div>
       </div>
 
       <table>
-        <thead><tr><th width="45">STT</th><th>Tên hàng hóa</th><th width="80">SL</th><th width="120">Đơn giá</th><th width="130">Thành tiền</th><th width="60" class="no-print">Xóa</th></tr></thead>
+        <thead>
+          <tr>
+            <th width="45">STT</th><th>Tên hàng hóa</th><th width="80">SL</th>
+            <th width="140">Đơn giá</th><th width="130">Thành tiền</th>
+            <th width="60" class="no-print">Xóa</th>
+          </tr>
+        </thead>
         <tbody id="items"></tbody>
       </table>
       <button class="btn no-print" onclick="addRow()">➕ Thêm sản phẩm</button>
@@ -171,6 +234,12 @@
         <div class="card">
           <h3>Mã thanh toán</h3>
           <div class="code"><div id="qr"></div></div>
+
+          <!-- 2 DÒNG GHI CHÚ DƯỚI MÃ QR -->
+          <div class="qr-note">
+            <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+            <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
+          </div>
         </div>
         <div class="summary">
           <div class="summary-row"><span>Tạm tính:</span><b id="sum">0 đ</b></div>
@@ -182,31 +251,33 @@
       <div class="note">Ghi chú:<input id="note" value="Cảm ơn quý khách đã sử dụng dịch vụ." /></div>
       <button class="btn no-print" onclick="window.print()">🖨 In hóa đơn</button>
     </div>
-    <div class="footer">Hóa đơn được tạo tự động. Vui lòng kiểm tra thông tin trước khi thanh toán.</div>
+    <div class="footer">Hóa đơn được tạo tự động. Vui lòng kiểm tra thông tin trước thanh toán.</div>
   </div>
 
   <script>
-    // ============================================================
-    //  MÃ BIN NGÂN HÀNG (theo NAPAS - dùng cho VietQR EMVCo)
-    // ============================================================
+    /* ============================================================
+     *  MÃ BIN NGÂN HÀNG (NAPAS)
+     *  MoMo dùng BIN BVBank (970454) để nhận tiền qua VietQR
+     * ============================================================ */
     const BANK_BIN = {
       VCB: "970436", TCB: "970407", ICB: "970415", BIDV: "970418",
       AGRIBANK: "970405", MB: "970422", ACB: "970416", VPB: "970432",
       TPB: "970423", STB: "970403", HDB: "970437", SHB: "970443",
       VIB: "970441", MSB: "970426", OCB: "970448", SEAB: "970440",
       EIB: "970431", NAB: "970428", SCB: "970429", PGB: "970430",
-      KLB: "970452", BVB: "970454", BAOVIETBANK: "970438",
-      PVCOMBANK: "970412", SAIGONBANK: "970400", ABB: "970425",
-      NCB: "970419", SHBVN: "970409", BAB: "970409", VIKKI: "970406"
+      KLB: "970452", BVB: "970454", MOMO: "970454",
+      BAOVIETBANK: "970438", PVCOMBANK: "970412", SAIGONBANK: "970400",
+      ABB: "970425", NCB: "970419", SHBVN: "970409", BAB: "970409",
+      VIKKI: "970406"
     };
 
-    // TLV: tag + length (2 số) + value
+    /* TLV: tag + length (2 số) + value */
     function tlv(tag, val) {
       const len = String(val.length).padStart(2, "0");
       return tag + len + val;
     }
 
-    // CRC-16/CCITT-FALSE (chuẩn EMVCo)
+    /* CRC-16/CCITT-FALSE (chuẩn EMVCo) */
     function crc16(str) {
       let crc = 0xffff;
       for (let i = 0; i < str.length; i++) {
@@ -219,8 +290,10 @@
       return crc.toString(16).toUpperCase().padStart(4, "0");
     }
 
-    // Sinh chuỗi EMVCo VietQR (NAPAS 247)
-    function buildVietQR(bankCode, account, amount, addInfo, accountName) {
+    /* ============================================================
+     *  SINH CHUỖI EMVCo VIETQR
+     * ============================================================ */
+    function buildVietQR(bankCode, account, amount, addInfo, accountName, momoRef, momoPhone) {
       const bin = BANK_BIN[bankCode];
       if (!bin) return null;
 
@@ -232,7 +305,21 @@
       const tag38 = tlv("38", merchantInfo);
 
       let tag62 = "";
-      if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+      if (addInfo) {
+        const inner = tlv("01", addInfo) + tlv("08", addInfo);
+        tag62 = tlv("62", inner);
+      }
+
+      let tag80 = "";
+      if (bankCode === "MOMO" && momoPhone) {
+        const last3 = momoPhone.replace(/\D/g, "").slice(-3);
+        if (last3) tag80 = tlv("80", last3);
+      }
+
+      let tag62Extra = "";
+      if (bankCode === "MOMO" && momoRef) {
+        tag62Extra = tlv("05", momoRef);
+      }
 
       let payload =
         tlv("00", "01") +
@@ -243,15 +330,27 @@
         tlv("58", "VN") +
         (accountName ? tlv("59", accountName.substring(0, 25)) : "") +
         tlv("60", "HO CHI MINH") +
-        tag62;
+        tag62 +
+        tag62Extra +
+        tag80;
 
       payload += "6304";
       return payload + crc16(payload);
     }
 
-    // ============================================================
-    //  CORE LOGIC
-    // ============================================================
+    /* ============================================================
+     *  TIỆN ÍCH SỐ — hỗ trợ dấu chấm phân cách nghìn
+     * ============================================================ */
+    function parseVN(s) {
+      return parseFloat(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+    function formatVN(n) {
+      return Math.round(n || 0).toLocaleString('vi-VN');
+    }
+
+    /* ============================================================
+     *  CORE LOGIC
+     * ============================================================ */
     const items = document.getElementById("items");
     const discount = document.getElementById("discount");
     const total = document.getElementById("sum");
@@ -264,7 +363,10 @@
     }
 
     function escapeHtml(value) {
-      return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+      return String(value)
+        .replaceAll("&", "&amp;").replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;").replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     function addRow(name = "", qty = 1, price = 0) {
@@ -273,10 +375,17 @@
         <td class="center"></td>
         <td class="name"><input value="${escapeHtml(name)}" oninput="updateAll()" /></td>
         <td><input type="number" value="${qty}" oninput="updateAll()" /></td>
-        <td><input type="number" value="${price}" oninput="updateAll()" /></td>
+        <td><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" oninput="updateAll()" onblur="formatPrice(this)" /></td>
         <td class="right line">0 đ</td>
         <td class="no-print"><button type="button" class="delete-btn" onclick="removeRow(this)">❌</button></td>`;
       items.appendChild(tr);
+      updateAll();
+    }
+
+    // Format đơn giá khi rời ô: "1500000" → "1.500.000"
+    function formatPrice(el) {
+      const v = parseVN(el.value);
+      el.value = formatVN(v);
       updateAll();
     }
 
@@ -288,7 +397,7 @@
       items.querySelectorAll("tr").forEach((tr, index) => {
         tr.children[0].textContent = index + 1;
         const qty = +tr.children[2].querySelector("input").value || 0;
-        const price = +tr.children[3].querySelector("input").value || 0;
+        const price = parseVN(tr.children[3].querySelector("input").value);
         const line = qty * price;
         tr.querySelector(".line").textContent = fmt(line);
         sum += line;
@@ -301,36 +410,78 @@
       autoResizeShopName();
     }
 
-    // ============================================================
-    //  VẼ QR BẰNG qrcode-generator (KHÔNG LOGO, KHÔNG CHỮ)
-    // ============================================================
+    /* ============================================================
+     *  VẼ QR — HỖ TRỢ MOMO + NGÂN HÀNG
+     * ============================================================ */
     function updateQR() {
       const amount = parseInt(final.textContent.replace(/\D/g, "")) || 0;
       const bankCode = document.getElementById("bank").value;
       const account  = document.getElementById("account").value.trim();
       const owner    = document.getElementById("owner").value.trim();
-      const invoiceIdVal = document.getElementById("invoiceId").value.trim();
+      const contentVal = document.getElementById("content").value.trim();
 
       const qrBox = document.getElementById("qr");
+      const momoBox = document.getElementById("momoBox");
+      const momoPhone = document.getElementById("momoPhone");
+      const momoRef = document.getElementById("momoRef");
+
+      /* ==== NHÁNH MOMO ==== */
+      if (bankCode === "MOMO") {
+        momoBox.style.display = "block";
+        qrBox.innerHTML = "";
+
+        const phone = (momoPhone?.value || "").replace(/\D/g, "");
+        const ref = (momoRef?.value || "").trim();
+
+        if (!account) {
+          qrBox.innerHTML = '<div style="font-size:12px;color:#999;padding:20px">Nhập số tài khoản MoMo (BVBank)</div>';
+          return;
+        }
+
+        const payload = buildVietQR(
+          bankCode,
+          account,
+          amount,
+          contentVal || "Thanh toán",
+          owner || "Chủ tài khoản",
+          ref || null,
+          phone || null
+        );
+
+        if (!payload) {
+          qrBox.innerHTML = '<div style="font-size:12px;color:#c00;padding:20px">Không hỗ trợ</div>';
+          return;
+        }
+
+        try {
+          const qr = qrcode(0, "M");
+          qr.addData(payload);
+          qr.make();
+          qrBox.innerHTML = qr.createImgTag(3, 4) +
+            '<div class="momo-note show">💳 Quét được bằng app ngân hàng <b>và</b> app MoMo</div>';
+        } catch (err) {
+          qrBox.innerHTML = '<div style="font-size:12px;color:#c00;padding:20px">Lỗi tạo QR</div>';
+        }
+        return;
+      }
+
+      /* ==== NHÁNH NGÂN HÀNG ==== */
+      momoBox.style.display = "none";
       qrBox.innerHTML = "";
 
       if (!bankCode || !account) {
-        qrBox.innerHTML =
-          '<div style="font-size:12px;color:#999;padding:20px">Nhập đủ thông tin NH</div>';
+        qrBox.innerHTML = '<div style="font-size:12px;color:#999;padding:20px">Nhập đủ thông tin NH</div>';
         return;
       }
 
       const payload = buildVietQR(
-        bankCode,
-        account,
-        amount,
-        invoiceIdVal || "Thanh toán",
+        bankCode, account, amount,
+        contentVal || "Thanh toán",
         owner || "Chủ tài khoản"
       );
 
       if (!payload) {
-        qrBox.innerHTML =
-          '<div style="font-size:12px;color:#c00;padding:20px">Không hỗ trợ NH này</div>';
+        qrBox.innerHTML = '<div style="font-size:12px;color:#c00;padding:20px">Không hỗ trợ NH này</div>';
         return;
       }
 
@@ -338,20 +489,21 @@
         const qr = qrcode(0, "M");
         qr.addData(payload);
         qr.make();
-        // cellSize=5, margin=4 module
-        qrBox.innerHTML = qr.createImgTag(5, 4);
+        qrBox.innerHTML = qr.createImgTag(3, 4);
       } catch (err) {
-        qrBox.innerHTML =
-          '<div style="font-size:12px;color:#c00;padding:20px">Lỗi tạo QR</div>';
+        qrBox.innerHTML = '<div style="font-size:12px;color:#c00;padding:20px">Lỗi tạo QR</div>';
       }
     }
 
+    /* ============================================================
+     *  NGÀY — điền ngày hiện tại vào 3 ô riêng
+     * ============================================================ */
     function setToday() {
-      const d = new Date();
-      const day = String(d.getDate()).padStart(2, "0");
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const year = d.getFullYear();
-      invoiceDate.value = `${day}/${month}/${year}`;
+      const pad = (n) => n.toString().padStart(2, "0");
+      const now = new Date();
+      document.getElementById("dateD").value = pad(now.getDate());
+      document.getElementById("dateM").value = pad(now.getMonth() + 1);
+      document.getElementById("dateY").value = now.getFullYear();
     }
 
     window.onload = () => {

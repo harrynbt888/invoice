@@ -68,8 +68,8 @@
               border-radius:4px;background:#fff;outline:none;min-width:200px;cursor:pointer}
   select.bank:focus{border-color:#93c5fd;box-shadow:0 0 0 2px #e0edff}
 
-  /* QR — vẽ client-side, khung tự co */
-  .payment .qr{width:170px;flex:none;display:flex;flex-direction:column;
+  /* QR — THU NHỎ, khung tự co */
+  .payment .qr{width:150px;flex:none;display:flex;flex-direction:column;
                align-items:center;gap:6px}
   #qr{
     display:inline-block;
@@ -81,11 +81,23 @@
   }
   #qr img{
     display:block !important;
-    width:150px !important;
-    height:150px !important;
+    width:110px !important;
+    height:110px !important;
     image-rendering:-webkit-optimize-contrast;
   }
   .payment .qr .cap{font-size:11.5px;color:#6b7280;text-align:center;line-height:1.3}
+
+  /* Ghi chú dưới QR */
+  .qr-note {
+    max-width: 200px;
+    margin-top: 6px;
+    font-size: 9.5px;
+    color: #4b5563;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .qr-note p { margin: 2px 0; }
+  .qr-note p:first-child { font-weight: 600; color: #111827; }
 
   .note-foot{margin-top:22px;padding-top:10px;border-top:1px dashed #d1d5db;
              font-size:11.5px;color:#6b7280;font-style:italic;text-align:center}
@@ -118,11 +130,12 @@
       print-color-adjust:exact;
     }
     #qr img{
-      width:150px !important;
-      height:150px !important;
+      width:110px !important;
+      height:110px !important;
       -webkit-print-color-adjust:exact;
       print-color-adjust:exact;
     }
+    .qr-note { font-size: 9px; }
     tr{page-break-inside:avoid}
   }
 </style>
@@ -156,6 +169,7 @@
   <div class="buyer">
     <div><span class="k">Người mua:</span><span class="v" contenteditable="true">Nguyễn Văn A</span></div>
     <div><span class="k">Thanh toán:</span><span class="v" contenteditable="true">Chuyển khoản</span></div>
+    <div><span class="k">Mã HĐ:</span><span class="v" contenteditable="true">HD0001</span></div>
   </div>
 
   <!-- Bảng hàng hóa -->
@@ -252,7 +266,13 @@
     </div>
     <div class="qr">
       <div id="qr"></div>
-      <div class="cap">Mã QR chuyển khoản</div>
+      <div class="cap no-print">Mã QR chuyển khoản</div>
+
+      <!-- 2 DÒNG GHI CHÚ DƯỚI MÃ QR -->
+      <div class="qr-note">
+        <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+        <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -303,8 +323,12 @@ function buildVietQR(bankCode, account, amount, addInfo, accountName) {
     tlv("02", "QRIBFTTA");
   const tag38 = tlv("38", merchantInfo);
 
+  // Nội dung CK — đặt ở cả 62.01 (Bill Number) và 62.08 (Purpose)
   let tag62 = "";
-  if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+  if (addInfo) {
+    const inner = tlv("01", addInfo) + tlv("08", addInfo);
+    tag62 = tlv("62", inner);
+  }
 
   let payload =
     tlv("00", "01") +
@@ -400,8 +424,8 @@ function updateQR(amount){
     const qr = qrcode(0, 'M');
     qr.addData(payload);
     qr.make();
-    // cellSize=4, margin=4 module
-    qrBox.innerHTML = qr.createImgTag(4, 4);
+    // cellSize=3 cho QR gọn vừa khung 110px
+    qrBox.innerHTML = qr.createImgTag(3, 4);
   } catch (err) {
     qrBox.innerHTML =
       '<div style="font-size:11px;color:#c00;padding:20px">Lỗi tạo QR</div>';

@@ -17,6 +17,24 @@
     .info { display: flex; justify-content: space-between; font-size: 12px; margin: 8px 0; }
     .info>div { width: 48%; }
 
+    /* DATE LINE — Ngày ... tháng ... năm ... */
+    .date-line {
+      text-align: center;
+      font-size: 12px;
+      margin: 6px 0;
+    }
+    .date-line input {
+      width: 34px;
+      text-align: center;
+      border: none;
+      border-bottom: 1px dashed #888;
+      background: transparent;
+      font-size: 12px;
+      padding: 0 2px;
+    }
+    .date-line input.yr { width: 48px; }
+    .date-line input:focus { outline: none; border-bottom-color: #1fa14a; }
+
     table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
     th, td { border: 1px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; }
     td.name { text-align: left; }
@@ -25,6 +43,12 @@
             font-size: 12px; background: transparent; padding: 2px 0; }
     .edit:focus { outline: none; border-bottom-color: #1fa14a; }
     select.edit { border: 1px solid #ccc; padding: 2px; background: #fff; }
+
+    /* Ô đơn giá — căn phải, số thẳng hàng */
+    .item-price {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
 
     .delete-btn { border: 1px solid #cc0000; background: #fff; color: #cc0000; cursor: pointer;
                   padding: 2px 8px; border-radius: 4px; font-size: 12px; }
@@ -39,20 +63,36 @@
     .summary .final { font-weight: bold; }
 
     .bank { margin-top: 10px; font-size: 12px; padding: 8px 0; border-top: 1px dashed #000; }
+    .bank .row { margin: 3px 0; }
 
-    /* QR — ép cứng kích thước, không cho ảnh vượt khung */
+    /* QR — THU NHỎ */
     #qr {
-      width: 140px;
-      height: 140px;
-      margin-top: 6px;
+      width: 110px;
+      height: 110px;
+      margin: 6px auto 0;
       display: block;
       overflow: hidden;
     }
     #qr img {
       display: block !important;
-      width: 140px !important;
-      height: 140px !important;
+      width: 110px !important;
+      height: 110px !important;
       image-rendering: -webkit-optimize-contrast;
+    }
+
+    /* Ghi chú dưới QR */
+    .qr-note {
+      max-width: 420px;
+      margin: 8px auto 0;
+      font-size: 10px;
+      color: #4b5563;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .qr-note p { margin: 2px 0; }
+    .qr-note p:first-child {
+      font-weight: 600;
+      color: #111827;
     }
 
     .print-image { text-align: center; margin-bottom: 8px; }
@@ -66,14 +106,14 @@
       .print-text { display: inline !important; }
       .invoice { border: 1px solid #000 !important; margin: 0 !important; padding: 8mm !important; }
       .print-image img { display: block !important; max-width: 160px; }
-      #qr { width: 140px !important; height: 140px !important; display: block !important; }
-      #qr img { width: 140px !important; height: 140px !important; }
+      #qr { width: 110px !important; height: 110px !important; display: block !important; margin: 6px auto 0 !important; }
+      #qr img { width: 110px !important; height: 110px !important; }
       .no-print { display: none !important; }
       input[type="file"] { display: none !important; }
     }
   </style>
 
-  <!-- Thư viện sinh QR nhẹ, ổn định -->
+  <!-- Thư viện sinh QR client-side (nhẹ, không logo) -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
 
@@ -92,10 +132,8 @@
     <!-- Thông tin chung -->
     <div class="info">
       <div>
-        Mã HĐ: <input class="edit" id="invoiceId" value="HD001749" oninput="updateAll()" />
-        <span class="print-text" id="invoicePrint">HD001749</span><br />
-        Ngày: <input class="edit" id="invoiceDate" value="13/11/2013" oninput="updateAll()" />
-        <span class="print-text" id="datePrint">13/11/2013</span>
+        Mã HĐ: <input class="edit" id="invoiceId" value="HD001749" />
+        <span class="print-text" id="invoicePrint">HD001749</span>
       </div>
       <div>
         Khách hàng: <input class="edit" id="customerName" value="NGUYEN THI B" oninput="updateAll()" />
@@ -103,12 +141,19 @@
       </div>
     </div>
 
+    <!-- Dòng ngày kiểu Việt Nam: Ngày ... tháng ... năm ... -->
+    <div class="date-line">
+      Ngày <input id="dateD" value="" maxlength="2" oninput="updateAll()" />
+      tháng <input id="dateM" value="" maxlength="2" oninput="updateAll()" />
+      năm <input id="dateY" class="yr" value="" maxlength="4" oninput="updateAll()" />
+    </div>
+
     <!-- Bảng sản phẩm -->
     <table>
       <thead>
         <tr>
           <th>Tên hàng</th>
-          <th style="width:70px;">Đơn giá</th>
+          <th style="width:80px;">Đơn giá</th>
           <th style="width:50px;">SL</th>
           <th style="width:60px;">CK (%)</th>
           <th style="width:100px;">Thành tiền</th>
@@ -145,48 +190,65 @@
     <div class="bank">
       <b>Thanh toán chuyển khoản</b><br />
 
-      Ngân hàng:
-      <select id="bank" class="edit" onchange="updateQR()">
-        <option value="VCB">Vietcombank</option>
-        <option value="ABB">ABBank</option>
-        <option value="SHBVN">SOL</option>
-        <option value="ACB">ACB</option>
-        <option value="AGRIBANK">Agribank</option>
-        <option value="BAB">Bac A Bank</option>
-        <option value="BAOVIETBANK">BaoViet Bank</option>
-        <option value="BIDV">BIDV</option>
-        <option value="BVB">BVBank</option>
-        <option value="EIB">Eximbank</option>
-        <option value="HDB">HDBank</option>
-        <option value="ICB">VietinBank</option>
-        <option value="KLB">KienlongBank</option>
-        <option value="MB">MB Bank</option>
-        <option value="MSB">MSB</option>
-        <option value="NAB">Nam A Bank</option>
-        <option value="OCB">OCB</option>
-        <option value="PGB">PG Bank</option>
-        <option value="PVCOMBANK">PVcomBank</option>
-        <option value="SAIGONBANK">SaigonBank</option>
-        <option value="SCB">SCB</option>
-        <option value="SEAB">SeABank</option>
-        <option value="SHB">SHB</option>
-        <option value="STB">Sacombank</option>
-        <option value="TCB">Techcombank</option>
-        <option value="TPB">TPBank</option>
-        <option value="VIB">VIB</option>
-        <option value="VPB">VPBank</option>
-        <option value="NCB">NCB</option>
-        <option value="VIKKI">VIKKI</option>
-      </select>
-      <span class="print-text" id="bankPrint">Vietcombank</span><br />
+      <div class="row">
+        Ngân hàng:
+        <select id="bank" class="edit" onchange="updateQR()">
+          <option value="VCB">Vietcombank</option>
+          <option value="ABB">ABBank</option>
+          <option value="SHBVN">SOL</option>
+          <option value="ACB">ACB</option>
+          <option value="AGRIBANK">Agribank</option>
+          <option value="BAB">Bac A Bank</option>
+          <option value="BAOVIETBANK">BaoViet Bank</option>
+          <option value="BIDV">BIDV</option>
+          <option value="BVB">BVBank</option>
+          <option value="EIB">Eximbank</option>
+          <option value="HDB">HDBank</option>
+          <option value="ICB">VietinBank</option>
+          <option value="KLB">KienlongBank</option>
+          <option value="MB">MB Bank</option>
+          <option value="MSB">MSB</option>
+          <option value="NAB">Nam A Bank</option>
+          <option value="OCB">OCB</option>
+          <option value="PGB">PG Bank</option>
+          <option value="PVCOMBANK">PVcomBank</option>
+          <option value="SAIGONBANK">SaigonBank</option>
+          <option value="SCB">SCB</option>
+          <option value="SEAB">SeABank</option>
+          <option value="SHB">SHB</option>
+          <option value="STB">Sacombank</option>
+          <option value="TCB">Techcombank</option>
+          <option value="TPB">TPBank</option>
+          <option value="VIB">VIB</option>
+          <option value="VPB">VPBank</option>
+          <option value="NCB">NCB</option>
+          <option value="VIKKI">VIKKI</option>
+        </select>
+        <span class="print-text" id="bankPrint">Vietcombank</span>
+      </div>
 
-      STK: <input id="account" class="edit" value="0123456789" oninput="updateQR()" />
-      <span class="print-text" id="accountPrint">0123456789</span><br />
+      <div class="row">
+        STK: <input id="account" class="edit" value="0123456789" oninput="updateQR()" />
+        <span class="print-text" id="accountPrint">0123456789</span>
+      </div>
 
-      Chủ TK: <input id="owner" class="edit" value="NGUYEN VAN A" oninput="updateQR()" />
-      <span class="print-text" id="ownerPrint">NGUYEN VAN A</span><br />
+      <div class="row">
+        Chủ TK: <input id="owner" class="edit" value="NGUYEN VAN A" oninput="updateQR()" />
+        <span class="print-text" id="ownerPrint">NGUYEN VAN A</span>
+      </div>
+
+      <div class="row">
+        Nội dung: <input id="content" class="edit" value="HD 001749" oninput="updateQR()" />
+        <span class="print-text" id="contentPrint">HD 001749</span>
+      </div>
 
       <div id="qr"></div>
+
+      <!-- 2 DÒNG GHI CHÚ DƯỚI MÃ QR -->
+      <div class="qr-note">
+        <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+        <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
+      </div>
     </div>
 
     <div class="divider"></div>
@@ -242,8 +304,12 @@
                          + tlv('02', 'QRIBFTTA');
       const tag38 = tlv('38', merchantInfo);
 
+      // Nội dung CK — đặt ở cả 62.01 (Bill Number) và 62.08 (Purpose)
       let tag62 = '';
-      if (addInfo) tag62 = tlv('62', tlv('01', addInfo));
+      if (addInfo) {
+        const inner = tlv('01', addInfo) + tlv('08', addInfo);
+        tag62 = tlv('62', inner);
+      }
 
       let payload =
         tlv('00', '01') +
@@ -261,9 +327,18 @@
     }
 
     // ============================================================
-    //  TIỆN ÍCH
+    //  TIỆN ÍCH SỐ — hỗ trợ dấu chấm phân cách nghìn
     // ============================================================
-    function fmt(n) { return n.toLocaleString('vi-VN'); }
+    // "1.000.000" → 1000000 ; "1000000" → 1000000
+    function parseVN(s) {
+      return parseFloat(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+    // 1000000 → "1.000.000"
+    function formatVN(n) {
+      return Math.round(n || 0).toLocaleString('vi-VN');
+    }
+    // fmt dùng cho các trường không nhập liệu
+    function fmt(n) { return (n || 0).toLocaleString('vi-VN'); }
 
     function escapeHtml(str) {
       return String(str)
@@ -287,8 +362,10 @@
           <span class="print-text item-name-print">${escapeHtml(name)}</span>
         </td>
         <td>
-          <input class="edit item-price" type="number" value="${price}" oninput="updateAll()" />
-          <span class="print-text item-price-print">${fmt(price)}</span>
+          <input class="edit item-price" type="text" inputmode="numeric"
+                 value="${formatVN(price)}"
+                 oninput="updateAll()" onblur="formatPrice(this)" />
+          <span class="print-text item-price-print">${formatVN(price)}</span>
         </td>
         <td>
           <input class="edit item-qty" type="number" value="${qty}" oninput="updateAll()" />
@@ -304,6 +381,13 @@
         </td>
       `;
       items.appendChild(tr);
+      updateAll();
+    }
+
+    // Format đơn giá khi rời ô: "1000000" → "1.000.000"
+    function formatPrice(el) {
+      const v = parseVN(el.value);
+      el.value = formatVN(v);
       updateAll();
     }
 
@@ -325,7 +409,7 @@
 
       document.querySelectorAll('#items tr').forEach(tr => {
         const name = tr.querySelector('.item-name').value || '';
-        const price = +tr.querySelector('.item-price').value || 0;
+        const price = parseVN(tr.querySelector('.item-price').value);
         const qty = +tr.querySelector('.item-qty').value || 0;
         const ck = +tr.querySelector('.item-ck').value || 0;
 
@@ -334,7 +418,7 @@
 
         tr.querySelector('.line').textContent = fmt(lineTotal);
         tr.querySelector('.item-name-print').textContent = name;
-        tr.querySelector('.item-price-print').textContent = fmt(price);
+        tr.querySelector('.item-price-print').textContent = formatVN(price);
         tr.querySelector('.item-qty-print').textContent = qty;
         tr.querySelector('.item-ck-print').textContent = ck + '%';
       });
@@ -346,7 +430,6 @@
       document.getElementById('final').textContent = fmt(pay);
 
       document.getElementById('invoicePrint').textContent = document.getElementById('invoiceId').value;
-      document.getElementById('datePrint').textContent = document.getElementById('invoiceDate').value;
       document.getElementById('customerPrint').textContent = document.getElementById('customerName').value;
       document.getElementById('discountPrint').textContent = d + '%';
 
@@ -360,7 +443,7 @@
       const bank = document.getElementById('bank').value;
       const account = document.getElementById('account').value.trim();
       const owner = document.getElementById('owner').value.trim();
-      const invoiceId = document.getElementById('invoiceId').value.trim();
+      const contentVal = document.getElementById('content').value.trim();
 
       const amountText = document.getElementById('final').textContent.replace(/\D/g, '');
       const amount = parseInt(amountText, 10) || 0;
@@ -368,6 +451,7 @@
       document.getElementById('bankPrint').textContent = document.getElementById('bank').selectedOptions[0].text;
       document.getElementById('accountPrint').textContent = account;
       document.getElementById('ownerPrint').textContent = owner;
+      document.getElementById('contentPrint').textContent = contentVal;
 
       const qrBox = document.getElementById('qr');
       qrBox.innerHTML = '';
@@ -377,19 +461,18 @@
         return;
       }
 
-      const payload = buildVietQR(bank, account, amount, 'HD ' + invoiceId, owner);
+      const payload = buildVietQR(bank, account, amount, contentVal || 'Thanh toán', owner);
       if (!payload) {
         qrBox.innerHTML = '<div style="font-size:11px;color:#c00">Không hỗ trợ NH này</div>';
         return;
       }
 
       try {
-        // typeNumber=0 → tự động; 'M' → mức sửa lỗi trung bình
         const qr = qrcode(0, 'M');
         qr.addData(payload);
         qr.make();
-        // cellSize=4, margin=4 modules
-        qrBox.innerHTML = qr.createImgTag(4, 4);
+        // cellSize=3 → QR gọn vừa khung 110px
+        qrBox.innerHTML = qr.createImgTag(3, 4);
       } catch (err) {
         qrBox.innerHTML = '<div style="font-size:11px;color:#c00">Lỗi tạo QR</div>';
       }
@@ -411,6 +494,16 @@
     //  KHỞI TẠO
     // ============================================================
     window.onload = function() {
+      // Điền ngày hiện tại vào 3 ô Ngày / tháng / năm
+      const pad = (n) => n.toString().padStart(2, '0');
+      const now = new Date();
+      document.getElementById('dateD').value = pad(now.getDate());
+      document.getElementById('dateM').value = pad(now.getMonth() + 1);
+      document.getElementById('dateY').value = now.getFullYear();
+
+      // Điền mặc định nội dung CK theo mã HĐ
+      document.getElementById('content').value = 'HD ' + document.getElementById('invoiceId').value;
+
       if (items.children.length === 0) {
         addItem('VÁY NỮ MÀU ROSE', 210000, 2, 0);
       } else {

@@ -108,17 +108,17 @@
             border-bottom-color: #0c4a6e;
         }
 
-        .header-meta .date-group {
+        /* DATE LINE — Ngày ... tháng ... năm ... */
+        .date-line {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             font-size: 13px;
             color: #0c4a6e;
             flex-shrink: 0;
         }
-        .header-meta .date-group label { font-weight: 500; }
-        .header-meta .date-group input {
-            width: 32px;
+        .date-line input {
+            width: 30px;
             text-align: center;
             border: none;
             border-bottom: 1.5px dashed #94a3b8;
@@ -126,11 +126,11 @@
             font-size: 13px;
             padding: 2px;
         }
-        .header-meta .date-group input:focus {
+        .date-line input.yr { width: 46px; }
+        .date-line input:focus {
             outline: none;
             border-bottom-color: #0c4a6e;
         }
-        .header-meta .date-group input:nth-child(3) { width: 54px; }
 
         /* ----- TITLE ----- */
         .title-row { text-align: center; margin-bottom: 12px; }
@@ -240,6 +240,12 @@
         .table td input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
+        }
+
+        /* Ô đơn giá — căn phải, số thẳng hàng */
+        .table td input.price {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
         }
 
         .table td:first-child {
@@ -402,6 +408,18 @@
             image-rendering: -webkit-optimize-contrast;
         }
 
+        /* Ghi chú dưới QR */
+        .qr-note {
+            max-width: 420px;
+            margin: 6px auto 0;
+            font-size: 10px;
+            color: #4b5563;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .qr-note p { margin: 2px 0; }
+        .qr-note p:first-child { font-weight: 600; color: #111827; }
+
         /* ----- FOOTER ----- */
         .footer {
             text-align: center;
@@ -507,7 +525,7 @@
             .invoice-wrapper { padding: 14px 16px; }
             .header-meta { flex-direction: column; align-items: stretch; gap: 8px; }
             .header-meta .barcode-box { justify-content: center; }
-            .header-meta .date-group { justify-content: center; }
+            .date-line { justify-content: center; }
             .customer-info { flex-direction: column; align-items: stretch; gap: 4px; }
             .customer-info input { text-align: center; }
         }
@@ -525,12 +543,15 @@
         <div class="header-meta">
             <span class="barcode-box">
                 <label>Mã</label>
-                <input id="invoiceId" value="HD00001" oninput="updateAll()" />
+                <input id="invoiceId" value="HD00001" />
             </span>
-            <span class="date-group">
-                <label>Ngày</label>
-                <input placeholder="DD" /> / <input placeholder="MM" /> / <input placeholder="YYYY" />
-            </span>
+
+            <!-- Ngày dạng: Ngày ... tháng ... năm ... -->
+            <div class="date-line">
+                Ngày <input id="dateD" maxlength="2" />
+                tháng <input id="dateM" maxlength="2" />
+                năm <input id="dateY" class="yr" maxlength="4" />
+            </div>
         </div>
     </div>
 
@@ -627,10 +648,20 @@
             <label>Chủ TK</label>
             <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
         </div>
+        <div class="bank-info">
+            <label>Nội dung</label>
+            <input id="content" value="HD00001" oninput="updateQR()" style="width: 300px;" />
+        </div>
 
         <!-- QR wrapper -->
         <div class="qr-wrapper">
             <div id="qr"></div>
+        </div>
+
+        <!-- 2 DÒNG GHI CHÚ DƯỚI MÃ QR -->
+        <div class="qr-note">
+            <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+            <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
         </div>
     </div>
 
@@ -693,8 +724,12 @@
             tlv("02", "QRIBFTTA");
         const tag38 = tlv("38", merchantInfo);
 
+        // Nội dung CK — đặt ở cả 62.01 (Bill Number) và 62.08 (Purpose)
         let tag62 = "";
-        if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+        if (addInfo) {
+            const inner = tlv("01", addInfo) + tlv("08", addInfo);
+            tag62 = tlv("62", inner);
+        }
 
         let payload =
             tlv("00", "01") +
@@ -712,6 +747,18 @@
     }
 
     // ============================================================
+    //  TIỆN ÍCH SỐ — hỗ trợ dấu chấm phân cách nghìn
+    // ============================================================
+    // "1.500.000" → 1500000 ; "1500000" → 1500000
+    function parseVN(s) {
+        return parseFloat(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+    // 1500000 → "1.500.000"
+    function formatVN(n) {
+        return Math.round(n || 0).toLocaleString('vi-VN');
+    }
+
+    // ============================================================
     //  CORE LOGIC
     // ============================================================
     const items = document.getElementById('items');
@@ -723,7 +770,7 @@
             <td><span class="name-cell" contenteditable="true">${name}</span></td>
             <td><input type="text" value="" /></td>
             <td><input type="number" value="${qty}" /></td>
-            <td><input type="number" value="${price}" /></td>
+            <td><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" onblur="formatPrice(this)" /></td>
             <td class="line-total">0</td>
             <td class="no-print"><button class="del-btn" onclick="this.closest('tr').remove();updateAll()"><i class="fas fa-times"></i></button></td>
         `;
@@ -731,6 +778,13 @@
 
         tr.querySelectorAll('input').forEach(i => i.oninput = updateAll);
         tr.querySelector('.name-cell').oninput = updateAll;
+        updateAll();
+    }
+
+    // Format đơn giá khi rời ô: "100000" → "100.000"
+    function formatPrice(el) {
+        const v = parseVN(el.value);
+        el.value = formatVN(v);
         updateAll();
     }
 
@@ -743,7 +797,7 @@
         [...items.children].forEach((tr, i) => {
             tr.children[0].textContent = i + 1;
             const q = +tr.children[3].querySelector('input').value || 0;
-            const p = +tr.children[4].querySelector('input').value || 0;
+            const p = parseVN(tr.children[4].querySelector('input').value);
             const t = q * p;
             tr.querySelector('.line-total').textContent = fmt(t);
             sum += t;
@@ -765,7 +819,7 @@
         const bankCode = document.getElementById('bank').value;
         const account  = document.getElementById('account').value.trim();
         const owner    = document.getElementById('owner').value.trim();
-        const invoiceIdVal = document.getElementById('invoiceId').value.trim();
+        const contentVal = document.getElementById('content').value.trim();
 
         const qrBox = document.getElementById('qr');
         qrBox.innerHTML = '';
@@ -780,7 +834,7 @@
             bankCode,
             account,
             amount,
-            invoiceIdVal || "Thanh toán",
+            contentVal || "Thanh toán",
             owner || "Chủ tài khoản"
         );
 
@@ -802,7 +856,19 @@
         }
     }
 
+    // ============================================================
+    //  KHỞI TẠO — điền ngày hôm nay vào 3 ô riêng
+    // ============================================================
+    function setToday() {
+        const pad = (n) => n.toString().padStart(2, "0");
+        const now = new Date();
+        document.getElementById("dateD").value = pad(now.getDate());
+        document.getElementById("dateM").value = pad(now.getMonth() + 1);
+        document.getElementById("dateY").value = now.getFullYear();
+    }
+
     window.onload = () => {
+        setToday();
         addItem('Sản phẩm 1', 1, 100000);
         addItem('Sản phẩm 2', 2, 50000);
     };

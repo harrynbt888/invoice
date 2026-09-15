@@ -98,6 +98,32 @@
       border-bottom-color: #2c7be5;
     }
 
+    /* DATE LINE — Ngày ... tháng ... năm ... */
+    .date-line {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+    .date-line input {
+      width: 34px;
+      text-align: center;
+      border: none;
+      border-bottom: 1px dashed #b0c4d8;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 2px;
+      color: #1a2a3a;
+    }
+    .date-line input.yr { width: 52px; }
+    .date-line input:focus {
+      outline: none;
+      border-bottom-color: #2c7be5;
+    }
+
     /* ---------- INFO ---------- */
     .info-grid {
       display: grid;
@@ -158,11 +184,11 @@
     .data-table td:nth-child(2) { width: 8%; text-align: center; }
 
     .data-table th:nth-child(3),
-    .data-table td:nth-child(3) { width: 15%; text-align: center; }
+    .data-table td:nth-child(3) { width: 18%; text-align: right; }
 
     .data-table th:nth-child(4),
     .data-table td:nth-child(4) {
-      width: 25%;
+      width: 22%;
       text-align: right;
       white-space: nowrap;
       padding-right: 10px;
@@ -202,6 +228,12 @@
       outline: none;
       background: #f2f7ff;
       border-radius: 4px;
+    }
+
+    /* Ô đơn giá — căn phải, số thẳng hàng */
+    .data-table td input.price {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
     }
 
     .data-table td .remove-btn {
@@ -272,14 +304,14 @@
     /* ---------- BANK & QR ---------- */
     .bank-qr-grid {
       display: grid;
-      grid-template-columns: 1fr 200px;   /* giảm cột QR từ 1fr → 200px */
+      grid-template-columns: 1fr 220px;
       gap: 30px 30px;
       background: #f8faff;
       border-radius: 14px;
       padding: 22px 24px;
       margin-top: 24px;
       border: 1px solid #e6eef8;
-      align-items: center;
+      align-items: start;
     }
 
     .bank-fields { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
@@ -334,7 +366,7 @@
       gap: 6px;
     }
 
-    /* QR — vẽ client-side, khung tự co, kích thước vừa đủ in */
+    /* QR — THU NHỎ, khung tự co */
     #qr {
       display: inline-block;
       padding: 6px;
@@ -345,8 +377,8 @@
     }
     #qr img {
       display: block !important;
-      width: 130px !important;      /* giảm từ 150 → 130 */
-      height: 130px !important;
+      width: 110px !important;
+      height: 110px !important;
       image-rendering: -webkit-optimize-contrast;
     }
 
@@ -356,11 +388,16 @@
       letter-spacing: 0.3px;
     }
 
-    .qr-section .qr-note {
-      font-size: 11px;
-      color: #9aafc4;
+    /* Ghi chú dưới QR */
+    .qr-note {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #4b5563;
+      line-height: 1.5;
       text-align: center;
     }
+    .qr-note p { margin: 2px 0; }
+    .qr-note p:first-child { font-weight: 600; color: #111827; }
 
     .warning-note {
       font-size: 12px;
@@ -388,7 +425,6 @@
         print-color-adjust: exact !important;
       }
 
-      /* Thu gọn khu vực ngân hàng + QR để không tràn trang */
       .bank-qr-grid {
         grid-template-columns: 1fr 160px !important;
         gap: 16px 20px !important;
@@ -412,15 +448,14 @@
         border-radius: 8px !important;
       }
       #qr img {
-        width: 110px !important;      /* in ra 110px — vừa cột 160px */
+        width: 110px !important;
         height: 110px !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
       .qr-section .qr-label { font-size: 10px !important; }
-      .qr-section .qr-note  { font-size: 9px !important; }
+      .qr-note { font-size: 9px !important; }
 
-      /* Thu gọn bảng và các khối khác để đủ 1 trang A4 */
       .header { margin-bottom: 14px !important; padding-bottom: 12px !important; }
       .brand-text h1 { font-size: 20px !important; }
       .info-grid { margin-bottom: 14px !important; padding: 10px 14px !important; }
@@ -438,11 +473,11 @@
       .invoice-wrapper { padding: 25px 18px; }
       .header { flex-direction: column; align-items: stretch; }
       .invoice-meta { text-align: left; }
-      .meta-row { justify-content: flex-start; }
+      .meta-row, .date-line { justify-content: flex-start; }
       .info-grid { grid-template-columns: 1fr; gap: 12px; }
       .bank-qr-grid { grid-template-columns: 1fr; gap: 20px; }
       .bank-row { grid-template-columns: 80px 1fr; }
-      #qr img { width: 130px !important; height: 130px !important; }
+      #qr img { width: 110px !important; height: 110px !important; }
       .data-table th:nth-child(1),
       .data-table td:nth-child(1) { width: 30%; min-width: 100px; }
     }
@@ -466,13 +501,16 @@
       </div>
       <div class="invoice-meta">
         <h2>HÓA ĐƠN</h2>
-        <div class="meta-row">
-          <span>Ngày:</span>
-          <input id="invoiceDate" value="20/07/2026" />
-        </div>
         <div class="meta-row" style="margin-top: 6px;">
           <span>Số:</span>
           <input id="invoiceNo" value="HD-2026-001" style="width: 130px;" />
+        </div>
+
+        <!-- Ngày dạng: Ngày ... tháng ... năm ... -->
+        <div class="date-line">
+          Ngày <input id="dateD" maxlength="2" />
+          tháng <input id="dateM" maxlength="2" />
+          năm <input id="dateY" class="yr" maxlength="4" />
         </div>
       </div>
     </header>
@@ -500,7 +538,7 @@
           <tr>
             <th>Mô tả</th>
             <th style="text-align:center;">SL</th>
-            <th style="text-align:center;">Đơn giá</th>
+            <th style="text-align:right;">Đơn giá</th>
             <th style="text-align:right;">Thành tiền</th>
             <th class="no-print" style="text-align:center;">&nbsp;</th>
           </tr>
@@ -576,7 +614,12 @@
       <div class="qr-section">
         <div id="qr"></div>
         <div class="qr-label no-print">Quét mã QR để thanh toán</div>
-        <div class="qr-note no-print">(Nội dung chuyển khoản sẽ hiển thị đúng)</div>
+
+        <!-- 2 DÒNG GHI CHÚ DƯỚI MÃ QR -->
+        <div class="qr-note">
+          <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+          <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
+        </div>
       </div>
     </div>
 
@@ -628,8 +671,12 @@
         tlv("02", "QRIBFTTA");
       const tag38 = tlv("38", merchantInfo);
 
+      // Nội dung CK — đặt ở cả 62.01 (Bill Number) và 62.08 (Purpose)
       let tag62 = "";
-      if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+      if (addInfo) {
+        const inner = tlv("01", addInfo) + tlv("08", addInfo);
+        tag62 = tlv("62", inner);
+      }
 
       let payload =
         tlv("00", "01") +
@@ -646,6 +693,18 @@
       return payload + crc16(payload);
     }
 
+    // ============================================================
+    //  TIỆN ÍCH SỐ — hỗ trợ dấu chấm phân cách nghìn
+    // ============================================================
+    // "1.500.000" → 1500000 ; "1500000" → 1500000
+    function parseVN(s) {
+      return parseFloat(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+    // 1500000 → "1.500.000"
+    function formatVN(n) {
+      return Math.round(n || 0).toLocaleString('vi-VN');
+    }
+
     // ---------- CORE ----------
     const items = document.getElementById('items');
 
@@ -659,7 +718,7 @@
       tr.innerHTML = `
         <td><input value="${desc}" placeholder="Tên dịch vụ / sản phẩm"></td>
         <td style="text-align:center;"><input type="number" value="${qty}" min="1" oninput="calc()" style="text-align:center;"></td>
-        <td style="text-align:center;"><input type="number" value="${price}" min="0" step="1000" oninput="calc()" style="text-align:center;"></td>
+        <td style="text-align:right;"><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" oninput="calc()" onblur="formatPrice(this)"></td>
         <td class="line-total" style="text-align:right;">0</td>
         <td class="no-print" style="text-align:center;">
           <button class="remove-btn" onclick="this.closest('tr').remove();calc();">✕</button>
@@ -669,13 +728,20 @@
       calc();
     }
 
+    // Format đơn giá khi rời ô: "1500000" → "1.500.000"
+    function formatPrice(el) {
+      const v = parseVN(el.value);
+      el.value = formatVN(v);
+      calc();
+    }
+
     // Tính tổng
     function calc() {
       let sum = 0;
       document.querySelectorAll('#items tr').forEach(tr => {
         const inputs = tr.querySelectorAll('input');
         const q = parseFloat(inputs[1]?.value) || 0;
-        const p = parseFloat(inputs[2]?.value) || 0;
+        const p = parseVN(inputs[2]?.value);
         const t = q * p;
         const lineTd = tr.querySelector('.line-total');
         if (lineTd) lineTd.textContent = fmt(t);
@@ -688,7 +754,6 @@
 
     // ============================================================
     //  VẼ QR BẰNG qrcode-generator (KHÔNG LOGO, KHÔNG CHỮ)
-    //  cellSize nhỏ hơn để QR gọn, không tràn khi in
     // ============================================================
     function syncQR() {
       const bankCode = document.getElementById('bank').value;
@@ -726,7 +791,7 @@
         const qr = qrcode(0, 'M');
         qr.addData(payload);
         qr.make();
-        // cellSize=3 (nhỏ hơn 4), margin=4 module → QR gọn hơn, vẫn scan tốt
+        // cellSize=3 cho QR gọn khung 110px
         qrBox.innerHTML = qr.createImgTag(3, 4);
       } catch (err) {
         qrBox.innerHTML =
@@ -734,10 +799,22 @@
       }
     }
 
+    // Điền ngày hiện tại vào 3 ô riêng
+    function setToday() {
+      const pad = (n) => n.toString().padStart(2, "0");
+      const now = new Date();
+      document.getElementById("dateD").value = pad(now.getDate());
+      document.getElementById("dateM").value = pad(now.getMonth() + 1);
+      document.getElementById("dateY").value = now.getFullYear();
+    }
+
     // ---------- KHỞI TẠO ----------
-    addRow('Tư vấn giải pháp', 2, 1500000);
-    addRow('Phát triển phần mềm', 1, 3500000);
-    setTimeout(() => calc(), 100);
+    window.onload = () => {
+      setToday();
+      addRow('Tư vấn giải pháp', 2, 1500000);
+      addRow('Phát triển phần mềm', 1, 3500000);
+      setTimeout(() => calc(), 100);
+    };
   </script>
 
 </body>

@@ -108,6 +108,34 @@
       border-bottom-color: #1a9c72;
     }
 
+    /* DATE LINE — Ngày ... tháng ... năm ... */
+    .date-line {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #6a8a9c;
+    }
+    .date-line input {
+      width: 30px;
+      text-align: center;
+      border: none;
+      border-bottom: 1.5px dashed #c8d8e5;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 0;
+      color: #0a2e3f;
+      font-family: inherit;
+    }
+    .date-line input.yr { width: 46px; }
+    .date-line input:focus {
+      outline: none;
+      border-bottom-color: #1a9c72;
+    }
+
     /* --- BỐ CỤC CHÍNH 2 CỘT --- */
     .main-grid {
       display: grid;
@@ -138,11 +166,11 @@
     .data-table td:nth-child(2) { width: 8%; text-align: center; }
 
     .data-table th:nth-child(3),
-    .data-table td:nth-child(3) { width: 16%; text-align: center; }
+    .data-table td:nth-child(3) { width: 18%; text-align: right; }
 
     .data-table th:nth-child(4),
     .data-table td:nth-child(4) {
-      width: 24%;
+      width: 22%;
       text-align: right;
       padding-right: 10px;
     }
@@ -185,7 +213,12 @@
       text-align: center;
       width: 52px;
     }
-    .data-table td:nth-child(3) input[type="number"] { width: 70px; }
+
+    /* Ô đơn giá — căn phải, số thẳng hàng */
+    .data-table td input.price {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
 
     .data-table td .remove-btn {
       background: none;
@@ -314,6 +347,18 @@
       font-weight: 600;
       color: #0d6b4a;
     }
+
+    /* Ghi chú dưới QR */
+    .qr-note {
+      margin-top: 4px;
+      font-size: 9px;
+      color: #4b5563;
+      line-height: 1.4;
+      text-align: center;
+      max-width: 130px;
+    }
+    .qr-note p { margin: 2px 0; }
+    .qr-note p:first-child { font-weight: 600; color: #111827; }
 
     .bank-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
@@ -465,6 +510,7 @@
         print-color-adjust: exact;
       }
       .qr-section .qr-label { font-size: 9px; }
+      .qr-note { font-size: 8px; }
 
       .bank-row { grid-template-columns: 50px 1fr; gap: 2px 4px; }
       .bank-row label { font-size: 10px; }
@@ -488,7 +534,6 @@
       .data-table td { padding: 4px 4px; }
       .data-table td input { font-size: 11px; padding: 0; }
       .data-table td input[type="number"] { width: 40px; }
-      .data-table td:nth-child(3) input[type="number"] { width: 55px; }
       .line-total { font-size: 11px; }
 
       .data-table th:nth-child(5),
@@ -509,6 +554,9 @@
       .invoice-meta .meta-title { font-size: 14px; }
       .meta-row { font-size: 10px; padding: 1px 0; }
       .meta-row input { font-size: 10px; width: 80px; }
+      .date-line { font-size: 10px; }
+      .date-line input { font-size: 10px; width: 24px; }
+      .date-line input.yr { width: 36px; }
 
       .barcode-wrap { margin-top: 4px; padding-top: 4px; }
       .barcode-wrap svg { max-width: 140px; }
@@ -531,7 +579,7 @@
       .invoice-wrapper { padding: 18px 14px; }
       .header { flex-direction: column; align-items: stretch; }
       .invoice-meta { text-align: left; min-width: unset; }
-      .meta-row { justify-content: flex-start; }
+      .meta-row, .date-line { justify-content: flex-start; }
     }
 
     @media (max-width: 500px) {
@@ -556,12 +604,15 @@
     <div class="invoice-meta">
       <div class="meta-title">HÓA ĐƠN</div>
       <div class="meta-row">
-        <span>Ngày</span>
-        <input id="invoiceDate" value="20/07/2026">
-      </div>
-      <div class="meta-row">
         <span>Số</span>
         <input id="invoiceNo" value="HD-2026-001">
+      </div>
+
+      <!-- Ngày dạng: Ngày ... tháng ... năm ... -->
+      <div class="date-line">
+        Ngày <input id="dateD" maxlength="2" />
+        tháng <input id="dateM" maxlength="2" />
+        năm <input id="dateY" class="yr" maxlength="4" />
       </div>
     </div>
   </header>
@@ -638,6 +689,10 @@
         <div class="qr-section">
           <div id="qr"></div>
           <span class="qr-label no-print">Quét mã</span>
+          <div class="qr-note">
+            <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+            <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
+          </div>
         </div>
         <div class="bank-fields">
           <div class="bank-row">
@@ -681,7 +736,7 @@
           </div>
           <div class="bank-row" style="grid-template-columns:1fr;">
             <label>Nội dung</label>
-            <textarea id="description" rows="2" oninput="syncQR()" placeholder="Nhập nội dung chuyển khoản...">chuyen khoan VAN QUYNH</textarea>
+            <textarea id="description" rows="2" oninput="syncQR()" placeholder="Nhập nội dung chuyển khoản...">HD-2026-001</textarea>
           </div>
           <div class="warning-note no-print">⚠️ Thay đổi số tài khoản để QR hoạt động</div>
         </div>
@@ -694,11 +749,6 @@
   <div class="actions no-print">
     <button class="btn btn-success" onclick="addRow()">＋ Thêm dòng</button>
     <button class="btn btn-primary" onclick="window.print()">🖨 In hóa đơn</button>
-  </div>
-
-  <!-- ===== BARCODE ===== -->
-  <div class="barcode-wrap">
-    <svg id="barcode"></svg>
   </div>
 
 </div>
@@ -749,8 +799,12 @@
       tlv("02", "QRIBFTTA");
     const tag38 = tlv("38", merchantInfo);
 
+    // Nội dung CK — đặt ở cả 62.01 (Bill Number) và 62.08 (Purpose)
     let tag62 = "";
-    if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+    if (addInfo) {
+      const inner = tlv("01", addInfo) + tlv("08", addInfo);
+      tag62 = tlv("62", inner);
+    }
 
     let payload =
       tlv("00", "01") +
@@ -767,6 +821,18 @@
     return payload + crc16(payload);
   }
 
+  // ============================================================
+  //  TIỆN ÍCH SỐ — hỗ trợ dấu chấm phân cách nghìn
+  // ============================================================
+  // "1.500.000" → 1500000 ; "1500000" → 1500000
+  function parseVN(s) {
+    return parseFloat(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+  }
+  // 1500000 → "1.500.000"
+  function formatVN(n) {
+    return Math.round(n || 0).toLocaleString('vi-VN');
+  }
+
   // ===== CORE =====
   const items = document.getElementById('items');
 
@@ -779,7 +845,7 @@
     tr.innerHTML = `
       <td><input value="${desc}" placeholder="Tên dịch vụ / sản phẩm"></td>
       <td style="text-align:center;"><input type="number" value="${qty}" min="1" oninput="calc()" style="text-align:center; width:52px;"></td>
-      <td style="text-align:center;"><input type="number" value="${price}" min="0" step="1000" oninput="calc()" style="text-align:center; width:70px;"></td>
+      <td style="text-align:right;"><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" oninput="calc()" onblur="formatPrice(this)"></td>
       <td class="line-total" style="text-align:right;">0</td>
       <td class="no-print" style="text-align:center;">
         <button class="remove-btn" onclick="this.closest('tr').remove();calc();">✕</button>
@@ -789,12 +855,19 @@
     calc();
   }
 
+  // Format đơn giá khi rời ô: "1500000" → "1.500.000"
+  function formatPrice(el) {
+    const v = parseVN(el.value);
+    el.value = formatVN(v);
+    calc();
+  }
+
   function calc() {
     let sum = 0;
     document.querySelectorAll('#items tr').forEach(tr => {
       const inputs = tr.querySelectorAll('input');
       const q = parseFloat(inputs[1]?.value) || 0;
-      const p = parseFloat(inputs[2]?.value) || 0;
+      const p = parseVN(inputs[2]?.value);
       const t = q * p;
       const lineTd = tr.querySelector('.line-total');
       if (lineTd) lineTd.textContent = fmt(t);
@@ -804,23 +877,6 @@
     document.getElementById('total').textContent = totalStr;
     document.getElementById('subtotal').textContent = totalStr;
     document.getElementById('totalDisplay').textContent = totalStr;
-
-    // Barcode (dùng invoiceNo nếu có, fallback invoiceDate)
-    try {
-      const codeVal =
-        (document.getElementById('invoiceNo')?.value || '').trim() ||
-        (document.getElementById('invoiceDate')?.value || '').trim() ||
-        'HD-0000';
-      JsBarcode('#barcode', codeVal, {
-        displayValue: true,
-        fontSize: 13,
-        height: 36,
-        width: 1.6,
-        background: '#ffffff',
-        lineColor: '#0d6b4a',
-        margin: 4
-      });
-    } catch (e) {}
 
     syncQR();
   }
@@ -872,14 +928,26 @@
     }
   }
 
-  // ===== KHỞI TẠO 5 SẢN PHẨM =====
-  addRow('Tư vấn chiến lược', 2, 1500000);
-  addRow('Phát triển phần mềm', 1, 3500000);
-  addRow('Triển khai hệ thống', 1, 2500000);
-  addRow('Đào tạo nhân sự', 3, 800000);
-  addRow('Bảo trì & hỗ trợ', 2, 1200000);
+  // ============================================================
+  //  KHỞI TẠO — điền ngày hôm nay vào 3 ô riêng
+  // ============================================================
+  function setToday() {
+    const pad = (n) => n.toString().padStart(2, "0");
+    const now = new Date();
+    document.getElementById("dateD").value = pad(now.getDate());
+    document.getElementById("dateM").value = pad(now.getMonth() + 1);
+    document.getElementById("dateY").value = now.getFullYear();
+  }
 
-  setTimeout(() => calc(), 100);
+  window.onload = () => {
+    setToday();
+    addRow('Tư vấn chiến lược', 2, 1500000);
+    addRow('Phát triển phần mềm', 1, 3500000);
+    addRow('Triển khai hệ thống', 1, 2500000);
+    addRow('Đào tạo nhân sự', 3, 800000);
+    addRow('Bảo trì & hỗ trợ', 2, 1200000);
+    setTimeout(() => calc(), 100);
+  };
 </script>
 
 </body>

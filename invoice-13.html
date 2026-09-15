@@ -103,6 +103,7 @@
             border-bottom-color: #5a3e2b;
         }
 
+        /* DATE LINE — Ngày ... tháng ... năm ... */
         .date-group {
             display: flex;
             align-items: center;
@@ -121,11 +122,11 @@
             padding: 2px;
             font-family: inherit;
         }
+        .date-group input.yr { width: 56px; }
         .date-group input:focus {
             outline: none;
             border-bottom-color: #5a3e2b;
         }
-        .date-group input:nth-child(3) { width: 56px; }
 
         .title-row {
             text-align: center;
@@ -242,6 +243,12 @@
             margin: 0;
         }
 
+        /* Ô đơn giá — căn phải, số thẳng hàng */
+        .table td input.price {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
         .table td:first-child {
             background: #f3ede7;
             font-weight: 700;
@@ -337,52 +344,67 @@
             font-weight: 700;
         }
 
+        /* ==== KHỐI QR + NGÂN HÀNG ==== */
         .qr-box {
             border: 1.5px solid #5a3e2b;
             padding: 14px 16px;
             background: #faf3ea;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
+            align-items: stretch;
+            gap: 12px;
         }
-        .qr-box .bank-info {
+
+        /* Khối thông tin ngân hàng dạng grid 2 cột */
+        .bank-fields {
             width: 100%;
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 6px 14px;
-            font-size: 13px;
+            flex-direction: column;
+            gap: 6px;
         }
-        .qr-box .bank-info label {
+
+        .bank-row {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bank-row label {
             font-weight: 600;
             color: #5a3e2b;
+            text-align: right;
+            white-space: nowrap;
+            font-size: 13px;
         }
-        .qr-box .bank-info select,
-        .qr-box .bank-info input {
+
+        .bank-row select,
+        .bank-row input {
             border: none;
             border-bottom: 1.5px dashed #8c6e5b;
             background: transparent;
             padding: 2px 4px;
             font-size: 13px;
-            min-width: 100px;
-            text-align: center;
             font-family: inherit;
+            color: #3e2e23;
+            text-align: left;
+            width: 100%;
         }
-        .qr-box .bank-info select:focus,
-        .qr-box .bank-info input:focus {
+
+        .bank-row select:focus,
+        .bank-row input:focus {
             outline: none;
             border-bottom-color: #5a3e2b;
         }
 
-        /* QR — vẽ client-side, khung tự co */
+        /* QR wrapper */
         .qr-wrapper {
             display: inline-block;
             padding: 4px;
             background: white;
             border: 1px solid #b2957e;
             line-height: 0;
+            align-self: center;
         }
         #qr {
             display: inline-block;
@@ -390,10 +412,22 @@
         }
         #qr img {
             display: block !important;
-            width: 120px !important;
-            height: 120px !important;
+            width: 110px !important;
+            height: 110px !important;
             image-rendering: -webkit-optimize-contrast;
         }
+
+        /* Ghi chú dưới QR */
+        .qr-note {
+            max-width: 340px;
+            margin: 0 auto;
+            font-size: 10px;
+            color: #4b5563;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .qr-note p { margin: 2px 0; }
+        .qr-note p:first-child { font-weight: 600; color: #111827; }
 
         .footer {
             text-align: center;
@@ -487,6 +521,7 @@
                 print-color-adjust: exact;
             }
             .add-row-btn { display: none !important; }
+            .qr-note { font-size: 9px !important; }
 
             .qr-box { page-break-inside: avoid; break-inside: avoid; }
         }
@@ -513,11 +548,14 @@
         <div class="header-meta">
             <span class="barcode-box">
                 <label>Mã</label>
-                <input id="invoiceId" value="HD00001" oninput="updateAll()" />
+                <input id="invoiceId" value="HD00001" />
             </span>
+
+            <!-- Ngày dạng: Ngày ... tháng ... năm ... -->
             <span class="date-group">
-                <label>Ngày</label>
-                <input placeholder="DD" /> / <input placeholder="MM" /> / <input placeholder="YYYY" />
+                Ngày <input id="dateD" maxlength="2" />
+                tháng <input id="dateM" maxlength="2" />
+                năm <input id="dateY" class="yr" maxlength="4" />
             </span>
         </div>
     </div>
@@ -576,49 +614,67 @@
         </div>
 
         <div class="qr-box">
-            <div class="bank-info">
-                <label>Ngân hàng</label>
-                <select id="bank" onchange="updateQR()">
-                    <option value="VCB">Vietcombank</option>
-                    <option value="ABB">ABBank</option>
-                    <option value="SHBVN">SOL</option>
-                    <option value="ACB">ACB</option>
-                    <option value="AGRIBANK">Agribank</option>
-                    <option value="BAB">Bac A Bank</option>
-                    <option value="BAOVIETBANK">BaoViet Bank</option>
-                    <option value="BIDV">BIDV</option>
-                    <option value="BVB">BVBank</option>
-                    <option value="EIB">Eximbank</option>
-                    <option value="HDB">HDBank</option>
-                    <option value="ICB">VietinBank</option>
-                    <option value="KLB">KienlongBank</option>
-                    <option value="MB">MB Bank</option>
-                    <option value="MSB">MSB</option>
-                    <option value="NAB">Nam A Bank</option>
-                    <option value="OCB">OCB</option>
-                    <option value="PGB">PG Bank</option>
-                    <option value="PVCOMBANK">PVcomBank</option>
-                    <option value="SAIGONBANK">SaigonBank</option>
-                    <option value="SCB">SCB</option>
-                    <option value="SEAB">SeABank</option>
-                    <option value="SHB">SHB</option>
-                    <option value="STB">Sacombank</option>
-                    <option value="TCB">Techcombank</option>
-                    <option value="TPB">TPBank</option>
-                    <option value="VIB">VIB</option>
-                    <option value="VPB">VPBank</option>
-                    <option value="NCB">NCB</option>
-                    <option value="VIKKI">VIKKI</option>
-                </select>
+            <div class="bank-fields">
+                <div class="bank-row">
+                    <label>Ngân hàng</label>
+                    <select id="bank" onchange="updateQR()">
+                        <option value="VCB">Vietcombank</option>
+                        <option value="ABB">ABBank</option>
+                        <option value="SHBVN">SOL</option>
+                        <option value="ACB">ACB</option>
+                        <option value="AGRIBANK">Agribank</option>
+                        <option value="BAB">Bac A Bank</option>
+                        <option value="BAOVIETBANK">BaoViet Bank</option>
+                        <option value="BIDV">BIDV</option>
+                        <option value="BVB">BVBank</option>
+                        <option value="EIB">Eximbank</option>
+                        <option value="HDB">HDBank</option>
+                        <option value="ICB">VietinBank</option>
+                        <option value="KLB">KienlongBank</option>
+                        <option value="MB">MB Bank</option>
+                        <option value="MSB">MSB</option>
+                        <option value="NAB">Nam A Bank</option>
+                        <option value="OCB">OCB</option>
+                        <option value="PGB">PG Bank</option>
+                        <option value="PVCOMBANK">PVcomBank</option>
+                        <option value="SAIGONBANK">SaigonBank</option>
+                        <option value="SCB">SCB</option>
+                        <option value="SEAB">SeABank</option>
+                        <option value="SHB">SHB</option>
+                        <option value="STB">Sacombank</option>
+                        <option value="TCB">Techcombank</option>
+                        <option value="TPB">TPBank</option>
+                        <option value="VIB">VIB</option>
+                        <option value="VPB">VPBank</option>
+                        <option value="NCB">NCB</option>
+                        <option value="VIKKI">VIKKI</option>
+                    </select>
+                </div>
+
+                <div class="bank-row">
+                    <label>Số TK</label>
+                    <input id="account" value="0123456789" oninput="updateQR()" />
+                </div>
+
+                <div class="bank-row">
+                    <label>Chủ TK</label>
+                    <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
+                </div>
+
+                <div class="bank-row">
+                    <label>Nội dung</label>
+                    <input id="content" value="HD00001" oninput="updateQR()" />
+                </div>
             </div>
-            <div class="bank-info">
-                <label>Số TK</label>
-                <input id="account" value="0123456789" oninput="updateQR()" />
-                <label>Chủ TK</label>
-                <input id="owner" value="NGUYEN VAN A" oninput="updateQR()" />
-            </div>
+
             <div class="qr-wrapper">
                 <div id="qr"></div>
+            </div>
+
+            <!-- 2 DÒNG GHI CHÚ DƯỚI MÃ QR -->
+            <div class="qr-note">
+                <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+                <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
             </div>
         </div>
     </div>
@@ -680,8 +736,12 @@
             tlv("02", "QRIBFTTA");
         const tag38 = tlv("38", merchantInfo);
 
+        // Nội dung CK — đặt ở cả 62.01 (Bill Number) và 62.08 (Purpose)
         let tag62 = "";
-        if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+        if (addInfo) {
+            const inner = tlv("01", addInfo) + tlv("08", addInfo);
+            tag62 = tlv("62", inner);
+        }
 
         let payload =
             tlv("00", "01") +
@@ -699,6 +759,18 @@
     }
 
     // ============================================================
+    //  TIỆN ÍCH SỐ — hỗ trợ dấu chấm phân cách nghìn
+    // ============================================================
+    // "1.500.000" → 1500000 ; "1500000" → 1500000
+    function parseVN(s) {
+        return parseFloat(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+    // 1500000 → "1.500.000"
+    function formatVN(n) {
+        return Math.round(n || 0).toLocaleString('vi-VN');
+    }
+
+    // ============================================================
     //  CORE
     // ============================================================
     const items = document.getElementById('items');
@@ -710,7 +782,7 @@
             <td><span class="name-cell" contenteditable="true">${name}</span></td>
             <td><input type="text" value="" /></td>
             <td><input type="number" value="${qty}" /></td>
-            <td><input type="number" value="${price}" /></td>
+            <td><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" oninput="updateAll()" onblur="formatPrice(this)" /></td>
             <td class="line-total">0</td>
             <td class="no-print"><button class="del-btn" onclick="this.closest('tr').remove();updateAll()"><i class="fas fa-times"></i></button></td>
         `;
@@ -718,6 +790,13 @@
 
         tr.querySelectorAll('input').forEach(i => i.oninput = updateAll);
         tr.querySelector('.name-cell').oninput = updateAll;
+        updateAll();
+    }
+
+    // Format đơn giá khi rời ô: "100000" → "100.000"
+    function formatPrice(el) {
+        const v = parseVN(el.value);
+        el.value = formatVN(v);
         updateAll();
     }
 
@@ -730,7 +809,7 @@
         [...items.children].forEach((tr, i) => {
             tr.children[0].textContent = i + 1;
             const q = +tr.children[3].querySelector('input').value || 0;
-            const p = +tr.children[4].querySelector('input').value || 0;
+            const p = parseVN(tr.children[4].querySelector('input').value);
             const t = q * p;
             tr.querySelector('.line-total').textContent = fmt(t);
             sum += t;
@@ -753,7 +832,7 @@
         const bankCode = document.getElementById('bank').value;
         const account  = document.getElementById('account').value.trim();
         const owner    = document.getElementById('owner').value.trim();
-        const invoiceIdVal = document.getElementById('invoiceId').value.trim();
+        const contentVal = document.getElementById('content').value.trim();
 
         const qrBox = document.getElementById('qr');
         qrBox.innerHTML = '';
@@ -768,7 +847,7 @@
             bankCode,
             account,
             amount,
-            invoiceIdVal || "Thanh toán",
+            contentVal || "Thanh toán",
             owner || "Chủ tài khoản"
         );
 
@@ -790,7 +869,19 @@
         }
     }
 
+    // ============================================================
+    //  KHỞI TẠO — điền ngày hôm nay vào 3 ô riêng
+    // ============================================================
+    function setToday() {
+        const pad = (n) => n.toString().padStart(2, "0");
+        const now = new Date();
+        document.getElementById("dateD").value = pad(now.getDate());
+        document.getElementById("dateM").value = pad(now.getMonth() + 1);
+        document.getElementById("dateY").value = now.getFullYear();
+    }
+
     window.onload = () => {
+        setToday();
         addItem('Sản phẩm 1', 1, 100000);
         addItem('Sản phẩm 2', 2, 50000);
     };

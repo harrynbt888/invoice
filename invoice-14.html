@@ -9,10 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 
-  <!-- Thư viện sinh QR client-side (nhẹ, không logo) -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-  <!-- Barcode -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,12 +33,12 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
-    /* ===== HEADER – DẠNG BẢNG ===== */
+    /* ===== HEADER ===== */
     .header-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 20px;
+      grid-template-columns: 1.2fr 1fr 1.3fr;
+      gap: 0;
+      margin-bottom: 16px;
       border: 1px solid #b0bec5;
       background: #fafcfe;
     }
@@ -65,7 +62,7 @@
     }
 
     .meta-title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
       color: #0a2e3f;
       letter-spacing: 1px;
@@ -74,10 +71,15 @@
     .meta-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 14px;
       padding: 3px 0;
+      gap: 8px;
     }
-    .meta-row span:first-child { color: #546e7a; }
+    .meta-row span:first-child {
+      color: #546e7a;
+      white-space: nowrap;
+    }
     .meta-row input {
       border: none;
       border-bottom: 1px solid #b0bec5;
@@ -87,7 +89,7 @@
       color: #1a2634;
       text-align: right;
       padding: 2px 0;
-      width: 120px;
+      width: 100%;
       font-family: inherit;
     }
     .meta-row input:focus {
@@ -95,7 +97,33 @@
       border-bottom-color: #0a2e3f;
     }
 
-    .header-cell:last-child .meta-row input { width: 100%; }
+    .date-line {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      font-size: 14px;
+      padding: 3px 0;
+      color: #546e7a;
+      white-space: nowrap;
+    }
+    .date-line input {
+      width: 30px;
+      text-align: center;
+      border: none;
+      border-bottom: 1px solid #b0bec5;
+      background: transparent;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a2634;
+      padding: 2px 0;
+      font-family: inherit;
+    }
+    .date-line input.yr { width: 46px; }
+    .date-line input:focus {
+      outline: none;
+      border-bottom-color: #0a2e3f;
+    }
 
     /* ===== THÔNG TIN KHÁCH ===== */
     .info-grid {
@@ -103,7 +131,7 @@
       grid-template-columns: 1fr 1fr 1fr;
       gap: 0;
       border: 1px solid #b0bec5;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       background: #fafcfe;
     }
 
@@ -127,7 +155,7 @@
       border-bottom: 1px solid #b0bec5;
       background: transparent;
       font-weight: 600;
-      font-size: 15px;
+      font-size: 14px;
       color: #1a2634;
       padding: 4px 0;
       font-family: inherit;
@@ -140,8 +168,8 @@
     /* ===== BẢNG SẢN PHẨM ===== */
     .table-wrap {
       border: 1px solid #b0bec5;
-      margin-bottom: 12px;
-      overflow-x: auto;
+      margin-bottom: 14px;
+      overflow: hidden;
     }
 
     .data-table {
@@ -149,6 +177,7 @@
       border-collapse: collapse;
       font-size: 14px;
       background: #ffffff;
+      table-layout: fixed;
     }
 
     .data-table th,
@@ -167,15 +196,21 @@
       font-weight: 700;
       text-align: left;
     }
-    .data-table th:nth-child(2),
-    .data-table th:nth-child(3) { text-align: center; }
-    .data-table th:nth-child(4) { text-align: right; }
-    .data-table th:nth-child(5) { text-align: center; }
 
-    .data-table td:nth-child(2),
-    .data-table td:nth-child(3) { text-align: center; }
-    .data-table td:nth-child(4) { text-align: right; }
-    .data-table td:nth-child(5) { text-align: center; }
+    .data-table th:nth-child(1),
+    .data-table td:nth-child(1) { width: 46%; text-align: left; }
+
+    .data-table th:nth-child(2),
+    .data-table td:nth-child(2) { width: 8%; text-align: center; }
+
+    .data-table th:nth-child(3),
+    .data-table td:nth-child(3) { width: 18%; text-align: right; }
+
+    .data-table th:nth-child(4),
+    .data-table td:nth-child(4) { width: 22%; text-align: right; }
+
+    .data-table th:nth-child(5),
+    .data-table td:nth-child(5) { width: 6%; text-align: center; }
 
     .data-table td input {
       width: 100%;
@@ -185,22 +220,24 @@
       color: #1a2634;
       padding: 4px 2px;
       font-family: inherit;
+      text-align: inherit;
     }
     .data-table td input:focus {
       outline: none;
       background: #f2f6fa;
     }
-    .data-table td input[type="number"] {
-      text-align: center;
-      width: 60px;
+
+    /* Ô đơn giá — căn phải, số thẳng hàng */
+    .data-table td input.price {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
     }
-    .data-table td:nth-child(3) input[type="number"] { width: 80px; }
 
     .data-table td .remove-btn {
       background: none;
       border: none;
       color: #b91c1c;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
       padding: 0 4px;
@@ -211,82 +248,110 @@
     .line-total {
       font-weight: 600;
       color: #0a2e3f;
+      white-space: nowrap;
+      font-size: 13.5px;
     }
 
     .data-table tfoot td {
+      padding: 10px 10px 8px;
+      background: #fafcfe;
       border-top: 2px solid #0a2e3f;
-      padding: 12px 10px 8px;
+      border-bottom: none;
+      border-left: none;
+      border-right: none;
     }
     .data-table tfoot .total-label {
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: #0a2e3f;
+      text-align: right;
+      white-space: nowrap;
     }
     #total {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: #0a2e3f;
       text-align: right;
       white-space: nowrap;
     }
 
-    /* ===== PHẦN TỔNG HỢP CUỐI ===== */
-    .footer-grid {
+    /* ===== KHỐI 2 CỘT: TỔNG TIỀN + NGÂN HÀNG ===== */
+    .footer-2col {
       display: grid;
-      grid-template-columns: 1fr 1.2fr 0.8fr;
-      gap: 12px;
-      margin: 6px 0 12px;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 16px;
+      margin-bottom: 12px;
       border: 1px solid #b0bec5;
       background: #fafcfe;
       padding: 16px 18px;
+      align-items: start;
     }
 
+    .totals-box { min-width: 0; }
     .totals-box .total-row {
       display: flex;
       justify-content: space-between;
-      font-size: 14px;
+      align-items: center;
+      font-size: 13px;
       font-weight: 500;
       padding: 4px 0;
       color: #1a2634;
       border-bottom: 1px dashed #cfd8e0;
+      gap: 8px;
     }
     .totals-box .total-row:last-of-type { border-bottom: none; }
+    .totals-box .total-row span:last-child {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
     .totals-box .grand {
-      font-size: 20px;
+      font-size: 15px;
       font-weight: 800;
       border-top: 2px solid #0a2e3f;
-      padding-top: 10px;
+      padding-top: 8px;
       margin-top: 6px;
+      color: #0a2e3f;
+      white-space: nowrap;
     }
-    .totals-box .grand .amount { color: #0a2e3f; }
+    .totals-box .grand .amount {
+      color: #0a2e3f;
+      white-space: nowrap;
+      font-size: 15px;
+    }
 
     .bank-fields {
       display: flex;
       flex-direction: column;
       gap: 6px;
+      min-width: 0;
     }
     .bank-row {
       display: grid;
-      grid-template-columns: 55px 1fr;
+      grid-template-columns: 80px 1fr;
       align-items: center;
-      gap: 4px 8px;
+      gap: 6px;
     }
     .bank-row label {
       font-size: 12px;
       font-weight: 600;
       color: #546e7a;
+      text-align: right;
+      white-space: nowrap;
     }
     .bank-row select,
     .bank-row input {
       border: none;
       border-bottom: 1px solid #b0bec5;
       background: transparent;
-      padding: 4px 0;
+      padding: 3px 0;
       font-size: 13px;
       color: #1a2634;
       font-family: inherit;
       width: 100%;
+      text-align: left;
+      min-width: 0;
     }
     .bank-row select:focus,
     .bank-row input:focus {
@@ -298,25 +363,29 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23546e7a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 4px center;
-      padding-right: 20px;
+      padding-right: 18px;
       cursor: pointer;
     }
-    .bank-row.full-width { grid-column: 1 / -1; }
     .warning-note {
       font-size: 10px;
       color: #8a9aa8;
-      grid-column: 1 / -1;
-      margin-top: 2px;
+      margin-top: 4px;
+      text-align: center;
     }
 
-    /* QR — vẽ client-side, khung tự co */
-    .qr-section {
+    /* ===== KHỐI QR — CĂN GIỮA, CHỮ DƯỚI QR ===== */
+    .qr-panel {
+      border: 1px solid #b0bec5;
+      background: #fafcfe;
+      padding: 14px 18px 16px;
+      margin-bottom: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 4px;
+      text-align: center;
+      gap: 8px;
     }
+
     #qr {
       display: inline-block;
       padding: 4px;
@@ -326,14 +395,28 @@
     }
     #qr img {
       display: block !important;
-      width: 100px !important;
-      height: 100px !important;
+      width: 90px !important;
+      height: 90px !important;
       image-rendering: -webkit-optimize-contrast;
     }
-    .qr-section .qr-label {
+
+    .qr-label {
       font-size: 11px;
       font-weight: 600;
       color: #546e7a;
+    }
+
+    .qr-panel .qr-note {
+      font-size: 11px;
+      color: #4b5563;
+      line-height: 1.5;
+      max-width: 520px;
+    }
+    .qr-panel .qr-note p { margin: 2px 0; }
+    .qr-panel .qr-note p:first-child {
+      font-weight: 600;
+      color: #111827;
+      font-size: 12px;
     }
 
     /* ===== NÚT TÁC VỤ ===== */
@@ -341,7 +424,7 @@
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
-      margin: 8px 0 14px;
+      margin: 10px 0 14px;
       justify-content: center;
     }
 
@@ -363,16 +446,6 @@
     .btn-success { background: #2c7be5; color: #fff; }
     .btn-success:hover { background: #1a66c9; }
 
-    /* ===== BARCODE ===== */
-    .barcode-wrap {
-      text-align: center;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid #b0bec5;
-    }
-    .barcode-wrap svg { max-width: 220px; height: auto; }
-
-    /* =============================================================== */
     @media print {
       body { background: #fff; padding: 0; margin: 0; }
       .invoice-wrapper {
@@ -383,7 +456,7 @@
       .no-print { display: none !important; }
       .actions { display: none !important; }
 
-      .header-grid, .info-grid, .footer-grid {
+      .header-grid, .info-grid, .footer-2col, .qr-panel {
         border-color: #888;
         background: #fafcfe !important;
         -webkit-print-color-adjust: exact !important;
@@ -391,6 +464,11 @@
       }
       .data-table th {
         background: #e8edf2 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .data-table tfoot td {
+        background: #fafcfe !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -408,19 +486,17 @@
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
-      .barcode-wrap svg { max-width: 160px; }
-      .barcode-wrap { margin-top: 8px; padding-top: 8px; }
 
-      .footer-grid { page-break-inside: avoid; break-inside: avoid; }
+      .qr-panel, .footer-2col { page-break-inside: avoid; break-inside: avoid; }
       .invoice-wrapper {
         page-break-after: avoid;
         page-break-inside: avoid;
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 700px) {
       .invoice-wrapper { padding: 16px 12px; }
-      .header-grid, .info-grid, .footer-grid {
+      .header-grid, .info-grid, .footer-2col {
         grid-template-columns: 1fr;
         border: 1px solid #b0bec5;
       }
@@ -429,8 +505,8 @@
         border-bottom: 1px solid #b0bec5;
       }
       .header-cell:last-child, .info-cell:last-child { border-bottom: none; }
-      .footer-grid { gap: 16px; }
-      .bank-row { grid-template-columns: 1fr; }
+      .bank-row { grid-template-columns: 70px 1fr; }
+      .date-line { justify-content: flex-start; }
     }
   </style>
 </head>
@@ -438,7 +514,7 @@
 
 <div class="invoice-wrapper">
 
-  <!-- ===== HEADER DẠNG BẢNG ===== -->
+  <!-- ===== HEADER ===== -->
   <div class="header-grid">
     <div class="header-cell">
       <div class="brand-text">
@@ -450,12 +526,16 @@
       <div class="meta-title">HÓA ĐƠN</div>
     </div>
     <div class="header-cell">
-      <div class="meta-row"><span>Ngày</span><input id="invoiceDate" value="20/07/2026"></div>
       <div class="meta-row"><span>Số</span><input id="invoiceNo" value="HD-2026-001"></div>
+      <div class="date-line">
+        Ngày <input id="dateD" maxlength="2" />
+        tháng <input id="dateM" maxlength="2" />
+        năm <input id="dateY" class="yr" maxlength="4" />
+      </div>
     </div>
   </div>
 
-  <!-- ===== THÔNG TIN KHÁCH DẠNG BẢNG ===== -->
+  <!-- ===== THÔNG TIN KHÁCH ===== -->
   <div class="info-grid">
     <div class="info-cell">
       <label>Khách hàng</label>
@@ -486,22 +566,16 @@
       <tbody id="items"></tbody>
       <tfoot>
         <tr>
-          <td colspan="4" style="border-top:2px solid #0a2e3f; padding:10px 10px 0; text-align:right; font-weight:700; color:#0a2e3f; text-transform:uppercase; letter-spacing:0.5px; font-size:14px;">
-            Tổng cộng
-          </td>
-          <td class="no-print"></td>
-        </tr>
-        <tr>
-          <td colspan="3" style="border:none; padding:0;"></td>
-          <td id="total" style="font-size:22px; font-weight:800; color:#0a2e3f; text-align:right; padding:2px 10px 4px;">0 VND</td>
+          <td colspan="3" class="total-label">TỔNG CỘNG</td>
+          <td id="total">0 VND</td>
           <td class="no-print"></td>
         </tr>
       </tfoot>
     </table>
   </div>
 
-  <!-- ===== PHẦN DƯỚI: TỔNG TIỀN + NGÂN HÀNG + QR ===== -->
-  <div class="footer-grid">
+  <!-- ===== KHỐI 2 CỘT: TỔNG + NGÂN HÀNG ===== -->
+  <div class="footer-2col">
     <div class="totals-box">
       <div class="total-row"><span>Tạm tính</span><span id="subtotal">0 VND</span></div>
       <div class="total-row"><span>Giảm giá</span><span>0 VND</span></div>
@@ -548,16 +622,25 @@
         <label>Số TK</label>
         <input id="account" value="0123456789" oninput="syncQR()">
       </div>
-      <div class="bank-row full-width" style="grid-template-columns:1fr;">
+      <div class="bank-row">
+        <label>Chủ TK</label>
+        <input id="owner2" value="NGUYEN VAN A" oninput="syncQR()">
+      </div>
+      <div class="bank-row">
         <label>Nội dung</label>
-        <input id="description" value="chuyen khoan VAN QUYNH" oninput="syncQR()">
+        <input id="description" value="HD-2026-001" oninput="syncQR()">
       </div>
       <div class="warning-note no-print">⚠️ Sửa số TK để QR hoạt động</div>
     </div>
+  </div>
 
-    <div class="qr-section">
-      <div id="qr"></div>
-      <span class="qr-label no-print">Quét mã</span>
+  <!-- ===== KHỐI QR — CĂN GIỮA, CHỮ DƯỚI QR ===== -->
+  <div class="qr-panel">
+    <div id="qr"></div>
+
+    <div class="qr-note">
+      <p>Vui lòng quét mã QR để thanh toán trong vòng 2 giờ từ khi mua hàng.</p>
+      <p>Chúng tôi từ chối trách nhiệm trong trường hợp quý khách hàng nhập thông tin hóa đơn không đúng.</p>
     </div>
   </div>
 
@@ -567,17 +650,9 @@
     <button class="btn btn-primary" onclick="window.print()">🖨 In hóa đơn</button>
   </div>
 
-  <!-- ===== BARCODE ===== -->
-  <div class="barcode-wrap">
-    <svg id="barcode"></svg>
-  </div>
-
 </div>
 
 <script>
-  // ============================================================
-  //  MÃ BIN NGÂN HÀNG (theo NAPAS - dùng cho VietQR EMVCo)
-  // ============================================================
   const BANK_BIN = {
     VCB: "970436", TCB: "970407", ICB: "970415", BIDV: "970418",
     AGRIBANK: "970405", MB: "970422", ACB: "970416", VPB: "970432",
@@ -589,13 +664,11 @@
     NCB: "970419", SHBVN: "970409", BAB: "970409", VIKKI: "970406"
   };
 
-  // TLV: tag + length (2 số) + value
   function tlv(tag, val) {
     const len = String(val.length).padStart(2, "0");
     return tag + len + val;
   }
 
-  // CRC-16/CCITT-FALSE (chuẩn EMVCo)
   function crc16(str) {
     let crc = 0xffff;
     for (let i = 0; i < str.length; i++) {
@@ -608,7 +681,6 @@
     return crc.toString(16).toUpperCase().padStart(4, "0");
   }
 
-  // Sinh chuỗi EMVCo VietQR (NAPAS 247)
   function buildVietQR(bankCode, account, amount, addInfo, accountName) {
     const bin = BANK_BIN[bankCode];
     if (!bin) return null;
@@ -620,8 +692,12 @@
       tlv("02", "QRIBFTTA");
     const tag38 = tlv("38", merchantInfo);
 
+    // Nội dung CK — đặt ở cả 62.01 (Bill Number) và 62.08 (Purpose)
     let tag62 = "";
-    if (addInfo) tag62 = tlv("62", tlv("01", addInfo));
+    if (addInfo) {
+      const inner = tlv("01", addInfo) + tlv("08", addInfo);
+      tag62 = tlv("62", inner);
+    }
 
     let payload =
       tlv("00", "01") +
@@ -638,7 +714,18 @@
     return payload + crc16(payload);
   }
 
-  // ===== CORE =====
+  // ============================================================
+  //  TIỆN ÍCH SỐ — hỗ trợ dấu chấm phân cách nghìn
+  // ============================================================
+  // "1.500.000" → 1500000 ; "1500000" → 1500000
+  function parseVN(s) {
+    return parseFloat(String(s).replace(/\./g, '').replace(/,/g, '.')) || 0;
+  }
+  // 1500000 → "1.500.000"
+  function formatVN(n) {
+    return Math.round(n || 0).toLocaleString('vi-VN');
+  }
+
   const items = document.getElementById('items');
 
   function fmt(n) {
@@ -649,8 +736,8 @@
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><input value="${desc}" placeholder="Tên dịch vụ / sản phẩm"></td>
-      <td style="text-align:center;"><input type="number" value="${qty}" min="1" oninput="calc()" style="text-align:center; width:60px;"></td>
-      <td style="text-align:center;"><input type="number" value="${price}" min="0" step="1000" oninput="calc()" style="text-align:center; width:80px;"></td>
+      <td style="text-align:center;"><input type="number" value="${qty}" min="1" oninput="calc()" style="text-align:center;"></td>
+      <td style="text-align:right;"><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" oninput="calc()" onblur="formatPrice(this)"></td>
       <td class="line-total" style="text-align:right;">0</td>
       <td class="no-print" style="text-align:center;">
         <button class="remove-btn" onclick="this.closest('tr').remove();calc();">✕</button>
@@ -660,12 +747,19 @@
     calc();
   }
 
+  // Format đơn giá khi rời ô: "1500000" → "1.500.000"
+  function formatPrice(el) {
+    const v = parseVN(el.value);
+    el.value = formatVN(v);
+    calc();
+  }
+
   function calc() {
     let sum = 0;
     document.querySelectorAll('#items tr').forEach(tr => {
       const inputs = tr.querySelectorAll('input');
       const q = parseFloat(inputs[1]?.value) || 0;
-      const p = parseFloat(inputs[2]?.value) || 0;
+      const p = parseVN(inputs[2]?.value);
       const t = q * p;
       const lineTd = tr.querySelector('.line-total');
       if (lineTd) lineTd.textContent = fmt(t);
@@ -676,32 +770,13 @@
     document.getElementById('subtotal').textContent = totalStr;
     document.getElementById('totalDisplay').textContent = totalStr;
 
-    try {
-      const codeVal =
-        (document.getElementById('invoiceNo')?.value || '').trim() ||
-        (document.getElementById('invoiceDate')?.value || '').trim() ||
-        'HD-0000';
-      JsBarcode('#barcode', codeVal, {
-        displayValue: true,
-        fontSize: 13,
-        height: 36,
-        width: 1.6,
-        background: '#ffffff',
-        lineColor: '#0a2e3f',
-        margin: 4
-      });
-    } catch (e) {}
-
     syncQR();
   }
 
-  // ============================================================
-  //  VẼ QR BẰNG qrcode-generator (KHÔNG LOGO, KHÔNG CHỮ)
-  // ============================================================
   function syncQR() {
     const bankCode = document.getElementById('bank').value;
     const account  = document.getElementById('account').value.trim();
-    const owner    = document.getElementById('owner').value.trim();
+    const owner    = document.getElementById('owner2').value.trim();
     const desc     = document.getElementById('description').value.trim();
 
     const qrBox = document.getElementById('qr');
@@ -734,7 +809,6 @@
       const qr = qrcode(0, 'M');
       qr.addData(payload);
       qr.make();
-      // cellSize=3, margin=4 module → vừa ~100px
       qrBox.innerHTML = qr.createImgTag(3, 4);
     } catch (err) {
       qrBox.innerHTML =
@@ -742,14 +816,26 @@
     }
   }
 
-  // ===== KHỞI TẠO 5 SẢN PHẨM =====
-  addRow('Tư vấn chiến lược', 2, 1500000);
-  addRow('Phát triển phần mềm', 1, 3500000);
-  addRow('Triển khai hệ thống', 1, 2500000);
-  addRow('Đào tạo nhân sự', 3, 800000);
-  addRow('Bảo trì & hỗ trợ', 2, 1200000);
+  function setToday() {
+    const pad = (n) => n.toString().padStart(2, "0");
+    const now = new Date();
+    document.getElementById("dateD").value = pad(now.getDate());
+    document.getElementById("dateM").value = pad(now.getMonth() + 1);
+    document.getElementById("dateY").value = now.getFullYear();
+  }
 
-  setTimeout(() => calc(), 100);
+  window.onload = () => {
+    setToday();
+    document.getElementById("owner2").value = document.getElementById("owner").value;
+
+    addRow('Tư vấn chiến lược', 2, 1500000);
+    addRow('Phát triển phần mềm', 1, 3500000);
+    addRow('Triển khai hệ thống', 1, 2500000);
+    addRow('Đào tạo nhân sự', 3, 800000);
+    addRow('Bảo trì & hỗ trợ', 2, 1200000);
+
+    setTimeout(() => calc(), 100);
+  };
 </script>
 
 </body>
