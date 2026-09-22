@@ -56,19 +56,67 @@
       .info input { border: none; display: block; margin: 2px 0; width: 260px; }
 
       /* TABLE */
-      table { width: 100%; border-collapse: collapse; margin-top: 40px; font-size: 14px; }
-      thead th { text-align: left; border-bottom: 2px solid #333; padding: 8px; }
-      tbody td { border-bottom: 1px solid #ddd; padding: 8px; }
-      td.center { text-align: center; }
-      td.right { text-align: right; }
-      td input { width: 100%; border: none; }
-      .delete { color: #c00; cursor: pointer; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 40px;
+        font-size: 14px;
+        table-layout: fixed; /* Cố định độ rộng cột */
+      }
+      thead th {
+        text-align: left;
+        border-bottom: 2px solid #333;
+        padding: 8px;
+      }
+      tbody td {
+        border-bottom: 1px solid #ddd;
+        padding: 8px;
+      }
+
+      /* Căn chỉnh cột */
+      .right { text-align: right; }
+      .center { text-align: center; }
+
+      /* Độ rộng các cột */
+      th.col-name  { width: auto; }   /* Tên sản phẩm tự giãn */
+      th.col-qty   { width: 80px; white-space: nowrap; }   /* Số lượng vừa đủ 1 hàng */
+      th.col-price { width: 95px; }   /* Giá nhỏ */
+      th.col-total { width: 95px; }   /* Tổng nhỏ */
+      th.col-del   { width: 25px; }   /* Nút xoá */
+
+      td input {
+        width: 100%;
+        border: none;
+        background: transparent;
+        box-sizing: border-box;
+      }
+
+      /* Ô số lượng — căn phải, ẩn mũi tên tăng giảm */
+      .qty {
+        text-align: right;
+        width: 100%;
+        background: transparent;
+        border: none;
+      }
+      input[type=number]::-webkit-inner-spin-button,
+      input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
 
       /* Ô đơn giá — căn phải, số thẳng hàng */
       .price {
         text-align: right;
         font-variant-numeric: tabular-nums;
+        width: 100%;
+        background: transparent;
+        border: none;
       }
+
+      .delete { color: #c00; cursor: pointer; }
 
       /* TOTAL */
       .total-box { margin-top: 20px; width: 260px; margin-left: auto; }
@@ -197,11 +245,11 @@
       <table>
         <thead>
           <tr>
-            <th>TÊN</th>
-            <th class="center">SỐ LƯỢNG</th>
-            <th class="center">GIÁ</th>
-            <th class="right">TỔNG</th>
-            <th class="no-print"></th>
+            <th class="col-name">TÊN</th>
+            <th class="right col-qty">SỐ LƯỢNG</th>
+            <th class="right col-price">GIÁ</th>
+            <th class="right col-total">TỔNG</th>
+            <th class="no-print col-del"></th>
           </tr>
         </thead>
         <tbody id="items"></tbody>
@@ -376,8 +424,8 @@
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td><input value="${name}"></td>
-          <td class="center"><input type="number" value="${qty}" oninput="calc()"></td>
-          <td class="center"><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" oninput="calc()" onblur="formatPrice(this)"></td>
+          <td class="right"><input class="qty" type="number" value="${qty}" oninput="calc()"></td>
+          <td class="right"><input class="price" type="text" inputmode="numeric" value="${formatVN(price)}" oninput="calc()" onblur="formatPrice(this)"></td>
           <td class="right line">0</td>
           <td class="no-print delete" onclick="this.closest('tr').remove();calc()">✕</td>
         `;
