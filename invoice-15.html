@@ -442,9 +442,9 @@ function updateQR(amount){
 
 /* ========== THÊM / XÓA DÒNG ========== */
 function addRow(){
-  const tb=document.getElementById('items');
-  const tr=document.createElement('tr');
-  tr.innerHTML=`
+  const tb = document.getElementById('items');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
     <td class="c"></td>
     <td class="item-name" contenteditable="true"></td>
     <td class="c" contenteditable="true"></td>
@@ -454,20 +454,20 @@ function addRow(){
     <td class="c col-del no-print"><button class="btn-del" title="Xóa dòng" onclick="removeRow(this)">×</button></td>`;
   tb.appendChild(tr);
   tr.querySelector('.item-name').focus();
+  renumber();   // <-- thêm dòng này
+  calc();
+}
+function removeRow(btn) {
+  btn.closest('tr').remove();
+  renumber();   // <-- đánh lại STT sau khi xóa
   calc();
 }
 
-function removeRow(btn){
-  const tb=document.getElementById('items');
-  if(tb.rows.length<=1){
-    const tr=btn.closest('tr');
-    tr.querySelectorAll('[contenteditable]').forEach(el=>el.textContent='');
-    tr.querySelector('.sl').value='1';
-    tr.querySelector('.dg').value='0';
-  }else{
-    btn.closest('tr').remove();
-  }
-  calc();
+function renumber() {
+  const rows = document.querySelectorAll('#items tr');
+  rows.forEach((tr, i) => {
+    tr.children[0].textContent = i + 1;
+  });
 }
 
 document.addEventListener('blur',e=>{
